@@ -10,5 +10,5 @@ jobs:
   ci:
     uses: Volontariapp/ci-tools/.github/workflows/ci-service.yml@main
     with:
-      service-name: ms-post
+      service-name: ms-social
     secrets: inherit
