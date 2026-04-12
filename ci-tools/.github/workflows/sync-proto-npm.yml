@@ -1,0 +1,106 @@
+name: Sync Proto to NPM Packages
+
+on:
+  workflow_call:
+    inputs:
+      proto_repository:
+        description: "Repository containing the proto files"
+        default: "Volontariapp/proto-registry"
+        type: string
+      npm_repository:
+        description: "Repository for the npm packages"
+        default: "Volontariapp/npm-packages"
+        type: string
+      node_version:
+        description: "Node version to use"
+        default: "24.14.0"
+        type: string
+    secrets:
+      ORG_REPO_TOKEN:
+        required: true
+
+jobs:
+  sync-proto-to-npm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Git Configuration
+        uses: Volontariapp/ci-tools/.github/actions/setup-git@main
+
+      - name: Checkout NPM Packages
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.npm_repository }}
+          token: ${{ secrets.ORG_REPO_TOKEN }}
+          path: npm-packages
+          submodules: recursive
+
+      - name: Checkout Proto Registry
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.proto_repository }}
+          token: ${{ secrets.ORG_REPO_TOKEN }}
+          path: proto-registry
+          fetch-depth: 2
+
+      - name: Setup Node & Yarn
+        uses: Volontariapp/ci-tools/.github/actions/setup-node-yarn@main
+        with:
+          node-version: ${{ inputs.node_version }}
+
+      - name: Install Protobuf Tools (buf & ts-proto)
+        run: |
+          npm install -g @bufbuild/buf ts-proto
+
+      - name: Lint Proto files
+        run: buf lint
+        working-directory: proto-registry
+
+      - name: Generate TypeScript types
+        run: |
+          cd proto-registry
+
+          rm -rf gen/ts
+
+          CHANGED_PROTOS=$(git diff --name-only HEAD~1 HEAD -- '*.proto' 2>/dev/null || true)
+
+          if [ -z "$CHANGED_PROTOS" ]; then
+            echo "No proto files changed or first commit. Generating all."
+            buf generate
+            DOMAINS="user post event common"
+          else
+            echo "Changed protos: $CHANGED_PROTOS"
+            buf generate
+            DOMAINS=$(echo "$CHANGED_PROTOS" | grep -o '^proto/volontariapp/[^/]*' | cut -d'/' -f3 | sort | uniq | tr '\n' ' ')
+            DOMAINS="$DOMAINS common"
+            echo "Domains to update: $DOMAINS"
+          fi
+
+          find gen/ts -name "*.ts" -exec sed -i 's/import { wrappers } from ["'\'']protobufjs["'\'']/import _m0 from "protobufjs"; const { wrappers } = _m0/g' {} +
+
+          PKG_ROOT="../npm-packages/packages/contracts"
+          SRC_DEST="$PKG_ROOT/src"
+
+          for DOMAIN in $DOMAINS; do
+            if [ -n "$DOMAIN" ] && [ -d "gen/ts/volontariapp/$DOMAIN" ]; then
+              DOMAIN_DEST="$SRC_DEST/$DOMAIN"
+              mkdir -p "$DOMAIN_DEST"
+              find "$DOMAIN_DEST" -type f -name "*.ts" ! -name "index.ts" -delete
+              cp gen/ts/volontariapp/$DOMAIN/*.ts "$DOMAIN_DEST/" 2>/dev/null || true
+            fi
+          done
+
+          if [ -d "gen/ts/google/protobuf" ]; then
+            GOOGLE_DEST="$SRC_DEST/google/protobuf"
+            mkdir -p "$GOOGLE_DEST"
+            find "$GOOGLE_DEST" -type f -name "*.ts" ! -name "index.ts" -delete
+            cp gen/ts/google/protobuf/*.ts "$GOOGLE_DEST/"
+          fi
+
+      - name: Check modifications, bump versions, and create PR
+        uses: Volontariapp/ci-tools/.github/actions/create-bump-pr@main
+        with:
+          github_token: ${{ secrets.ORG_REPO_TOKEN }}
+          changed_pkgs: "contracts"
+          commit_message: "chore(proto): auto-update typings and prepare release"
+          pr_title: "chore: sync proto typings"
+          pr_body: "Auto-generated proto typings update."

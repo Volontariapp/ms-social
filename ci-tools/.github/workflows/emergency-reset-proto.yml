@@ -1,0 +1,106 @@
+name: Emergency Reset Proto Sync
+
+on:
+  workflow_call:
+    inputs:
+      proto_repository:
+        description: "Repository containing the proto files"
+        default: "Volontariapp/proto-registry"
+        type: string
+      npm_repository:
+        description: "Repository for the npm packages"
+        default: "Volontariapp/npm-packages"
+        type: string
+      node_version:
+        description: "Node version to use"
+        default: "24.14.0"
+        type: string
+    secrets:
+      ORG_REPO_TOKEN:
+        required: true
+
+jobs:
+  emergency-reset-sync:
+    runs-on: ubuntu-latest
+    if: |
+      github.event.pull_request.labels.*.name && contains(github.event.pull_request.labels.*.name, 'reset') &&
+      startsWith(github.head_ref, 'debug/')
+    steps:
+      - name: Setup Git Configuration
+        uses: Volontariapp/ci-tools/.github/actions/setup-git@main
+
+      - name: Checkout NPM Packages
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.npm_repository }}
+          token: ${{ secrets.ORG_REPO_TOKEN }}
+          path: npm-packages
+          submodules: recursive
+
+      - name: Checkout Proto Registry
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.proto_repository }}
+          token: ${{ secrets.ORG_REPO_TOKEN }}
+          path: proto-registry
+
+      - name: Setup Node & Yarn
+        uses: Volontariapp/ci-tools/.github/actions/setup-node-yarn@main
+        with:
+          node-version: ${{ inputs.node_version }}
+
+      - name: Install Protobuf Tools (buf & ts-proto)
+        run: |
+          npm install -g @bufbuild/buf ts-proto
+
+      - name: full Regeneration and Sync
+        run: |
+          cd proto-registry
+
+          # 1. Clean and Full Generate
+          rm -rf gen/ts
+          buf generate
+
+          # Fix protobufjs imports for ESM
+          find gen/ts -name "*.ts" -exec sed -i 's/import { wrappers } from ["'\'']protobufjs["'\'']/import _m0 from "protobufjs"; const { wrappers } = _m0/g' {} +
+
+          PKG_ROOT="../npm-packages/packages/contracts"
+          PROTO_DEST="$PKG_ROOT/proto"
+          SRC_DEST="$PKG_ROOT/src"
+
+          # 2. Sync ALL Proto files (Breaking symlink if it exists)
+          if [ -L "$PROTO_DEST" ]; then
+            rm -f "$PROTO_DEST"
+          fi
+          rm -rf "$PROTO_DEST"
+          mkdir -p "$PROTO_DEST"
+          cp -r proto/* "$PROTO_DEST/"
+
+          # 3. Sync ALL TS types (Full reset of domains)
+          DOMAINS="user post event common"
+          for DOMAIN in $DOMAINS; do
+            if [ -d "gen/ts/volontariapp/$DOMAIN" ]; then
+              DOMAIN_DEST="$SRC_DEST/$DOMAIN"
+              mkdir -p "$DOMAIN_DEST"
+              # Clean only generated .ts files, keep index.ts
+              find "$DOMAIN_DEST" -type f -name "*.ts" ! -name "index.ts" -delete
+              cp gen/ts/volontariapp/$DOMAIN/*.ts "$DOMAIN_DEST/"
+            fi
+          done
+
+          # 4. Sync Google Protos
+          if [ -d "gen/ts/google/protobuf" ]; then
+            GOOGLE_DEST="$SRC_DEST/google/protobuf"
+            mkdir -p "$GOOGLE_DEST"
+            rm -f "$GOOGLE_DEST"/*.ts
+            cp gen/ts/google/protobuf/*.ts "$GOOGLE_DEST/"
+          fi
+
+      - name: Create Emergency Reset PR
+        uses: Volontariapp/ci-tools/.github/actions/create-bump-pr@main
+        with:
+          github_token: ${{ secrets.ORG_REPO_TOKEN }}
+          changed_pkgs: "contracts"
+          commit_message: "fix(proto): emergency full reset of types and proto files"
+          pr_title: "🚨 EMERGENCY: Full Proto Reset"
+          pr_body: "This PR was triggered by the 'reset' label on a debug branch. It performs a full regeneration of all proto files and TypeScript types, including the .proto files in the contracts package."
