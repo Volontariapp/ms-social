@@ -1,6 +1,6 @@
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-import { PaginationRequestDTO } from '../../../modules/social/dto/common/pagination.dto';
+import { PaginationRequestDTO } from '../../../../modules/social/dto/common/pagination.dto';
 
 describe('PaginationRequestDTO', () => {
   it('should validate with valid page and limit', async () => {

@@ -3,7 +3,7 @@ import { validate } from 'class-validator';
 import {
   CreateSocialUserCommandDTO,
   DeleteSocialUserCommandDTO,
-} from '../../../modules/social/dto/request/command/user-node.command.dto';
+} from '../../../../modules/social/dto/request/command/user-node.command.dto';
 
 describe('UserNode Command DTOs', () => {
   describe('CreateSocialUserCommandDTO', () => {
