@@ -1,18 +1,18 @@
 import { UserId, PaginationVO } from '@volontariapp/domain-social';
-import { RelationshipMapper } from './relationship.mapper';
+import { RelationshipMapper } from '../../../../modules/social/mappers/relationship.mapper';
 import {
   PostFollowUserCommandDTO,
   DeleteFollowUserCommandDTO,
   PostBlockUserCommandDTO,
   DeleteBlockUserCommandDTO,
-} from '../dto/request/command/relationship.command.dto';
+} from '../../../../modules/social/dto/request/command/relationship.command.dto';
 import {
   GetMyFollowsQueryDTO,
   GetMyFollowersQueryDTO,
   GetMyBlocksQueryDTO,
   GetWhoBlockedMeQueryDTO,
-} from '../dto/request/query/relationship.query.dto';
-import { PaginationRequestDTO } from '../dto/common/pagination.dto';
+} from '../../../../modules/social/dto/request/query/relationship.query.dto';
+import { PaginationRequestDTO } from '../../../../modules/social/dto/common/pagination.dto';
 
 describe('RelationshipMapper', () => {
   describe('toFollowUserParams', () => {

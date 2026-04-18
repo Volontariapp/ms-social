@@ -1,5 +1,5 @@
 import { DynamicModule, Global, Module } from '@nestjs/common';
-import { Neo4jBridgeModule } from '@volontariapp/bridge-nest';
+import { Neo4jBridgeModule, NestNeo4jProvider } from '@volontariapp/bridge-nest';
 import type { CustomConfig } from '../../config/base-config.js';
 
 @Global()
@@ -14,7 +14,7 @@ export class DatabaseModule {
           authToken: config.neo4j.authToken,
         }),
       ],
-      exports: [Neo4jBridgeModule],
+      exports: [NestNeo4jProvider],
       global: true,
     };
   }

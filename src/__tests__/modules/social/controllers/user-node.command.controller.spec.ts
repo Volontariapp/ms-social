@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserNodeCommandController } from './user-node.command.controller';
+import { UserNodeCommandController } from '../../../modules/social/controllers/user-node.command.controller';
 import { SocialUserService } from '@volontariapp/domain-social';
-import { CreateSocialUserCommandDTO, DeleteSocialUserCommandDTO } from '../dto/request/command/user-node.command.dto';
-import { CreateUserNodeResponseDTO, DeleteUserNodeResponseDTO } from '../dto/response/social.response.dto';
+import { CreateSocialUserCommandDTO, DeleteSocialUserCommandDTO } from '../../../modules/social/dto/request/command/user-node.command.dto';
+import { CreateUserNodeResponseDTO, DeleteUserNodeResponseDTO } from '../../../modules/social/dto/response/social.response.dto';
 
 describe('UserNodeCommandController', () => {
   let controller: UserNodeCommandController;

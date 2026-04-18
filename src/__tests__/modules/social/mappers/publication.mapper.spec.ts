@@ -1,17 +1,17 @@
 import { PostId, UserId, PaginationVO } from '@volontariapp/domain-social';
-import { PublicationMapper } from './publication.mapper';
+import { PublicationMapper } from '../../../../modules/social/mappers/publication.mapper';
 import {
   CreateSocialPostCommandDTO,
   DeleteSocialPostCommandDTO,
   PostUserOwnCommandDTO,
   DeleteUserOwnCommandDTO,
-} from '../dto/request/command/publication.command.dto';
+} from '../../../../modules/social/dto/request/command/publication.command.dto';
 import {
   GetSocialPostQueryDTO,
   GetUserPostsQueryDTO,
   GetFeedQueryDTO,
-} from '../dto/request/query/publication.query.dto';
-import { PaginationRequestDTO } from '../dto/common/pagination.dto';
+} from '../../../../modules/social/dto/request/query/publication.query.dto';
+import { PaginationRequestDTO } from '../../../../modules/social/dto/common/pagination.dto';
 
 describe('PublicationMapper', () => {
   describe('toPostIdVO', () => {

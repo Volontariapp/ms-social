@@ -1,6 +1,6 @@
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-import { PaginationRequestDTO } from './pagination.dto';
+import { PaginationRequestDTO } from '../../../modules/social/dto/common/pagination.dto';
 
 describe('PaginationRequestDTO', () => {
   it('should validate with valid page and limit', async () => {
@@ -47,7 +47,7 @@ describe('PaginationRequestDTO', () => {
     });
     const errors = await validate(dto);
     expect(errors.length).toBeGreaterThan(0);
-      expect(errors[0].property).toBe('limit');
+    expect(errors[0].property).toBe('limit');
   });
 
   it('should fail validation with negative page', async () => {

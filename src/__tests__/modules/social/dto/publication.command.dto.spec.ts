@@ -5,7 +5,7 @@ import {
   DeleteSocialPostCommandDTO,
   PostUserOwnCommandDTO,
   DeleteUserOwnCommandDTO,
-} from './publication.command.dto';
+} from '../../../modules/social/dto/request/command/publication.command.dto';
 
 describe('Publication Command DTOs', () => {
   describe('CreateSocialPostCommandDTO', () => {

@@ -1,18 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PublicationCommandController } from './publication.command.controller';
+import { PublicationCommandController } from '../../../modules/social/controllers/publication.command.controller';
 import { PublicationService } from '@volontariapp/domain-social';
 import {
   CreateSocialPostCommandDTO,
   DeleteSocialPostCommandDTO,
   PostUserOwnCommandDTO,
   DeleteUserOwnCommandDTO,
-} from '../dto/request/command/publication.command.dto';
+} from '../../../modules/social/dto/request/command/publication.command.dto';
 import {
   CreatePostNodeResponseDTO,
   DeletePostNodeResponseDTO,
   PostUserOwnResponseDTO,
   DeleteUserOwnResponseDTO,
-} from '../dto/response/social.response.dto';
+} from '../../../modules/social/dto/response/social.response.dto';
 
 describe('PublicationCommandController', () => {
   let controller: PublicationCommandController;

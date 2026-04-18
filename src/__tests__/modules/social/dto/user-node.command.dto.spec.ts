@@ -3,7 +3,7 @@ import { validate } from 'class-validator';
 import {
   CreateSocialUserCommandDTO,
   DeleteSocialUserCommandDTO,
-} from './user-node.command.dto';
+} from '../../../modules/social/dto/request/command/user-node.command.dto';
 
 describe('UserNode Command DTOs', () => {
   describe('CreateSocialUserCommandDTO', () => {
@@ -44,7 +44,6 @@ describe('UserNode Command DTOs', () => {
         userId: '',
       });
       const errors = await validate(dto);
-      // IsString() allows empty strings, so this should pass
       expect(errors).toHaveLength(0);
     });
 

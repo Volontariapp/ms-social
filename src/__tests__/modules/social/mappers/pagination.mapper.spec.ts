@@ -1,5 +1,5 @@
-import { PaginationMapper } from './pagination.mapper';
-import { PaginationRequestDTO } from '../dto/common/pagination.dto';
+import { PaginationMapper } from '../../../../modules/social/mappers/pagination.mapper';
+import { PaginationRequestDTO } from '../../../../modules/social/dto/common/pagination.dto';
 import { PaginationVO, PaginationResultVO } from '@volontariapp/domain-social';
 
 describe('PaginationMapper', () => {

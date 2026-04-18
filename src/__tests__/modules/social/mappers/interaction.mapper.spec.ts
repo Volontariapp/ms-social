@@ -1,14 +1,14 @@
 import { UserId, PostId, PaginationVO } from '@volontariapp/domain-social';
-import { InteractionMapper } from './interaction.mapper';
+import { InteractionMapper } from '../../../../modules/social/mappers/interaction.mapper';
 import {
   PostLikePostCommandDTO,
   DeleteLikePostCommandDTO,
-} from '../dto/request/command/interaction.command.dto';
+} from '../../../../modules/social/dto/request/command/interaction.command.dto';
 import {
   GetUserLikesQueryDTO,
   GetPostLikersQueryDTO,
-} from '../dto/request/query/interaction.query.dto';
-import { PaginationRequestDTO } from '../dto/common/pagination.dto';
+} from '../../../../modules/social/dto/request/query/interaction.query.dto';
+import { PaginationRequestDTO } from '../../../../modules/social/dto/common/pagination.dto';
 
 describe('InteractionMapper', () => {
   describe('toLikePostParams', () => {

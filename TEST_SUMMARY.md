@@ -2,8 +2,9 @@
 
 ## Overview
 Created comprehensive unit tests for mappers, DTOs, and validation of the social module.
+Tests are organized in `src/__tests__/` directory following NestJS testing conventions.
 
-## Test Files Created (11 files)
+## Test Files Created (11 files - organized in src/__tests__/)
 
 ### DTO Validation Tests ✅ (Passing)
 1. **src/modules/social/dto/common/pagination.dto.spec.ts** - 15 tests
@@ -119,10 +120,32 @@ npm test:watch
 ```
 
 ## Current Test Results
-- **Total Tests**: 86 passing ✅
-- **Test Suites**: 6 passing (mapper/controller specs pending Jest ES modules resolution)
+- **Total Tests**: 86 passing ✅ (DTO validation tests)
+- **Test Suites**: 2 passing, 9 with resolution issues
 - **Snapshots**: 0
-- **Time**: ~2.1s
+- **Time**: ~2.9s
+
+## Directory Structure
+```
+src/__tests__/
+├── modules/
+│   └── social/
+│       ├── controllers/
+│       │   ├── user-node.command.controller.spec.ts
+│       │   └── publication.command.controller.spec.ts
+│       ├── dto/
+│       │   ├── pagination.dto.spec.ts
+│       │   ├── user-node.command.dto.spec.ts
+│       │   └── publication.command.dto.spec.ts
+│       ├── mappers/
+│       │   ├── user-node.mapper.spec.ts
+│       │   ├── pagination.mapper.spec.ts
+│       │   ├── publication.mapper.spec.ts
+│       │   ├── interaction.mapper.spec.ts
+│       │   └── relationship.mapper.spec.ts
+│       └── validation/
+│           └── dto-validation.spec.ts
+```
 
 ## Notes
 - DTO validation tests are fully functional and comprehensive
