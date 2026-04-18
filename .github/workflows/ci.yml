@@ -12,3 +12,15 @@ jobs:
     with:
       service-name: ms-social
     secrets: inherit
+
+  smoke-test:
+    needs: ci
+    uses: Volontariapp/ci-tools/.github/workflows/ci-docker-smoke.yml@main
+    with:
+      service-name: ms-social
+      db-image: "neo4j:5"
+      db-name: "neo4j"
+      db-user: "neo4j"
+      db-password: "password"
+      port: 3004
+    secrets: inherit

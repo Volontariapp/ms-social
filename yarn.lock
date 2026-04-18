@@ -3851,6 +3851,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@volontariapp/bridge-nest@npm:0.3.4":
+  version: 0.3.4
+  resolution: "@volontariapp/bridge-nest@npm:0.3.4"
+  dependencies:
+    "@volontariapp/bridge": "npm:0.2.8"
+    "@volontariapp/errors": "npm:0.4.4"
+    "@volontariapp/errors-nest": "npm:0.8.0"
+    "@volontariapp/logger": "npm:0.2.3"
+    ioredis: "npm:^5.10.1"
+    neo4j-driver: "npm:^6.0.1"
+    reflect-metadata: "npm:^0.2.2"
+    rxjs: "npm:^7.8.2"
+  peerDependencies:
+    "@nestjs/common": ^11.1.18
+    "@nestjs/core": ^11.1.18
+    typeorm: ^0.3.28
+  peerDependenciesMeta:
+    typeorm:
+      optional: true
+  checksum: 10c0/7f9446baf5712af6208ab8a91d8531d7bd042cc0024b7356fb052c063d5a5aff8a488b47535e0b91be6e8b51991674fc9afac7c0106c50309cc8f8ec0cdeb4b8
+  languageName: node
+  linkType: hard
+
 "@volontariapp/bridge@npm:0.2.6":
   version: 0.2.6
   resolution: "@volontariapp/bridge@npm:0.2.6"
@@ -3882,6 +3905,23 @@ __metadata:
     reflect-metadata: "npm:^0.2.2"
     typeorm: "npm:^0.3.28"
   checksum: 10c0/c142017d7828b49ef7b82a76b8958be30fc031ae3cdd856868407f6de5afda8509adc49416e92c70c78a7eae83540d6f1830b01b7077d4f3f62a45dc3c876fb6
+  languageName: node
+  linkType: hard
+
+"@volontariapp/bridge@npm:0.2.8":
+  version: 0.2.8
+  resolution: "@volontariapp/bridge@npm:0.2.8"
+  dependencies:
+    "@types/geojson": "npm:^7946.0.16"
+    "@volontariapp/config": "npm:2.0.0"
+    "@volontariapp/errors": "npm:0.4.4"
+    "@volontariapp/logger": "npm:0.2.3"
+    ioredis: "npm:^5.10.1"
+    neo4j-driver: "npm:^6.0.1"
+    pg: "npm:^8.20.0"
+    reflect-metadata: "npm:^0.2.2"
+    typeorm: "npm:^0.3.28"
+  checksum: 10c0/8c0db56cfa5a7ade42c3b6283ad9fa6ff7bbafe7d3859a37dd291be390962f5281e7022df08e0e53dc3df373fe0d1e75912dea1d13a32e471e2e211c337dcb35
   languageName: node
   linkType: hard
 
@@ -3930,9 +3970,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@volontariapp/contracts-nest@npm:2.2.9":
-  version: 2.2.9
-  resolution: "@volontariapp/contracts-nest@npm:2.2.9"
+"@volontariapp/contracts-nest@npm:3.0.0":
+  version: 3.0.0
+  resolution: "@volontariapp/contracts-nest@npm:3.0.0"
   dependencies:
     "@volontariapp/logger": "npm:0.2.3"
     protobufjs: "npm:7.5.3"
@@ -3941,17 +3981,43 @@ __metadata:
     "@nestjs/core": ^11.0.0
     "@nestjs/microservices": ^11.0.0
     rxjs: ^7.0.0
-  checksum: 10c0/a5375bb3cb9b4b39ca477073c876c7aeea0c9082428cda29d576ac4e4fc9e6a52ba4cf0f10575a7bae283c347a3326028880edf875d6d20af9fa5ca69d680056
+  checksum: 10c0/506e8da102f2956125b068f80730bc54b75d9cd84e954e293388a10fc20fe33b14f53d3e38a4ebb4161865a4c6df41129eed29a9b38fbe863bf6d5350f767c0f
   languageName: node
   linkType: hard
 
-"@volontariapp/contracts@npm:3.3.4":
-  version: 3.3.4
-  resolution: "@volontariapp/contracts@npm:3.3.4"
+"@volontariapp/contracts@npm:4.0.0":
+  version: 4.0.0
+  resolution: "@volontariapp/contracts@npm:4.0.0"
   dependencies:
     "@volontariapp/logger": "npm:0.2.3"
     protobufjs: "npm:7.5.3"
-  checksum: 10c0/617aaedb9b73ed3b7c55b2d14e00b172781791872b20b975a035c10dd72be42b95638861455f3b819ca11da01c8649fe1790dd1aa2fd25ffa477ad75e320b346
+  checksum: 10c0/9f5a7c8945de4d8eb89391898960cebbff52cfa0e9ebff607685ff46c09d7cebf1e200238b408ebe7ff842e8ab66ecce9403d1865b3776b22b4bab0eb60e6803
+  languageName: node
+  linkType: hard
+
+"@volontariapp/contracts@npm:4.0.1":
+  version: 4.0.1
+  resolution: "@volontariapp/contracts@npm:4.0.1"
+  dependencies:
+    "@volontariapp/logger": "npm:0.2.3"
+    protobufjs: "npm:7.5.3"
+  checksum: 10c0/116b5a28ddb866394c28b0c518fd8e32cd8c460f96b65e444815902f0dd5f718fa4c26d389a690538b7e2af3310a7e466564123fe8dcdab89e3f46af97c1a716
+  languageName: node
+  linkType: hard
+
+"@volontariapp/domain-social@npm:0.2.0":
+  version: 0.2.0
+  resolution: "@volontariapp/domain-social@npm:0.2.0"
+  dependencies:
+    "@nestjs/common": "npm:^11.0.1"
+    "@volontariapp/bridge-nest": "npm:0.3.4"
+    "@volontariapp/contracts": "npm:4.0.1"
+    "@volontariapp/errors": "npm:0.4.4"
+    "@volontariapp/errors-nest": "npm:0.8.0"
+    "@volontariapp/logger": "npm:0.2.3"
+    neo4j-driver: "npm:^6.0.1"
+    reflect-metadata: "npm:^0.2.2"
+  checksum: 10c0/c320f9e6bab7cde916f28f328fcdd4369f97e0aa677a8506392a21383162778ef393b0f958d5cd7585e1372027b6c37bbb196751877001c7625eb52d9fb4b50f
   languageName: node
   linkType: hard
 
@@ -3978,6 +4044,32 @@ __metadata:
     "@nestjs/swagger":
       optional: true
   checksum: 10c0/4d934e10a30fe8b7aecc67b4e0a31115af167b9a792ecfbcad445d5965e4533b3c42a9adfefb930ab75a391499d883346e055fcc0330fc5e186b73f35a912971
+  languageName: node
+  linkType: hard
+
+"@volontariapp/errors-nest@npm:0.8.0":
+  version: 0.8.0
+  resolution: "@volontariapp/errors-nest@npm:0.8.0"
+  dependencies:
+    "@volontariapp/errors": "npm:0.4.4"
+    "@volontariapp/logger": "npm:0.2.3"
+    reflect-metadata: "npm:^0.2.2"
+    rxjs: "npm:^7.8.1"
+  peerDependencies:
+    "@nestjs/common": ^10.0.0 || ^11.0.0
+    "@nestjs/core": ^10.0.0 || ^11.0.0
+    "@nestjs/microservices": ^10.0.0 || ^11.0.0
+    "@nestjs/swagger": ^8.0.0 || ^11.0.0
+  peerDependenciesMeta:
+    "@nestjs/common":
+      optional: true
+    "@nestjs/core":
+      optional: true
+    "@nestjs/microservices":
+      optional: true
+    "@nestjs/swagger":
+      optional: true
+  checksum: 10c0/81e6566976f8b40973176fc32b353ed3f83269094d9c21313cacb3c9be5f6f82b1e742c2ec78277d2379fe93bda96f7c988df6cc504f3e53a9e6be7f4b756521
   languageName: node
   linkType: hard
 
@@ -4067,6 +4159,22 @@ __metadata:
     "@opentelemetry/semantic-conventions": "npm:^1.34.0"
     "@volontariapp/logger": "npm:0.2.3"
   checksum: 10c0/bf8d0d47d43f083b1ab148c9d1d85230c7918ba64503139968fd535062107f2196953b19b6ce06129ece29f41bfdd9a997a72e33522fa7f06f6525324f9f67d5
+  languageName: node
+  linkType: hard
+
+"@volontariapp/validation-nest@npm:0.1.2":
+  version: 0.1.2
+  resolution: "@volontariapp/validation-nest@npm:0.1.2"
+  peerDependencies:
+    "@nestjs/common": ^11.0.1
+    class-transformer: ^0.5.1
+    class-validator: ^0.15.1
+  peerDependenciesMeta:
+    class-transformer:
+      optional: true
+    class-validator:
+      optional: true
+  checksum: 10c0/ceaa17b24b0bfe4f216b8b8997730913b9c8cdfef5781cf3a4d242dd9b484bc36e22aaba4b65ab9604a7375c2bee45ca8eb8a7dc348cf62718092037415210fb
   languageName: node
   linkType: hard
 
@@ -8234,14 +8342,16 @@ __metadata:
     "@volontariapp/auth": "npm:2.1.12"
     "@volontariapp/bridge-nest": "npm:0.3.3"
     "@volontariapp/config": "npm:2.0.0"
-    "@volontariapp/contracts": "npm:3.3.4"
-    "@volontariapp/contracts-nest": "npm:2.2.9"
+    "@volontariapp/contracts": "npm:4.0.0"
+    "@volontariapp/contracts-nest": "npm:3.0.0"
+    "@volontariapp/domain-social": "npm:0.2.0"
     "@volontariapp/errors": "npm:0.4.4"
     "@volontariapp/errors-nest": "npm:0.7.4"
     "@volontariapp/eslint-config": "npm:2.2.2"
     "@volontariapp/health-check-nest": "npm:0.1.18"
     "@volontariapp/logger": "npm:0.2.3"
     "@volontariapp/monitoring": "npm:2.1.3"
+    "@volontariapp/validation-nest": "npm:0.1.2"
     axios: "npm:^1.15.0"
     class-transformer: "npm:^0.5.1"
     class-validator: "npm:^0.15.1"
