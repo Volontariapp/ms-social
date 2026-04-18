@@ -5,7 +5,10 @@ import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
-import { GRPC_SERVICES, getGrpcOptions } from '@volontariapp/contracts';
+// import {
+//   GRPC_MICROSERVICES,
+//   getGrpcOptions,
+// } from '@volontariapp/contracts-nest';
 import { AppConfigService } from './config/app-config.service.js';
 import { loadConfig } from '@volontariapp/config';
 import { CustomConfig } from './config/base-config.js';
@@ -33,12 +36,12 @@ async function bootstrap() {
   });
   const configService = app.get(AppConfigService);
 
-  app.connectMicroservice(
-    getGrpcOptions(
-      GRPC_SERVICES.SOCIAL,
-      configService.config.microServices.msSocialUrl,
-    ),
-  );
+  // app.connectMicroservice(
+  //   getGrpcOptions(
+  //     GRPC_MICROSERVICES.SOCIAL,
+  //     configService.config.microServices.msSocialUrl,
+  //   ),
+  // );
 
   await app.startAllMicroservices();
   await app.listen(configService.config.port);

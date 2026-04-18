@@ -1,8 +1,4 @@
-import {
-  BackendConfig,
-  PostgresConfig,
-  MSURLsConfig,
-} from '@volontariapp/config';
+import { BackendConfig, MSURLsConfig, Neo4jConfig } from '@volontariapp/config';
 import { Type } from 'class-transformer';
 import { IsDefined, ValidateNested } from 'class-validator';
 
@@ -18,6 +14,6 @@ export class CustomConfig extends BackendConfig {
 
   @IsDefined()
   @ValidateNested()
-  @Type(() => PostgresConfig)
-  db!: PostgresConfig;
+  @Type(() => Neo4jConfig)
+  neo4j!: Neo4jConfig;
 }

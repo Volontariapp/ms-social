@@ -20,5 +20,15 @@
     "msUserUrl": "MS_USER_URL",
     "msPostUrl": "MS_POST_URL",
     "msEventUrl": "MS_EVENT_URL"
+  },
+  "neo4j": {
+    "scheme": "NEO4J_SCHEME",
+    "host": "NEO4J_HOST",
+    "port": "NEO4J_PORT",
+    "username": "NEO4J_USERNAME",
+    "password": "NEO4J_PASSWORD",
+    "database": "NEO4J_DATABASE",
+    "authScheme": "NEO4J_AUTH_SCHEME",
+    "realm": "NEO4J_REALM"
   }
 }

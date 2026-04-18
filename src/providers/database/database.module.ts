@@ -1,9 +1,19 @@
-import { Module } from '@nestjs/common';
-import { PostgresModule } from './postgres/postgres.module.js';
-import { Neo4jModule } from './neo4j/neo4j.module.js';
+import { DynamicModule, Module } from '@nestjs/common';
+import { Neo4jBridgeModule } from '@volontariapp/bridge-nest';
+import type { CustomConfig } from '../../config/base-config.js';
 
-@Module({
-  imports: [PostgresModule, Neo4jModule],
-  exports: [PostgresModule, Neo4jModule],
-})
-export class DatabaseModule {}
+@Module({})
+export class DatabaseModule {
+  static register(config: CustomConfig): DynamicModule {
+    return {
+      module: DatabaseModule,
+      imports: [
+        Neo4jBridgeModule.register({
+          url: config.neo4j.url,
+          authToken: config.neo4j.authToken,
+        }),
+      ],
+      exports: [Neo4jBridgeModule],
+    };
+  }
+}
