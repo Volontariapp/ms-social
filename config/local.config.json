@@ -14,9 +14,9 @@
     "realm": "neo4j"
   },
   "microServices": {
-    "msUserUrl": "localhost:5000",
-    "msPostUrl": "localhost:5001",
-    "msEventUrl": "localhost:5002",
-    "msSocialUrl": "localhost:5003"
+    "msUserUrl": "localhost:5001",
+    "msPostUrl": "localhost:5002",
+    "msEventUrl": "localhost:5003",
+    "msSocialUrl": "localhost:5004"
   }
 }

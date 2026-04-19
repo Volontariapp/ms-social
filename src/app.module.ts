@@ -10,7 +10,7 @@ import { GlobalExceptionFilter } from '@volontariapp/errors-nest';
 import { GrpcValidationPipe } from '@volontariapp/validation-nest';
 
 @Module({
-  imports: [SocialModule, GrpcClientModule],
+  imports: [],
 })
 export class AppModule {
   static register(config: CustomConfig): DynamicModule {
@@ -20,6 +20,7 @@ export class AppModule {
         AppConfigModule.forRoot(config),
         DatabaseModule.register(config),
         SocialModule,
+        GrpcClientModule,
         HealthModule.register({
           databases: ['neo4j'],
           failOnMissingProvider: true,

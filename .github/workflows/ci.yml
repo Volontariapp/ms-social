@@ -22,5 +22,6 @@ jobs:
       db-name: "neo4j"
       db-user: "neo4j"
       db-password: "password"
+      db-type: "neo4j"
       port: 3004
     secrets: inherit

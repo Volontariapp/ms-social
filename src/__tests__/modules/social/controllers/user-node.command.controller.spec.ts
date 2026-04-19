@@ -1,8 +1,15 @@
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserNodeCommandController } from '../../../modules/social/controllers/user-node.command.controller';
+import { UserNodeCommandController } from '../../../../modules/social/controllers/user-node.command.controller';
 import { SocialUserService } from '@volontariapp/domain-social';
-import { CreateSocialUserCommandDTO, DeleteSocialUserCommandDTO } from '../../../modules/social/dto/request/command/user-node.command.dto';
-import { CreateUserNodeResponseDTO, DeleteUserNodeResponseDTO } from '../../../modules/social/dto/response/social.response.dto';
+import {
+  CreateSocialUserCommandDTO,
+  DeleteSocialUserCommandDTO,
+} from '../../../../modules/social/dto/request/command/user-node.command.dto';
+import {
+  CreateUserNodeResponseDTO,
+  DeleteUserNodeResponseDTO,
+} from '../../../../modules/social/dto/response/social.response.dto';
 
 describe('UserNodeCommandController', () => {
   let controller: UserNodeCommandController;
@@ -24,7 +31,9 @@ describe('UserNodeCommandController', () => {
       ],
     }).compile();
 
-    controller = module.get<UserNodeCommandController>(UserNodeCommandController);
+    controller = module.get<UserNodeCommandController>(
+      UserNodeCommandController,
+    );
     service = module.get<SocialUserService>(SocialUserService);
   });
 
@@ -47,10 +56,12 @@ describe('UserNodeCommandController', () => {
     it('should throw error if service fails', async () => {
       const dto: CreateSocialUserCommandDTO = { userId: 'user-123' };
       (service.createUser as jest.Mock).mockRejectedValueOnce(
-        new Error('Database error')
+        new Error('Database error'),
       );
 
-      await expect(controller.createUserNode(dto)).rejects.toThrow('Database error');
+      await expect(controller.createUserNode(dto)).rejects.toThrow(
+        'Database error',
+      );
     });
 
     it('should handle multiple user creations', async () => {
@@ -83,16 +94,18 @@ describe('UserNodeCommandController', () => {
     it('should throw error if service fails', async () => {
       const dto: DeleteSocialUserCommandDTO = { userId: 'user-123' };
       (service.deleteUser as jest.Mock).mockRejectedValueOnce(
-        new Error('User not found')
+        new Error('User not found'),
       );
 
-      await expect(controller.deleteUserNode(dto)).rejects.toThrow('User not found');
+      await expect(controller.deleteUserNode(dto)).rejects.toThrow(
+        'User not found',
+      );
     });
 
     it('should handle deletion of non-existent users', async () => {
       const dto: DeleteSocialUserCommandDTO = { userId: 'non-existent-user' };
       (service.deleteUser as jest.Mock).mockRejectedValueOnce(
-        new Error('User not found')
+        new Error('User not found'),
       );
 
       await expect(controller.deleteUserNode(dto)).rejects.toThrow();

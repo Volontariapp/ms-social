@@ -27,6 +27,7 @@ import { EventPostLinkCommandController } from './controllers/event-post-link.co
 import { EventPostLinkQueryController } from './controllers/event-post-link.query.controller.js';
 
 @Module({
+  imports: [],
   controllers: [
     UserNodeCommandController,
     UserNodeQueryController,
@@ -42,18 +43,18 @@ import { EventPostLinkQueryController } from './controllers/event-post-link.quer
     EventPostLinkQueryController,
   ],
   providers: [
-    SocialUserService,
-    RelationshipService,
-    PublicationService,
-    InteractionService,
-    ParticipationService,
-    EventPostLinkService,
     Neo4jSocialUserRepository,
     Neo4jRelationshipRepository,
     Neo4jPublicationRepository,
     Neo4jInteractionRepository,
     Neo4jParticipationRepository,
     Neo4jEventPostLinkRepository,
+    SocialUserService,
+    RelationshipService,
+    PublicationService,
+    InteractionService,
+    ParticipationService,
+    EventPostLinkService,
   ],
   exports: [
     SocialUserService,

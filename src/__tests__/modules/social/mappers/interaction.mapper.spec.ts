@@ -60,7 +60,10 @@ describe('InteractionMapper', () => {
 
   describe('toGetUserLikesParams', () => {
     it('should convert GetUserLikesQueryDTO without pagination', () => {
-      const dto: GetUserLikesQueryDTO = { userId: 'user-123' };
+      const dto: GetUserLikesQueryDTO = {
+        userId: 'user-123',
+        pagination: undefined,
+      };
       const result = InteractionMapper.toGetUserLikesParams(dto);
 
       expect(result.userId).toBeInstanceOf(UserId);
@@ -93,7 +96,10 @@ describe('InteractionMapper', () => {
 
   describe('toGetPostLikersParams', () => {
     it('should convert GetPostLikersQueryDTO without pagination', () => {
-      const dto: GetPostLikersQueryDTO = { postId: 'post-789' };
+      const dto: GetPostLikersQueryDTO = {
+        postId: 'post-789',
+        pagination: undefined,
+      };
       const result = InteractionMapper.toGetPostLikersParams(dto);
 
       expect(result.postId).toBeInstanceOf(PostId);

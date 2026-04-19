@@ -86,7 +86,10 @@ describe('RelationshipMapper', () => {
 
   describe('toGetFollowsParams', () => {
     it('should convert GetMyFollowsQueryDTO without pagination', () => {
-      const dto: GetMyFollowsQueryDTO = { userId: 'user-123' };
+      const dto: GetMyFollowsQueryDTO = {
+        userId: 'user-123',
+        pagination: undefined,
+      };
       const result = RelationshipMapper.toGetFollowsParams(dto);
 
       expect(result.userId).toBeInstanceOf(UserId);
@@ -108,7 +111,10 @@ describe('RelationshipMapper', () => {
 
   describe('toGetFollowersParams', () => {
     it('should convert GetMyFollowersQueryDTO without pagination', () => {
-      const dto: GetMyFollowersQueryDTO = { userId: 'user-456' };
+      const dto: GetMyFollowersQueryDTO = {
+        userId: 'user-456',
+        pagination: undefined,
+      };
       const result = RelationshipMapper.toGetFollowersParams(dto);
 
       expect(result.userId).toBeInstanceOf(UserId);
@@ -130,7 +136,10 @@ describe('RelationshipMapper', () => {
 
   describe('toGetBlocksParams', () => {
     it('should convert GetMyBlocksQueryDTO without pagination', () => {
-      const dto: GetMyBlocksQueryDTO = { userId: 'user-789' };
+      const dto: GetMyBlocksQueryDTO = {
+        userId: 'user-789',
+        pagination: undefined,
+      };
       const result = RelationshipMapper.toGetBlocksParams(dto);
 
       expect(result.userId).toBeInstanceOf(UserId);
@@ -152,7 +161,10 @@ describe('RelationshipMapper', () => {
 
   describe('toGetWhoBlockedMeParams', () => {
     it('should convert GetWhoBlockedMeQueryDTO without pagination', () => {
-      const dto: GetWhoBlockedMeQueryDTO = { userId: 'user-101' };
+      const dto: GetWhoBlockedMeQueryDTO = {
+        userId: 'user-101',
+        pagination: undefined,
+      };
       const result = RelationshipMapper.toGetWhoBlockedMeParams(dto);
 
       expect(result.userId).toBeInstanceOf(UserId);

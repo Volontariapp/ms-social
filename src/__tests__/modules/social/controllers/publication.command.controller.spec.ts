@@ -1,18 +1,19 @@
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
-import { PublicationCommandController } from '../../../modules/social/controllers/publication.command.controller';
+import { PublicationCommandController } from '../../../../modules/social/controllers/publication.command.controller';
 import { PublicationService } from '@volontariapp/domain-social';
 import {
   CreateSocialPostCommandDTO,
   DeleteSocialPostCommandDTO,
   PostUserOwnCommandDTO,
   DeleteUserOwnCommandDTO,
-} from '../../../modules/social/dto/request/command/publication.command.dto';
+} from '../../../../modules/social/dto/request/command/publication.command.dto';
 import {
   CreatePostNodeResponseDTO,
   DeletePostNodeResponseDTO,
   PostUserOwnResponseDTO,
   DeleteUserOwnResponseDTO,
-} from '../../../modules/social/dto/response/social.response.dto';
+} from '../../../../modules/social/dto/response/social.response.dto';
 
 describe('PublicationCommandController', () => {
   let controller: PublicationCommandController;
@@ -36,7 +37,9 @@ describe('PublicationCommandController', () => {
       ],
     }).compile();
 
-    controller = module.get<PublicationCommandController>(PublicationCommandController);
+    controller = module.get<PublicationCommandController>(
+      PublicationCommandController,
+    );
     service = module.get<PublicationService>(PublicationService);
   });
 
@@ -52,10 +55,12 @@ describe('PublicationCommandController', () => {
     it('should throw error if service fails', async () => {
       const dto: CreateSocialPostCommandDTO = { postId: 'post-123' };
       (service.createPost as jest.Mock).mockRejectedValueOnce(
-        new Error('Database error')
+        new Error('Database error'),
       );
 
-      await expect(controller.createPostNode(dto)).rejects.toThrow('Database error');
+      await expect(controller.createPostNode(dto)).rejects.toThrow(
+        'Database error',
+      );
     });
   });
 
@@ -71,10 +76,12 @@ describe('PublicationCommandController', () => {
     it('should throw error if service fails', async () => {
       const dto: DeleteSocialPostCommandDTO = { postId: 'post-123' };
       (service.deletePost as jest.Mock).mockRejectedValueOnce(
-        new Error('Post not found')
+        new Error('Post not found'),
       );
 
-      await expect(controller.deletePostNode(dto)).rejects.toThrow('Post not found');
+      await expect(controller.deletePostNode(dto)).rejects.toThrow(
+        'Post not found',
+      );
     });
   });
 
@@ -106,10 +113,12 @@ describe('PublicationCommandController', () => {
         postId: 'post-456',
       };
       (service.ownPost as jest.Mock).mockRejectedValueOnce(
-        new Error('User not found')
+        new Error('User not found'),
       );
 
-      await expect(controller.postUserOwn(dto)).rejects.toThrow('User not found');
+      await expect(controller.postUserOwn(dto)).rejects.toThrow(
+        'User not found',
+      );
     });
 
     it('should throw error if post not found', async () => {
@@ -118,10 +127,12 @@ describe('PublicationCommandController', () => {
         postId: 'non-existent-post',
       };
       (service.ownPost as jest.Mock).mockRejectedValueOnce(
-        new Error('Post not found')
+        new Error('Post not found'),
       );
 
-      await expect(controller.postUserOwn(dto)).rejects.toThrow('Post not found');
+      await expect(controller.postUserOwn(dto)).rejects.toThrow(
+        'Post not found',
+      );
     });
   });
 
@@ -143,10 +154,12 @@ describe('PublicationCommandController', () => {
         postId: 'post-456',
       };
       (service.disownPost as jest.Mock).mockRejectedValueOnce(
-        new Error('Cannot disown post')
+        new Error('Cannot disown post'),
       );
 
-      await expect(controller.deleteUserOwn(dto)).rejects.toThrow('Cannot disown post');
+      await expect(controller.deleteUserOwn(dto)).rejects.toThrow(
+        'Cannot disown post',
+      );
     });
   });
 

@@ -90,7 +90,10 @@ describe('PublicationMapper', () => {
 
   describe('toGetUserPostsQueryParams', () => {
     it('should convert GetUserPostsQueryDTO without pagination', () => {
-      const dto: GetUserPostsQueryDTO = { userId: 'user-123' };
+      const dto: GetUserPostsQueryDTO = {
+        userId: 'user-123',
+        pagination: undefined,
+      };
       const result = PublicationMapper.toGetUserPostsQueryParams(dto);
 
       expect(result.userId).toBeInstanceOf(UserId);
@@ -112,7 +115,10 @@ describe('PublicationMapper', () => {
 
   describe('toGetFeedQueryParams', () => {
     it('should convert GetFeedQueryDTO without pagination', () => {
-      const dto: GetFeedQueryDTO = { userId: 'user-456' };
+      const dto: GetFeedQueryDTO = {
+        userId: 'user-456',
+        pagination: undefined,
+      };
       const result = PublicationMapper.toGetFeedQueryParams(dto);
 
       expect(result.userId).toBeInstanceOf(UserId);

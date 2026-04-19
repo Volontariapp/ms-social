@@ -2,5 +2,15 @@
   "logger": {
     "level": "info",
     "format": "json"
+  },
+  "neo4j": {
+    "scheme": "bolt",
+    "host": "127.0.0.1",
+    "port": 7687,
+    "username": "neo4j",
+    "password": "password",
+    "database": "neo4j",
+    "authScheme": "basic",
+    "realm": "neo4j"
   }
 }
