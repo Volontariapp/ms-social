@@ -13,6 +13,8 @@ import {
   DeleteUserEventCommandDTO,
   PostUserParticipateEventCommandDTO,
   DeleteUserParticipateEventCommandDTO,
+  PostUserWishEventCommandDTO,
+  DeleteUserWishEventCommandDTO,
 } from '../dto/request/command/participation.command.dto.js';
 import {
   CreateEventNodeResponseDTO,
@@ -21,6 +23,8 @@ import {
   DeleteUserEventResponseDTO,
   PostUserParticipateEventResponseDTO,
   DeleteUserParticipateEventResponseDTO,
+  PostUserWishEventResponseDTO,
+  DeleteUserWishEventResponseDTO,
 } from '../dto/response/social.response.dto.js';
 import { ParticipationMapper } from '../mappers/participation.mapper.js';
 
@@ -117,5 +121,32 @@ export class ParticipationCommandController {
     const { userId, eventId } = ParticipationMapper.toLeaveEventParams(data);
     await this.service.leaveEvent(userId, eventId);
     return new DeleteUserParticipateEventResponseDTO();
+  }
+
+  @GrpcMethod(GRPC_SERVICES.PARTICIPATION_COMMAND_SERVICE, 'postUserWishEvent')
+  async postUserWishEvent(
+    data: PostUserWishEventCommandDTO,
+  ): Promise<PostUserWishEventResponseDTO> {
+    this.logger.log(
+      `gRPC: User ${data.userId} wishing for event ${data.eventId}`,
+    );
+    const { userId, eventId } = ParticipationMapper.toWishEventParams(data);
+    await this.service.wishEvent(userId, eventId);
+    return new PostUserWishEventResponseDTO();
+  }
+
+  @GrpcMethod(
+    GRPC_SERVICES.PARTICIPATION_COMMAND_SERVICE,
+    'deleteUserWishEvent',
+  )
+  async deleteUserWishEvent(
+    data: DeleteUserWishEventCommandDTO,
+  ): Promise<DeleteUserWishEventResponseDTO> {
+    this.logger.log(
+      `gRPC: User ${data.userId} unwishing from event ${data.eventId}`,
+    );
+    const { userId, eventId } = ParticipationMapper.toUnwishEventParams(data);
+    await this.service.unwishEvent(userId, eventId);
+    return new DeleteUserWishEventResponseDTO();
   }
 }

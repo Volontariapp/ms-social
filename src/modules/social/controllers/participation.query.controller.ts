@@ -14,12 +14,14 @@ import {
   GetUserEventQueryDTO,
   GetUserParticipateEventQueryDTO,
   GetEventParticipantsQueryDTO,
+  GetUserWishEventQueryDTO,
 } from '../dto/request/query/participation.query.dto.js';
 import {
   GetEventNodeResponseDTO,
   GetUserEventResponseDTO,
   GetUserParticipateEventResponseDTO,
   GetEventParticipantsResponseDTO,
+  GetUserWishEventResponseDTO,
 } from '../dto/response/social.response.dto.js';
 import { ParticipationMapper } from '../mappers/participation.mapper.js';
 import { PaginatedIdsMapper } from '../mappers/paginated-ids.mapper.js';
@@ -97,6 +99,18 @@ export class ParticipationQueryController {
       eventId,
       paginationVO,
     );
+    return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
+  }
+
+  @GrpcMethod(GRPC_SERVICES.PARTICIPATION_QUERY_SERVICE, 'getUserWishEvent')
+  async getUserWishEvent(
+    data: GetUserWishEventQueryDTO,
+  ): Promise<GetUserWishEventResponseDTO> {
+    this.logger.log(`gRPC: Getting wished events for user: ${data.userId}`);
+    const { userId, pagination } =
+      ParticipationMapper.toGetUserWishEventsParams(data);
+    const paginationVO = pagination ?? new PaginationVO(1, 10);
+    const paginatedIds = await this.service.getUserWishes(userId, paginationVO);
     return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
   }
 }
