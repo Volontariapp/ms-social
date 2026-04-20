@@ -27,9 +27,12 @@ import type {
   DeleteUserEventResponse,
   PostUserParticipateEventResponse,
   DeleteUserParticipateEventResponse,
+  PostUserWishEventResponse,
+  DeleteUserWishEventResponse,
   GetEventNodeResponse,
   GetUserEventResponse,
   GetUserParticipateEventResponse,
+  GetUserWishEventResponse,
   GetEventParticipantsResponse,
   LinkPostToEventResponse,
   UnlinkPostFromEventResponse,
@@ -151,6 +154,12 @@ export class PostUserParticipateEventResponseDTO
 export class DeleteUserParticipateEventResponseDTO
   extends SuccessResponseDTO
   implements DeleteUserParticipateEventResponse {}
+export class PostUserWishEventResponseDTO
+  extends SuccessResponseDTO
+  implements PostUserWishEventResponse {}
+export class DeleteUserWishEventResponseDTO
+  extends SuccessResponseDTO
+  implements DeleteUserWishEventResponse {}
 
 export class GetUserEventResponseDTO
   extends IdsResponseDTO
@@ -158,6 +167,9 @@ export class GetUserEventResponseDTO
 export class GetUserParticipateEventResponseDTO
   extends IdsResponseDTO
   implements GetUserParticipateEventResponse {}
+export class GetUserWishEventResponseDTO
+  extends IdsResponseDTO
+  implements GetUserWishEventResponse {}
 export class GetEventParticipantsResponseDTO
   extends IdsResponseDTO
   implements GetEventParticipantsResponse {}

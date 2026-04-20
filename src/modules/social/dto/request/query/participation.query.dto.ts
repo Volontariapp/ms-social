@@ -5,6 +5,7 @@ import {
   GetUserParticipateEventQuery,
   GetEventParticipantsQuery,
   GetSocialEventQuery,
+  GetUserWishEventQuery,
 } from '@volontariapp/contracts-nest';
 import { PaginationRequestDTO } from '../../common/pagination.dto.js';
 
@@ -36,6 +37,16 @@ export class GetUserParticipateEventQueryDTO implements GetUserParticipateEventQ
 export class GetEventParticipantsQueryDTO implements GetEventParticipantsQuery {
   @IsString()
   eventId!: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => PaginationRequestDTO)
+  pagination: PaginationRequestDTO | undefined;
+}
+
+export class GetUserWishEventQueryDTO implements GetUserWishEventQuery {
+  @IsString()
+  userId!: string;
 
   @IsOptional()
   @ValidateNested()

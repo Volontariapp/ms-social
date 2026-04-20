@@ -6,6 +6,8 @@ import {
   DeleteUserEventCommand,
   PostUserParticipateEventCommand,
   DeleteUserParticipateEventCommand,
+  PostUserWishEventCommand,
+  DeleteUserWishEventCommand,
 } from '@volontariapp/contracts-nest';
 
 export class CreateSocialEventCommandDTO implements CreateSocialEventCommand {
@@ -43,6 +45,22 @@ export class PostUserParticipateEventCommandDTO implements PostUserParticipateEv
 }
 
 export class DeleteUserParticipateEventCommandDTO implements DeleteUserParticipateEventCommand {
+  @IsString()
+  userId!: string;
+
+  @IsString()
+  eventId!: string;
+}
+
+export class PostUserWishEventCommandDTO implements PostUserWishEventCommand {
+  @IsString()
+  userId!: string;
+
+  @IsString()
+  eventId!: string;
+}
+
+export class DeleteUserWishEventCommandDTO implements DeleteUserWishEventCommand {
   @IsString()
   userId!: string;
 
