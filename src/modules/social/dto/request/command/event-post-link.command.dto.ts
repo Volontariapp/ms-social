@@ -1,8 +1,5 @@
 import { IsString } from 'class-validator';
-import {
-  LinkPostToEventCommand,
-  UnlinkPostFromEventCommand,
-} from '@volontariapp/contracts-nest';
+import { LinkPostToEventCommand, UnlinkPostFromEventCommand } from '@volontariapp/contracts-nest';
 
 export class LinkPostToEventCommandDTO implements LinkPostToEventCommand {
   @IsString()

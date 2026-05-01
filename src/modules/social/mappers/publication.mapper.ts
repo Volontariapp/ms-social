@@ -55,9 +55,7 @@ export class PublicationMapper {
   } {
     return {
       userId: new UserId(dto.userId),
-      pagination: dto.pagination
-        ? PaginationMapper.toPaginationVO(dto.pagination)
-        : undefined,
+      pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
     };
   }
 
@@ -67,9 +65,7 @@ export class PublicationMapper {
   } {
     return {
       userId: new UserId(dto.userId),
-      pagination: dto.pagination
-        ? PaginationMapper.toPaginationVO(dto.pagination)
-        : undefined,
+      pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
     };
   }
 }

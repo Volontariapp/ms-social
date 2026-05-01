@@ -1,8 +1,5 @@
 import { IsString } from 'class-validator';
-import {
-  PostLikePostCommand,
-  DeleteLikePostCommand,
-} from '@volontariapp/contracts-nest';
+import { PostLikePostCommand, DeleteLikePostCommand } from '@volontariapp/contracts-nest';
 
 export class PostLikePostCommandDTO implements PostLikePostCommand {
   @IsString()

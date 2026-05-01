@@ -36,9 +36,7 @@ export class InteractionMapper {
   } {
     return {
       userId: new UserId(dto.userId),
-      pagination: dto.pagination
-        ? PaginationMapper.toPaginationVO(dto.pagination)
-        : undefined,
+      pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
     };
   }
 
@@ -48,9 +46,7 @@ export class InteractionMapper {
   } {
     return {
       postId: new PostId(dto.postId),
-      pagination: dto.pagination
-        ? PaginationMapper.toPaginationVO(dto.pagination)
-        : undefined,
+      pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
     };
   }
 }

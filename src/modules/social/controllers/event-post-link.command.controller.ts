@@ -1,10 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
 import { GrpcMethod } from '@nestjs/microservices';
-import {
-  GRPC_SERVICES,
-  EVENT_POST_LINK_METHODS,
-} from '@volontariapp/contracts-nest';
+import { GRPC_SERVICES, EVENT_POST_LINK_METHODS } from '@volontariapp/contracts-nest';
 import { EventPostLinkService } from '@volontariapp/domain-social';
 import {
   LinkPostToEventCommandDTO,
@@ -28,14 +25,9 @@ export class EventPostLinkCommandController {
     GRPC_SERVICES.EVENT_POST_LINK_COMMAND_SERVICE,
     EVENT_POST_LINK_METHODS.LINK_POST_TO_EVENT,
   )
-  async linkPostToEvent(
-    data: LinkPostToEventCommandDTO,
-  ): Promise<LinkPostToEventResponseDTO> {
-    this.logger.log(
-      `gRPC: Linking post ${data.postId} to event ${data.eventId}`,
-    );
-    const { postId, eventId } =
-      EventPostLinkMapper.toLinkPostToEventParams(data);
+  async linkPostToEvent(data: LinkPostToEventCommandDTO): Promise<LinkPostToEventResponseDTO> {
+    this.logger.log(`gRPC: Linking post ${data.postId} to event ${data.eventId}`);
+    const { postId, eventId } = EventPostLinkMapper.toLinkPostToEventParams(data);
     await this.service.linkPostToEvent(postId, eventId);
     return new LinkPostToEventResponseDTO();
   }
@@ -47,11 +39,8 @@ export class EventPostLinkCommandController {
   async unlinkPostFromEvent(
     data: UnlinkPostFromEventCommandDTO,
   ): Promise<UnlinkPostFromEventResponseDTO> {
-    this.logger.log(
-      `gRPC: Unlinking post ${data.postId} from event ${data.eventId}`,
-    );
-    const { postId, eventId } =
-      EventPostLinkMapper.toUnlinkPostFromEventParams(data);
+    this.logger.log(`gRPC: Unlinking post ${data.postId} from event ${data.eventId}`);
+    const { postId, eventId } = EventPostLinkMapper.toUnlinkPostFromEventParams(data);
     await this.service.unlinkPostFromEvent(postId, eventId);
     return new UnlinkPostFromEventResponseDTO();
   }

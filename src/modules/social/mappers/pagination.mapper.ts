@@ -8,9 +8,7 @@ export class PaginationMapper {
     return new PaginationVO(dto.page, dto.limit);
   }
 
-  static toPaginationResponseDTO(
-    pagination: PaginationResultVO,
-  ): PaginationResponseDTO {
+  static toPaginationResponseDTO(pagination: PaginationResultVO): PaginationResponseDTO {
     return {
       page: pagination.page,
       limit: pagination.limit,

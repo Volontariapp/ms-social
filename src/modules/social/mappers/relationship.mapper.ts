@@ -60,9 +60,7 @@ export class RelationshipMapper {
   } {
     return {
       userId: new UserId(dto.userId),
-      pagination: dto.pagination
-        ? PaginationMapper.toPaginationVO(dto.pagination)
-        : undefined,
+      pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
     };
   }
 
@@ -72,9 +70,7 @@ export class RelationshipMapper {
   } {
     return {
       userId: new UserId(dto.userId),
-      pagination: dto.pagination
-        ? PaginationMapper.toPaginationVO(dto.pagination)
-        : undefined,
+      pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
     };
   }
 
@@ -84,9 +80,7 @@ export class RelationshipMapper {
   } {
     return {
       userId: new UserId(dto.userId),
-      pagination: dto.pagination
-        ? PaginationMapper.toPaginationVO(dto.pagination)
-        : undefined,
+      pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
     };
   }
 
@@ -96,9 +90,7 @@ export class RelationshipMapper {
   } {
     return {
       userId: new UserId(dto.userId),
-      pagination: dto.pagination
-        ? PaginationMapper.toPaginationVO(dto.pagination)
-        : undefined,
+      pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
     };
   }
 }
