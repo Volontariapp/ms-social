@@ -1,9 +1,6 @@
 import { IsOptional, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import {
-  GetUserLikesQuery,
-  GetPostLikersQuery,
-} from '@volontariapp/contracts-nest';
+import { GetUserLikesQuery, GetPostLikersQuery } from '@volontariapp/contracts-nest';
 import { PaginationRequestDTO } from '../../common/pagination.dto.js';
 
 export class GetUserLikesQueryDTO implements GetUserLikesQuery {

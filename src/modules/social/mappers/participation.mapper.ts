@@ -81,9 +81,7 @@ export class ParticipationMapper {
   } {
     return {
       userId: new UserId(dto.userId),
-      pagination: dto.pagination
-        ? PaginationMapper.toPaginationVO(dto.pagination)
-        : undefined,
+      pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
     };
   }
 
@@ -93,9 +91,7 @@ export class ParticipationMapper {
   } {
     return {
       userId: new UserId(dto.userId),
-      pagination: dto.pagination
-        ? PaginationMapper.toPaginationVO(dto.pagination)
-        : undefined,
+      pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
     };
   }
 
@@ -105,9 +101,7 @@ export class ParticipationMapper {
   } {
     return {
       eventId: this.toEventIdVO(dto.eventId),
-      pagination: dto.pagination
-        ? PaginationMapper.toPaginationVO(dto.pagination)
-        : undefined,
+      pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
     };
   }
 
@@ -137,9 +131,7 @@ export class ParticipationMapper {
   } {
     return {
       userId: new UserId(dto.userId),
-      pagination: dto.pagination
-        ? PaginationMapper.toPaginationVO(dto.pagination)
-        : undefined,
+      pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
     };
   }
 }

@@ -30,9 +30,7 @@ export class EventPostLinkMapper {
     };
   }
 
-  static toGetEventRelatedToPostParams(
-    dto: GetEventRelatedToPostQueryDTO,
-  ): PostId {
+  static toGetEventRelatedToPostParams(dto: GetEventRelatedToPostQueryDTO): PostId {
     return new PostId(dto.postId);
   }
 
@@ -42,9 +40,7 @@ export class EventPostLinkMapper {
   } {
     return {
       eventId: new EventId(dto.eventId),
-      pagination: dto.pagination
-        ? PaginationMapper.toPaginationVO(dto.pagination)
-        : undefined,
+      pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
     };
   }
 }

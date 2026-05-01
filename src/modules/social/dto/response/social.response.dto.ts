@@ -65,9 +65,7 @@ export class CreateUserNodeResponseDTO
 export class DeleteUserNodeResponseDTO
   extends SuccessResponseDTO
   implements DeleteUserNodeResponse {}
-export class GetUserNodeResponseDTO
-  extends ExistsResponseDTO
-  implements GetUserNodeResponse {}
+export class GetUserNodeResponseDTO extends ExistsResponseDTO implements GetUserNodeResponse {}
 
 // Group 2: Relationships
 export class PostFollowUserResponseDTO
@@ -76,25 +74,15 @@ export class PostFollowUserResponseDTO
 export class DeleteFollowUserResponseDTO
   extends SuccessResponseDTO
   implements DeleteFollowUserResponse {}
-export class PostBlockUserResponseDTO
-  extends SuccessResponseDTO
-  implements PostBlockUserResponse {}
+export class PostBlockUserResponseDTO extends SuccessResponseDTO implements PostBlockUserResponse {}
 export class DeleteBlockUserResponseDTO
   extends SuccessResponseDTO
   implements DeleteBlockUserResponse {}
 
-export class GetMyFollowsResponseDTO
-  extends IdsResponseDTO
-  implements GetMyFollowsResponse {}
-export class GetMyFollowersResponseDTO
-  extends IdsResponseDTO
-  implements GetMyFollowersResponse {}
-export class GetMyBlocksResponseDTO
-  extends IdsResponseDTO
-  implements GetMyBlocksResponse {}
-export class GetWhoBlockedMeResponseDTO
-  extends IdsResponseDTO
-  implements GetWhoBlockedMeResponse {}
+export class GetMyFollowsResponseDTO extends IdsResponseDTO implements GetMyFollowsResponse {}
+export class GetMyFollowersResponseDTO extends IdsResponseDTO implements GetMyFollowersResponse {}
+export class GetMyBlocksResponseDTO extends IdsResponseDTO implements GetMyBlocksResponse {}
+export class GetWhoBlockedMeResponseDTO extends IdsResponseDTO implements GetWhoBlockedMeResponse {}
 
 // Group 3: Publications
 export class CreatePostNodeResponseDTO
@@ -103,37 +91,21 @@ export class CreatePostNodeResponseDTO
 export class DeletePostNodeResponseDTO
   extends SuccessResponseDTO
   implements DeletePostNodeResponse {}
-export class PostUserOwnResponseDTO
-  extends SuccessResponseDTO
-  implements PostUserOwnResponse {}
-export class DeleteUserOwnResponseDTO
-  extends SuccessResponseDTO
-  implements DeleteUserOwnResponse {}
+export class PostUserOwnResponseDTO extends SuccessResponseDTO implements PostUserOwnResponse {}
+export class DeleteUserOwnResponseDTO extends SuccessResponseDTO implements DeleteUserOwnResponse {}
 
-export class GetPostNodeResponseDTO
-  extends ExistsResponseDTO
-  implements GetPostNodeResponse {}
-export class GetUserPostsResponseDTO
-  extends IdsResponseDTO
-  implements GetUserPostsResponse {}
-export class GetFeedResponseDTO
-  extends IdsResponseDTO
-  implements GetFeedResponse {}
+export class GetPostNodeResponseDTO extends ExistsResponseDTO implements GetPostNodeResponse {}
+export class GetUserPostsResponseDTO extends IdsResponseDTO implements GetUserPostsResponse {}
+export class GetFeedResponseDTO extends IdsResponseDTO implements GetFeedResponse {}
 
 // Group 4: Interactions
-export class PostLikePostResponseDTO
-  extends SuccessResponseDTO
-  implements PostLikePostResponse {}
+export class PostLikePostResponseDTO extends SuccessResponseDTO implements PostLikePostResponse {}
 export class DeleteLikePostResponseDTO
   extends SuccessResponseDTO
   implements DeleteLikePostResponse {}
 
-export class GetUserLikesResponseDTO
-  extends IdsResponseDTO
-  implements GetUserLikesResponse {}
-export class GetPostLikersResponseDTO
-  extends IdsResponseDTO
-  implements GetPostLikersResponse {}
+export class GetUserLikesResponseDTO extends IdsResponseDTO implements GetUserLikesResponse {}
+export class GetPostLikersResponseDTO extends IdsResponseDTO implements GetPostLikersResponse {}
 
 // Group 5: Participation
 export class CreateEventNodeResponseDTO
@@ -142,9 +114,7 @@ export class CreateEventNodeResponseDTO
 export class DeleteEventNodeResponseDTO
   extends SuccessResponseDTO
   implements DeleteEventNodeResponse {}
-export class PostUserEventResponseDTO
-  extends SuccessResponseDTO
-  implements PostUserEventResponse {}
+export class PostUserEventResponseDTO extends SuccessResponseDTO implements PostUserEventResponse {}
 export class DeleteUserEventResponseDTO
   extends SuccessResponseDTO
   implements DeleteUserEventResponse {}
@@ -161,9 +131,7 @@ export class DeleteUserWishEventResponseDTO
   extends SuccessResponseDTO
   implements DeleteUserWishEventResponse {}
 
-export class GetUserEventResponseDTO
-  extends IdsResponseDTO
-  implements GetUserEventResponse {}
+export class GetUserEventResponseDTO extends IdsResponseDTO implements GetUserEventResponse {}
 export class GetUserParticipateEventResponseDTO
   extends IdsResponseDTO
   implements GetUserParticipateEventResponse {}
@@ -173,9 +141,7 @@ export class GetUserWishEventResponseDTO
 export class GetEventParticipantsResponseDTO
   extends IdsResponseDTO
   implements GetEventParticipantsResponse {}
-export class GetEventNodeResponseDTO
-  extends ExistsResponseDTO
-  implements GetEventNodeResponse {}
+export class GetEventNodeResponseDTO extends ExistsResponseDTO implements GetEventNodeResponse {}
 
 // Group 6: Event-Post Link
 export class LinkPostToEventResponseDTO
@@ -188,6 +154,4 @@ export class UnlinkPostFromEventResponseDTO
 export class GetEventRelatedToPostResponseDTO
   extends IdResponseDTO
   implements GetEventRelatedToPostResponse {}
-export class GetEventPostsResponseDTO
-  extends IdsResponseDTO
-  implements GetEventPostsResponse {}
+export class GetEventPostsResponseDTO extends IdsResponseDTO implements GetEventPostsResponse {}
