@@ -18,4 +18,8 @@ export class AppConfigService {
   get msSocialUrl() {
     return this.config.microServices.msSocialUrl;
   }
+
+  get internalPublicKeyPath() {
+    return this.config.auth.internalPublicKeyPath;
+  }
 }

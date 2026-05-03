@@ -6,6 +6,9 @@ import {
   GetEventParticipantsQuery,
   GetSocialEventQuery,
   GetUserWishEventQuery,
+  AdminGetUserEventQuery,
+  AdminGetUserParticipateEventQuery,
+  AdminGetUserWishEventQuery,
 } from '@volontariapp/contracts-nest';
 import { PaginationRequestDTO } from '../../common/pagination.dto.js';
 
@@ -15,9 +18,6 @@ export class GetSocialEventQueryDTO implements GetSocialEventQuery {
 }
 
 export class GetUserEventQueryDTO implements GetUserEventQuery {
-  @IsString()
-  userId!: string;
-
   @IsOptional()
   @ValidateNested()
   @Type(() => PaginationRequestDTO)
@@ -25,9 +25,6 @@ export class GetUserEventQueryDTO implements GetUserEventQuery {
 }
 
 export class GetUserParticipateEventQueryDTO implements GetUserParticipateEventQuery {
-  @IsString()
-  userId!: string;
-
   @IsOptional()
   @ValidateNested()
   @Type(() => PaginationRequestDTO)
@@ -45,6 +42,33 @@ export class GetEventParticipantsQueryDTO implements GetEventParticipantsQuery {
 }
 
 export class GetUserWishEventQueryDTO implements GetUserWishEventQuery {
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => PaginationRequestDTO)
+  pagination: PaginationRequestDTO | undefined;
+}
+
+export class AdminGetUserEventQueryDTO implements AdminGetUserEventQuery {
+  @IsString()
+  userId!: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => PaginationRequestDTO)
+  pagination: PaginationRequestDTO | undefined;
+}
+
+export class AdminGetUserParticipateEventQueryDTO implements AdminGetUserParticipateEventQuery {
+  @IsString()
+  userId!: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => PaginationRequestDTO)
+  pagination: PaginationRequestDTO | undefined;
+}
+
+export class AdminGetUserWishEventQueryDTO implements AdminGetUserWishEventQuery {
   @IsString()
   userId!: string;
 

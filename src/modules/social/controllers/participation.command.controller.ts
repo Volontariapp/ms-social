@@ -1,6 +1,8 @@
 import { Controller } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
 import { GrpcMethod } from '@nestjs/microservices';
+import { CurrentUser } from '@volontariapp/auth';
+import type { AuthUser } from '@volontariapp/auth';
 import { GRPC_SERVICES, PARTICIPATION_METHODS } from '@volontariapp/contracts-nest';
 import { ParticipationService } from '@volontariapp/domain-social';
 import {
@@ -12,6 +14,10 @@ import {
   DeleteUserParticipateEventCommandDTO,
   PostUserWishEventCommandDTO,
   DeleteUserWishEventCommandDTO,
+  AdminPostUserParticipateEventCommandDTO,
+  AdminDeleteUserParticipateEventCommandDTO,
+  AdminPostUserWishEventCommandDTO,
+  AdminDeleteUserWishEventCommandDTO,
 } from '../dto/request/command/participation.command.dto.js';
 import {
   CreateEventNodeResponseDTO,
@@ -22,6 +28,10 @@ import {
   DeleteUserParticipateEventResponseDTO,
   PostUserWishEventResponseDTO,
   DeleteUserWishEventResponseDTO,
+  AdminPostUserParticipateEventResponseDTO,
+  AdminDeleteUserParticipateEventResponseDTO,
+  AdminPostUserWishEventResponseDTO,
+  AdminDeleteUserWishEventResponseDTO,
 } from '../dto/response/social.response.dto.js';
 import { ParticipationMapper } from '../mappers/participation.mapper.js';
 
@@ -73,9 +83,10 @@ export class ParticipationCommandController {
   )
   async postUserParticipateEvent(
     data: PostUserParticipateEventCommandDTO,
+    @CurrentUser() user: AuthUser,
   ): Promise<PostUserParticipateEventResponseDTO> {
-    this.logger.log(`gRPC: User ${data.userId} participating to event ${data.eventId}`);
-    const { userId, eventId } = ParticipationMapper.toParticipateEventParams(data);
+    this.logger.log(`gRPC: User ${user.id} participating to event ${data.eventId}`);
+    const { userId, eventId } = ParticipationMapper.toParticipateEventParams(data, user);
     await this.service.participateEvent(userId, eventId);
     return new PostUserParticipateEventResponseDTO();
   }
@@ -86,9 +97,10 @@ export class ParticipationCommandController {
   )
   async deleteUserParticipateEvent(
     data: DeleteUserParticipateEventCommandDTO,
+    @CurrentUser() user: AuthUser,
   ): Promise<DeleteUserParticipateEventResponseDTO> {
-    this.logger.log(`gRPC: User ${data.userId} unparticipating from event ${data.eventId}`);
-    const { userId, eventId } = ParticipationMapper.toLeaveEventParams(data);
+    this.logger.log(`gRPC: User ${user.id} unparticipating from event ${data.eventId}`);
+    const { userId, eventId } = ParticipationMapper.toLeaveEventParams(data, user);
     await this.service.leaveEvent(userId, eventId);
     return new DeleteUserParticipateEventResponseDTO();
   }
@@ -96,9 +108,10 @@ export class ParticipationCommandController {
   @GrpcMethod(GRPC_SERVICES.PARTICIPATION_COMMAND_SERVICE, 'postUserWishEvent')
   async postUserWishEvent(
     data: PostUserWishEventCommandDTO,
+    @CurrentUser() user: AuthUser,
   ): Promise<PostUserWishEventResponseDTO> {
-    this.logger.log(`gRPC: User ${data.userId} wishing for event ${data.eventId}`);
-    const { userId, eventId } = ParticipationMapper.toWishEventParams(data);
+    this.logger.log(`gRPC: User ${user.id} wishing for event ${data.eventId}`);
+    const { userId, eventId } = ParticipationMapper.toWishEventParams(data, user);
     await this.service.wishEvent(userId, eventId);
     return new PostUserWishEventResponseDTO();
   }
@@ -106,10 +119,57 @@ export class ParticipationCommandController {
   @GrpcMethod(GRPC_SERVICES.PARTICIPATION_COMMAND_SERVICE, 'deleteUserWishEvent')
   async deleteUserWishEvent(
     data: DeleteUserWishEventCommandDTO,
+    @CurrentUser() user: AuthUser,
   ): Promise<DeleteUserWishEventResponseDTO> {
-    this.logger.log(`gRPC: User ${data.userId} unwishing from event ${data.eventId}`);
-    const { userId, eventId } = ParticipationMapper.toUnwishEventParams(data);
+    this.logger.log(`gRPC: User ${user.id} unwishing from event ${data.eventId}`);
+    const { userId, eventId } = ParticipationMapper.toUnwishEventParams(data, user);
     await this.service.unwishEvent(userId, eventId);
     return new DeleteUserWishEventResponseDTO();
+  }
+
+  @GrpcMethod(GRPC_SERVICES.PARTICIPATION_COMMAND_SERVICE, 'adminPostUserParticipateEvent')
+  async adminPostUserParticipateEvent(
+    data: AdminPostUserParticipateEventCommandDTO,
+  ): Promise<AdminPostUserParticipateEventResponseDTO> {
+    this.logger.log(
+      `gRPC: Admin user participating to event ${data.eventId} for user ${data.userId}`,
+    );
+    const { userId, eventId } = ParticipationMapper.toAdminParticipateEventParams(data);
+    await this.service.participateEvent(userId, eventId);
+    return new AdminPostUserParticipateEventResponseDTO();
+  }
+
+  @GrpcMethod(GRPC_SERVICES.PARTICIPATION_COMMAND_SERVICE, 'adminDeleteUserParticipateEvent')
+  async adminDeleteUserParticipateEvent(
+    data: AdminDeleteUserParticipateEventCommandDTO,
+  ): Promise<AdminDeleteUserParticipateEventResponseDTO> {
+    this.logger.log(
+      `gRPC: Admin user unparticipating from event ${data.eventId} for user ${data.userId}`,
+    );
+    const { userId, eventId } = ParticipationMapper.toAdminLeaveEventParams(data);
+    await this.service.leaveEvent(userId, eventId);
+    return new AdminDeleteUserParticipateEventResponseDTO();
+  }
+
+  @GrpcMethod(GRPC_SERVICES.PARTICIPATION_COMMAND_SERVICE, 'adminPostUserWishEvent')
+  async adminPostUserWishEvent(
+    data: AdminPostUserWishEventCommandDTO,
+  ): Promise<AdminPostUserWishEventResponseDTO> {
+    this.logger.log(`gRPC: Admin user wishing for event ${data.eventId} for user ${data.userId}`);
+    const { userId, eventId } = ParticipationMapper.toAdminWishEventParams(data);
+    await this.service.wishEvent(userId, eventId);
+    return new AdminPostUserWishEventResponseDTO();
+  }
+
+  @GrpcMethod(GRPC_SERVICES.PARTICIPATION_COMMAND_SERVICE, 'adminDeleteUserWishEvent')
+  async adminDeleteUserWishEvent(
+    data: AdminDeleteUserWishEventCommandDTO,
+  ): Promise<AdminDeleteUserWishEventResponseDTO> {
+    this.logger.log(
+      `gRPC: Admin user unwishing from event ${data.eventId} for user ${data.userId}`,
+    );
+    const { userId, eventId } = ParticipationMapper.toAdminUnwishEventParams(data);
+    await this.service.unwishEvent(userId, eventId);
+    return new AdminDeleteUserWishEventResponseDTO();
   }
 }

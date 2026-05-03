@@ -8,6 +8,10 @@ import {
   DeleteUserParticipateEventCommand,
   PostUserWishEventCommand,
   DeleteUserWishEventCommand,
+  AdminPostUserParticipateEventCommand,
+  AdminDeleteUserParticipateEventCommand,
+  AdminPostUserWishEventCommand,
+  AdminDeleteUserWishEventCommand,
 } from '@volontariapp/contracts-nest';
 
 export class CreateSocialEventCommandDTO implements CreateSocialEventCommand {
@@ -38,29 +42,53 @@ export class DeleteUserEventCommandDTO implements DeleteUserEventCommand {
 
 export class PostUserParticipateEventCommandDTO implements PostUserParticipateEventCommand {
   @IsString()
-  userId!: string;
-
-  @IsString()
   eventId!: string;
 }
 
 export class DeleteUserParticipateEventCommandDTO implements DeleteUserParticipateEventCommand {
-  @IsString()
-  userId!: string;
-
   @IsString()
   eventId!: string;
 }
 
 export class PostUserWishEventCommandDTO implements PostUserWishEventCommand {
   @IsString()
+  eventId!: string;
+}
+
+export class DeleteUserWishEventCommandDTO implements DeleteUserWishEventCommand {
+  @IsString()
+  eventId!: string;
+}
+
+export class AdminPostUserParticipateEventCommandDTO
+  implements AdminPostUserParticipateEventCommand
+{
+  @IsString()
   userId!: string;
 
   @IsString()
   eventId!: string;
 }
 
-export class DeleteUserWishEventCommandDTO implements DeleteUserWishEventCommand {
+export class AdminDeleteUserParticipateEventCommandDTO
+  implements AdminDeleteUserParticipateEventCommand
+{
+  @IsString()
+  userId!: string;
+
+  @IsString()
+  eventId!: string;
+}
+
+export class AdminPostUserWishEventCommandDTO implements AdminPostUserWishEventCommand {
+  @IsString()
+  userId!: string;
+
+  @IsString()
+  eventId!: string;
+}
+
+export class AdminDeleteUserWishEventCommandDTO implements AdminDeleteUserWishEventCommand {
   @IsString()
   userId!: string;
 

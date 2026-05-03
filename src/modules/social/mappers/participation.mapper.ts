@@ -1,4 +1,5 @@
 import { UserId, EventId } from '@volontariapp/domain-social';
+import type { AuthUser } from '@volontariapp/auth';
 import type {
   CreateSocialEventCommandDTO,
   DeleteSocialEventCommandDTO,
@@ -8,6 +9,10 @@ import type {
   DeleteUserParticipateEventCommandDTO,
   PostUserWishEventCommandDTO,
   DeleteUserWishEventCommandDTO,
+  AdminPostUserParticipateEventCommandDTO,
+  AdminDeleteUserParticipateEventCommandDTO,
+  AdminPostUserWishEventCommandDTO,
+  AdminDeleteUserWishEventCommandDTO,
 } from '../dto/request/command/participation.command.dto.js';
 import type {
   GetSocialEventQueryDTO,
@@ -15,6 +20,9 @@ import type {
   GetUserParticipateEventQueryDTO,
   GetEventParticipantsQueryDTO,
   GetUserWishEventQueryDTO,
+  AdminGetUserEventQueryDTO,
+  AdminGetUserParticipateEventQueryDTO,
+  AdminGetUserWishEventQueryDTO,
 } from '../dto/request/query/participation.query.dto.js';
 import { PaginationMapper } from './pagination.mapper.js';
 
@@ -51,7 +59,33 @@ export class ParticipationMapper {
     };
   }
 
-  static toParticipateEventParams(dto: PostUserParticipateEventCommandDTO): {
+  static toParticipateEventParams(
+    dto: PostUserParticipateEventCommandDTO,
+    user: AuthUser,
+  ): {
+    userId: UserId;
+    eventId: EventId;
+  } {
+    return {
+      userId: new UserId(user.id),
+      eventId: this.toEventIdVO(dto.eventId),
+    };
+  }
+
+  static toLeaveEventParams(
+    dto: DeleteUserParticipateEventCommandDTO,
+    user: AuthUser,
+  ): {
+    userId: UserId;
+    eventId: EventId;
+  } {
+    return {
+      userId: new UserId(user.id),
+      eventId: this.toEventIdVO(dto.eventId),
+    };
+  }
+
+  static toAdminParticipateEventParams(dto: AdminPostUserParticipateEventCommandDTO): {
     userId: UserId;
     eventId: EventId;
   } {
@@ -61,7 +95,7 @@ export class ParticipationMapper {
     };
   }
 
-  static toLeaveEventParams(dto: DeleteUserParticipateEventCommandDTO): {
+  static toAdminLeaveEventParams(dto: AdminDeleteUserParticipateEventCommandDTO): {
     userId: UserId;
     eventId: EventId;
   } {
@@ -75,7 +109,33 @@ export class ParticipationMapper {
     return this.toEventIdVO(dto.eventId);
   }
 
-  static toGetUserEventsParams(dto: GetUserEventQueryDTO): {
+  static toGetUserEventsParams(
+    dto: GetUserEventQueryDTO,
+    user: AuthUser,
+  ): {
+    userId: UserId;
+    pagination: ReturnType<typeof PaginationMapper.toPaginationVO> | undefined;
+  } {
+    return {
+      userId: new UserId(user.id),
+      pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
+    };
+  }
+
+  static toGetUserParticipationsParams(
+    dto: GetUserParticipateEventQueryDTO,
+    user: AuthUser,
+  ): {
+    userId: UserId;
+    pagination: ReturnType<typeof PaginationMapper.toPaginationVO> | undefined;
+  } {
+    return {
+      userId: new UserId(user.id),
+      pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
+    };
+  }
+
+  static toAdminGetUserEventsParams(dto: AdminGetUserEventQueryDTO): {
     userId: UserId;
     pagination: ReturnType<typeof PaginationMapper.toPaginationVO> | undefined;
   } {
@@ -85,7 +145,7 @@ export class ParticipationMapper {
     };
   }
 
-  static toGetUserParticipationsParams(dto: GetUserParticipateEventQueryDTO): {
+  static toAdminGetUserParticipationsParams(dto: AdminGetUserParticipateEventQueryDTO): {
     userId: UserId;
     pagination: ReturnType<typeof PaginationMapper.toPaginationVO> | undefined;
   } {
@@ -105,7 +165,33 @@ export class ParticipationMapper {
     };
   }
 
-  static toWishEventParams(dto: PostUserWishEventCommandDTO): {
+  static toWishEventParams(
+    dto: PostUserWishEventCommandDTO,
+    user: AuthUser,
+  ): {
+    userId: UserId;
+    eventId: EventId;
+  } {
+    return {
+      userId: new UserId(user.id),
+      eventId: this.toEventIdVO(dto.eventId),
+    };
+  }
+
+  static toUnwishEventParams(
+    dto: DeleteUserWishEventCommandDTO,
+    user: AuthUser,
+  ): {
+    userId: UserId;
+    eventId: EventId;
+  } {
+    return {
+      userId: new UserId(user.id),
+      eventId: this.toEventIdVO(dto.eventId),
+    };
+  }
+
+  static toAdminWishEventParams(dto: AdminPostUserWishEventCommandDTO): {
     userId: UserId;
     eventId: EventId;
   } {
@@ -115,7 +201,7 @@ export class ParticipationMapper {
     };
   }
 
-  static toUnwishEventParams(dto: DeleteUserWishEventCommandDTO): {
+  static toAdminUnwishEventParams(dto: AdminDeleteUserWishEventCommandDTO): {
     userId: UserId;
     eventId: EventId;
   } {
@@ -125,7 +211,20 @@ export class ParticipationMapper {
     };
   }
 
-  static toGetUserWishEventsParams(dto: GetUserWishEventQueryDTO): {
+  static toGetUserWishEventsParams(
+    dto: GetUserWishEventQueryDTO,
+    user: AuthUser,
+  ): {
+    userId: UserId;
+    pagination: ReturnType<typeof PaginationMapper.toPaginationVO> | undefined;
+  } {
+    return {
+      userId: new UserId(user.id),
+      pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
+    };
+  }
+
+  static toAdminGetUserWishEventsParams(dto: AdminGetUserWishEventQueryDTO): {
     userId: UserId;
     pagination: ReturnType<typeof PaginationMapper.toPaginationVO> | undefined;
   } {

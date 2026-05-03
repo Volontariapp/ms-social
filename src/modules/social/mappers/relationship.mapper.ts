@@ -1,20 +1,81 @@
 import { UserId } from '@volontariapp/domain-social';
+import type { AuthUser } from '@volontariapp/auth';
 import type {
   PostFollowUserCommandDTO,
   DeleteFollowUserCommandDTO,
   PostBlockUserCommandDTO,
   DeleteBlockUserCommandDTO,
+  AdminPostFollowUserCommandDTO,
+  AdminDeleteFollowUserCommandDTO,
+  AdminPostBlockUserCommandDTO,
+  AdminDeleteBlockUserCommandDTO,
 } from '../dto/request/command/relationship.command.dto.js';
 import type {
   GetMyFollowsQueryDTO,
   GetMyFollowersQueryDTO,
   GetMyBlocksQueryDTO,
   GetWhoBlockedMeQueryDTO,
+  AdminGetMyFollowsQueryDTO,
+  AdminGetMyFollowersQueryDTO,
+  AdminGetMyBlocksQueryDTO,
+  AdminGetWhoBlockedMeQueryDTO,
 } from '../dto/request/query/relationship.query.dto.js';
 import { PaginationMapper } from './pagination.mapper.js';
 
 export class RelationshipMapper {
-  static toFollowUserParams(dto: PostFollowUserCommandDTO): {
+  static toFollowUserParams(
+    dto: PostFollowUserCommandDTO,
+    user: AuthUser,
+  ): {
+    followerId: UserId;
+    followedId: UserId;
+  } {
+    return {
+      followerId: new UserId(user.id),
+      followedId: new UserId(dto.followedId),
+    };
+  }
+
+  static toUnfollowUserParams(
+    dto: DeleteFollowUserCommandDTO,
+    user: AuthUser,
+  ): {
+    followerId: UserId;
+    followedId: UserId;
+  } {
+    return {
+      followerId: new UserId(user.id),
+      followedId: new UserId(dto.followedId),
+    };
+  }
+
+  static toBlockUserParams(
+    dto: PostBlockUserCommandDTO,
+    user: AuthUser,
+  ): {
+    blockerId: UserId;
+    blockedId: UserId;
+  } {
+    return {
+      blockerId: new UserId(user.id),
+      blockedId: new UserId(dto.blockedId),
+    };
+  }
+
+  static toUnblockUserParams(
+    dto: DeleteBlockUserCommandDTO,
+    user: AuthUser,
+  ): {
+    blockerId: UserId;
+    blockedId: UserId;
+  } {
+    return {
+      blockerId: new UserId(user.id),
+      blockedId: new UserId(dto.blockedId),
+    };
+  }
+
+  static toAdminFollowUserParams(dto: AdminPostFollowUserCommandDTO): {
     followerId: UserId;
     followedId: UserId;
   } {
@@ -24,7 +85,7 @@ export class RelationshipMapper {
     };
   }
 
-  static toUnfollowUserParams(dto: DeleteFollowUserCommandDTO): {
+  static toAdminUnfollowUserParams(dto: AdminDeleteFollowUserCommandDTO): {
     followerId: UserId;
     followedId: UserId;
   } {
@@ -34,7 +95,7 @@ export class RelationshipMapper {
     };
   }
 
-  static toBlockUserParams(dto: PostBlockUserCommandDTO): {
+  static toAdminBlockUserParams(dto: AdminPostBlockUserCommandDTO): {
     blockerId: UserId;
     blockedId: UserId;
   } {
@@ -44,7 +105,7 @@ export class RelationshipMapper {
     };
   }
 
-  static toUnblockUserParams(dto: DeleteBlockUserCommandDTO): {
+  static toAdminUnblockUserParams(dto: AdminDeleteBlockUserCommandDTO): {
     blockerId: UserId;
     blockedId: UserId;
   } {
@@ -54,7 +115,59 @@ export class RelationshipMapper {
     };
   }
 
-  static toGetFollowsParams(dto: GetMyFollowsQueryDTO): {
+  static toGetFollowsParams(
+    dto: GetMyFollowsQueryDTO,
+    user: AuthUser,
+  ): {
+    userId: UserId;
+    pagination: ReturnType<typeof PaginationMapper.toPaginationVO> | undefined;
+  } {
+    return {
+      userId: new UserId(user.id),
+      pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
+    };
+  }
+
+  static toGetFollowersParams(
+    dto: GetMyFollowersQueryDTO,
+    user: AuthUser,
+  ): {
+    userId: UserId;
+    pagination: ReturnType<typeof PaginationMapper.toPaginationVO> | undefined;
+  } {
+    return {
+      userId: new UserId(user.id),
+      pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
+    };
+  }
+
+  static toGetBlocksParams(
+    dto: GetMyBlocksQueryDTO,
+    user: AuthUser,
+  ): {
+    userId: UserId;
+    pagination: ReturnType<typeof PaginationMapper.toPaginationVO> | undefined;
+  } {
+    return {
+      userId: new UserId(user.id),
+      pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
+    };
+  }
+
+  static toGetWhoBlockedMeParams(
+    dto: GetWhoBlockedMeQueryDTO,
+    user: AuthUser,
+  ): {
+    userId: UserId;
+    pagination: ReturnType<typeof PaginationMapper.toPaginationVO> | undefined;
+  } {
+    return {
+      userId: new UserId(user.id),
+      pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
+    };
+  }
+
+  static toAdminGetFollowsParams(dto: AdminGetMyFollowsQueryDTO): {
     userId: UserId;
     pagination: ReturnType<typeof PaginationMapper.toPaginationVO> | undefined;
   } {
@@ -64,7 +177,7 @@ export class RelationshipMapper {
     };
   }
 
-  static toGetFollowersParams(dto: GetMyFollowersQueryDTO): {
+  static toAdminGetFollowersParams(dto: AdminGetMyFollowersQueryDTO): {
     userId: UserId;
     pagination: ReturnType<typeof PaginationMapper.toPaginationVO> | undefined;
   } {
@@ -74,7 +187,7 @@ export class RelationshipMapper {
     };
   }
 
-  static toGetBlocksParams(dto: GetMyBlocksQueryDTO): {
+  static toAdminGetBlocksParams(dto: AdminGetMyBlocksQueryDTO): {
     userId: UserId;
     pagination: ReturnType<typeof PaginationMapper.toPaginationVO> | undefined;
   } {
@@ -84,7 +197,7 @@ export class RelationshipMapper {
     };
   }
 
-  static toGetWhoBlockedMeParams(dto: GetWhoBlockedMeQueryDTO): {
+  static toAdminGetWhoBlockedMeParams(dto: AdminGetWhoBlockedMeQueryDTO): {
     userId: UserId;
     pagination: ReturnType<typeof PaginationMapper.toPaginationVO> | undefined;
   } {

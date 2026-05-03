@@ -1,14 +1,19 @@
 import { PostId, UserId } from '@volontariapp/domain-social';
+import type { AuthUser } from '@volontariapp/auth';
 import type {
   CreateSocialPostCommandDTO,
   DeleteSocialPostCommandDTO,
   PostUserOwnCommandDTO,
   DeleteUserOwnCommandDTO,
+  AdminPostUserOwnCommandDTO,
+  AdminDeleteUserOwnCommandDTO,
 } from '../dto/request/command/publication.command.dto.js';
 import type {
   GetSocialPostQueryDTO,
   GetUserPostsQueryDTO,
   GetFeedQueryDTO,
+  AdminGetUserPostsQueryDTO,
+  AdminGetFeedQueryDTO,
 } from '../dto/request/query/publication.query.dto.js';
 import { PaginationMapper } from './pagination.mapper.js';
 
@@ -25,7 +30,33 @@ export class PublicationMapper {
     return this.toPostIdVO(dto.postId);
   }
 
-  static toOwnPostCommandParams(dto: PostUserOwnCommandDTO): {
+  static toOwnPostCommandParams(
+    dto: PostUserOwnCommandDTO,
+    user: AuthUser,
+  ): {
+    userId: UserId;
+    postId: PostId;
+  } {
+    return {
+      userId: new UserId(user.id),
+      postId: new PostId(dto.postId),
+    };
+  }
+
+  static toDisownPostCommandParams(
+    dto: DeleteUserOwnCommandDTO,
+    user: AuthUser,
+  ): {
+    userId: UserId;
+    postId: PostId;
+  } {
+    return {
+      userId: new UserId(user.id),
+      postId: new PostId(dto.postId),
+    };
+  }
+
+  static toAdminOwnPostCommandParams(dto: AdminPostUserOwnCommandDTO): {
     userId: UserId;
     postId: PostId;
   } {
@@ -35,7 +66,7 @@ export class PublicationMapper {
     };
   }
 
-  static toDisownPostCommandParams(dto: DeleteUserOwnCommandDTO): {
+  static toAdminDisownPostCommandParams(dto: AdminDeleteUserOwnCommandDTO): {
     userId: UserId;
     postId: PostId;
   } {
@@ -49,7 +80,33 @@ export class PublicationMapper {
     return this.toPostIdVO(dto.postId);
   }
 
-  static toGetUserPostsQueryParams(dto: GetUserPostsQueryDTO): {
+  static toGetUserPostsQueryParams(
+    dto: GetUserPostsQueryDTO,
+    user: AuthUser,
+  ): {
+    userId: UserId;
+    pagination: ReturnType<typeof PaginationMapper.toPaginationVO> | undefined;
+  } {
+    return {
+      userId: new UserId(user.id),
+      pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
+    };
+  }
+
+  static toGetFeedQueryParams(
+    dto: GetFeedQueryDTO,
+    user: AuthUser,
+  ): {
+    userId: UserId;
+    pagination: ReturnType<typeof PaginationMapper.toPaginationVO> | undefined;
+  } {
+    return {
+      userId: new UserId(user.id),
+      pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
+    };
+  }
+
+  static toAdminGetUserPostsQueryParams(dto: AdminGetUserPostsQueryDTO): {
     userId: UserId;
     pagination: ReturnType<typeof PaginationMapper.toPaginationVO> | undefined;
   } {
@@ -59,7 +116,7 @@ export class PublicationMapper {
     };
   }
 
-  static toGetFeedQueryParams(dto: GetFeedQueryDTO): {
+  static toAdminGetFeedQueryParams(dto: AdminGetFeedQueryDTO): {
     userId: UserId;
     pagination: ReturnType<typeof PaginationMapper.toPaginationVO> | undefined;
   } {

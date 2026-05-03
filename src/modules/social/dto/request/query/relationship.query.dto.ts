@@ -5,13 +5,14 @@ import {
   GetMyFollowersQuery,
   GetMyBlocksQuery,
   GetWhoBlockedMeQuery,
+  AdminGetMyFollowsQuery,
+  AdminGetMyFollowersQuery,
+  AdminGetMyBlocksQuery,
+  AdminGetWhoBlockedMeQuery,
 } from '@volontariapp/contracts-nest';
 import { PaginationRequestDTO } from '../../common/pagination.dto.js';
 
 export class GetMyFollowsQueryDTO implements GetMyFollowsQuery {
-  @IsString()
-  userId!: string;
-
   @IsOptional()
   @ValidateNested()
   @Type(() => PaginationRequestDTO)
@@ -19,9 +20,6 @@ export class GetMyFollowsQueryDTO implements GetMyFollowsQuery {
 }
 
 export class GetMyFollowersQueryDTO implements GetMyFollowersQuery {
-  @IsString()
-  userId!: string;
-
   @IsOptional()
   @ValidateNested()
   @Type(() => PaginationRequestDTO)
@@ -29,6 +27,20 @@ export class GetMyFollowersQueryDTO implements GetMyFollowersQuery {
 }
 
 export class GetMyBlocksQueryDTO implements GetMyBlocksQuery {
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => PaginationRequestDTO)
+  pagination: PaginationRequestDTO | undefined;
+}
+
+export class GetWhoBlockedMeQueryDTO implements GetWhoBlockedMeQuery {
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => PaginationRequestDTO)
+  pagination: PaginationRequestDTO | undefined;
+}
+
+export class AdminGetMyFollowsQueryDTO implements AdminGetMyFollowsQuery {
   @IsString()
   userId!: string;
 
@@ -38,7 +50,27 @@ export class GetMyBlocksQueryDTO implements GetMyBlocksQuery {
   pagination: PaginationRequestDTO | undefined;
 }
 
-export class GetWhoBlockedMeQueryDTO implements GetWhoBlockedMeQuery {
+export class AdminGetMyFollowersQueryDTO implements AdminGetMyFollowersQuery {
+  @IsString()
+  userId!: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => PaginationRequestDTO)
+  pagination: PaginationRequestDTO | undefined;
+}
+
+export class AdminGetMyBlocksQueryDTO implements AdminGetMyBlocksQuery {
+  @IsString()
+  userId!: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => PaginationRequestDTO)
+  pagination: PaginationRequestDTO | undefined;
+}
+
+export class AdminGetWhoBlockedMeQueryDTO implements AdminGetWhoBlockedMeQuery {
   @IsString()
   userId!: string;
 

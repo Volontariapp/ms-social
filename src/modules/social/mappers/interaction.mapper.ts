@@ -1,16 +1,46 @@
 import { UserId, PostId } from '@volontariapp/domain-social';
+import type { AuthUser } from '@volontariapp/auth';
 import type {
   PostLikePostCommandDTO,
   DeleteLikePostCommandDTO,
+  AdminPostLikePostCommandDTO,
+  AdminDeleteLikePostCommandDTO,
 } from '../dto/request/command/interaction.command.dto.js';
 import type {
   GetUserLikesQueryDTO,
   GetPostLikersQueryDTO,
+  AdminGetUserLikesQueryDTO,
 } from '../dto/request/query/interaction.query.dto.js';
 import { PaginationMapper } from './pagination.mapper.js';
 
 export class InteractionMapper {
-  static toLikePostParams(dto: PostLikePostCommandDTO): {
+  static toLikePostParams(
+    dto: PostLikePostCommandDTO,
+    user: AuthUser,
+  ): {
+    userId: UserId;
+    postId: PostId;
+  } {
+    return {
+      userId: new UserId(user.id),
+      postId: new PostId(dto.postId),
+    };
+  }
+
+  static toUnlikePostParams(
+    dto: DeleteLikePostCommandDTO,
+    user: AuthUser,
+  ): {
+    userId: UserId;
+    postId: PostId;
+  } {
+    return {
+      userId: new UserId(user.id),
+      postId: new PostId(dto.postId),
+    };
+  }
+
+  static toAdminLikePostParams(dto: AdminPostLikePostCommandDTO): {
     userId: UserId;
     postId: PostId;
   } {
@@ -20,7 +50,7 @@ export class InteractionMapper {
     };
   }
 
-  static toUnlikePostParams(dto: DeleteLikePostCommandDTO): {
+  static toAdminUnlikePostParams(dto: AdminDeleteLikePostCommandDTO): {
     userId: UserId;
     postId: PostId;
   } {
@@ -30,7 +60,20 @@ export class InteractionMapper {
     };
   }
 
-  static toGetUserLikesParams(dto: GetUserLikesQueryDTO): {
+  static toGetUserLikesParams(
+    dto: GetUserLikesQueryDTO,
+    user: AuthUser,
+  ): {
+    userId: UserId;
+    pagination: ReturnType<typeof PaginationMapper.toPaginationVO> | undefined;
+  } {
+    return {
+      userId: new UserId(user.id),
+      pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
+    };
+  }
+
+  static toAdminGetUserLikesParams(dto: AdminGetUserLikesQueryDTO): {
     userId: UserId;
     pagination: ReturnType<typeof PaginationMapper.toPaginationVO> | undefined;
   } {

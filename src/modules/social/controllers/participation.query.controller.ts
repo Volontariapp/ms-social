@@ -1,6 +1,8 @@
 import { Controller } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
 import { GrpcMethod } from '@nestjs/microservices';
+import { CurrentUser } from '@volontariapp/auth';
+import type { AuthUser } from '@volontariapp/auth';
 import { GRPC_SERVICES, PARTICIPATION_METHODS } from '@volontariapp/contracts-nest';
 import { ParticipationService, PaginationVO } from '@volontariapp/domain-social';
 import {
@@ -9,6 +11,9 @@ import {
   GetUserParticipateEventQueryDTO,
   GetEventParticipantsQueryDTO,
   GetUserWishEventQueryDTO,
+  AdminGetUserEventQueryDTO,
+  AdminGetUserParticipateEventQueryDTO,
+  AdminGetUserWishEventQueryDTO,
 } from '../dto/request/query/participation.query.dto.js';
 import {
   GetEventNodeResponseDTO,
@@ -16,6 +21,9 @@ import {
   GetUserParticipateEventResponseDTO,
   GetEventParticipantsResponseDTO,
   GetUserWishEventResponseDTO,
+  AdminGetUserEventResponseDTO,
+  AdminGetUserParticipateEventResponseDTO,
+  AdminGetUserWishEventResponseDTO,
 } from '../dto/response/social.response.dto.js';
 import { ParticipationMapper } from '../mappers/participation.mapper.js';
 import { PaginatedIdsMapper } from '../mappers/paginated-ids.mapper.js';
@@ -37,9 +45,12 @@ export class ParticipationQueryController {
   }
 
   @GrpcMethod(GRPC_SERVICES.PARTICIPATION_QUERY_SERVICE, PARTICIPATION_METHODS.GET_USER_EVENT)
-  async getUserEvent(data: GetUserEventQueryDTO): Promise<GetUserEventResponseDTO> {
-    this.logger.log(`gRPC: Getting events created by user: ${data.userId}`);
-    const { userId, pagination } = ParticipationMapper.toGetUserEventsParams(data);
+  async getUserEvent(
+    data: GetUserEventQueryDTO,
+    @CurrentUser() user: AuthUser,
+  ): Promise<GetUserEventResponseDTO> {
+    this.logger.log(`gRPC: Getting events created by user: ${user.id}`);
+    const { userId, pagination } = ParticipationMapper.toGetUserEventsParams(data, user);
     const paginationVO = pagination ?? new PaginationVO(1, 10);
     const paginatedIds = await this.service.getUserEvents(userId, paginationVO);
     return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
@@ -51,9 +62,10 @@ export class ParticipationQueryController {
   )
   async getUserParticipateEvent(
     data: GetUserParticipateEventQueryDTO,
+    @CurrentUser() user: AuthUser,
   ): Promise<GetUserParticipateEventResponseDTO> {
-    this.logger.log(`gRPC: Getting events participated by user: ${data.userId}`);
-    const { userId, pagination } = ParticipationMapper.toGetUserParticipationsParams(data);
+    this.logger.log(`gRPC: Getting events participated by user: ${user.id}`);
+    const { userId, pagination } = ParticipationMapper.toGetUserParticipationsParams(data, user);
     const paginationVO = pagination ?? new PaginationVO(1, 10);
     const paginatedIds = await this.service.getUserParticipations(userId, paginationVO);
     return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
@@ -74,9 +86,43 @@ export class ParticipationQueryController {
   }
 
   @GrpcMethod(GRPC_SERVICES.PARTICIPATION_QUERY_SERVICE, 'getUserWishEvent')
-  async getUserWishEvent(data: GetUserWishEventQueryDTO): Promise<GetUserWishEventResponseDTO> {
-    this.logger.log(`gRPC: Getting wished events for user: ${data.userId}`);
-    const { userId, pagination } = ParticipationMapper.toGetUserWishEventsParams(data);
+  async getUserWishEvent(
+    data: GetUserWishEventQueryDTO,
+    @CurrentUser() user: AuthUser,
+  ): Promise<GetUserWishEventResponseDTO> {
+    this.logger.log(`gRPC: Getting wished events for user: ${user.id}`);
+    const { userId, pagination } = ParticipationMapper.toGetUserWishEventsParams(data, user);
+    const paginationVO = pagination ?? new PaginationVO(1, 10);
+    const paginatedIds = await this.service.getUserWishes(userId, paginationVO);
+    return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
+  }
+
+  @GrpcMethod(GRPC_SERVICES.PARTICIPATION_QUERY_SERVICE, 'adminGetUserEvent')
+  async adminGetUserEvent(data: AdminGetUserEventQueryDTO): Promise<AdminGetUserEventResponseDTO> {
+    this.logger.log(`gRPC: Admin getting events created by user: ${data.userId}`);
+    const { userId, pagination } = ParticipationMapper.toAdminGetUserEventsParams(data);
+    const paginationVO = pagination ?? new PaginationVO(1, 10);
+    const paginatedIds = await this.service.getUserEvents(userId, paginationVO);
+    return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
+  }
+
+  @GrpcMethod(GRPC_SERVICES.PARTICIPATION_QUERY_SERVICE, 'adminGetUserParticipateEvent')
+  async adminGetUserParticipateEvent(
+    data: AdminGetUserParticipateEventQueryDTO,
+  ): Promise<AdminGetUserParticipateEventResponseDTO> {
+    this.logger.log(`gRPC: Admin getting events participated by user: ${data.userId}`);
+    const { userId, pagination } = ParticipationMapper.toAdminGetUserParticipationsParams(data);
+    const paginationVO = pagination ?? new PaginationVO(1, 10);
+    const paginatedIds = await this.service.getUserParticipations(userId, paginationVO);
+    return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
+  }
+
+  @GrpcMethod(GRPC_SERVICES.PARTICIPATION_QUERY_SERVICE, 'adminGetUserWishEvent')
+  async adminGetUserWishEvent(
+    data: AdminGetUserWishEventQueryDTO,
+  ): Promise<AdminGetUserWishEventResponseDTO> {
+    this.logger.log(`gRPC: Admin getting wished events for user: ${data.userId}`);
+    const { userId, pagination } = ParticipationMapper.toAdminGetUserWishEventsParams(data);
     const paginationVO = pagination ?? new PaginationVO(1, 10);
     const paginatedIds = await this.service.getUserWishes(userId, paginationVO);
     return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);

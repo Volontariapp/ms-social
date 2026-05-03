@@ -1,17 +1,23 @@
 import { Controller } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
 import { GrpcMethod } from '@nestjs/microservices';
+import { CurrentUser } from '@volontariapp/auth';
+import type { AuthUser } from '@volontariapp/auth';
 import { GRPC_SERVICES, PUBLICATION_METHODS } from '@volontariapp/contracts-nest';
 import { PublicationService, PaginationVO } from '@volontariapp/domain-social';
 import {
   GetSocialPostQueryDTO,
   GetUserPostsQueryDTO,
   GetFeedQueryDTO,
+  AdminGetUserPostsQueryDTO,
+  AdminGetFeedQueryDTO,
 } from '../dto/request/query/publication.query.dto.js';
 import {
   GetPostNodeResponseDTO,
   GetUserPostsResponseDTO,
   GetFeedResponseDTO,
+  AdminGetUserPostsResponseDTO,
+  AdminGetFeedResponseDTO,
 } from '../dto/response/social.response.dto.js';
 import { PublicationMapper } from '../mappers/publication.mapper.js';
 import { PaginatedIdsMapper } from '../mappers/paginated-ids.mapper.js';
@@ -33,18 +39,39 @@ export class PublicationQueryController {
   }
 
   @GrpcMethod(GRPC_SERVICES.PUBLICATION_QUERY_SERVICE, PUBLICATION_METHODS.GET_USER_POSTS)
-  async getUserPosts(data: GetUserPostsQueryDTO): Promise<GetUserPostsResponseDTO> {
-    this.logger.log(`gRPC: Getting posts for user: ${data.userId}`);
-    const { userId, pagination } = PublicationMapper.toGetUserPostsQueryParams(data);
+  async getUserPosts(
+    data: GetUserPostsQueryDTO,
+    @CurrentUser() user: AuthUser,
+  ): Promise<GetUserPostsResponseDTO> {
+    this.logger.log(`gRPC: Getting posts for user: ${user.id}`);
+    const { userId, pagination } = PublicationMapper.toGetUserPostsQueryParams(data, user);
     const paginationVO = pagination ?? new PaginationVO(1, 10);
     const paginatedIds = await this.service.getUserPosts(userId, paginationVO);
     return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
   }
 
   @GrpcMethod(GRPC_SERVICES.PUBLICATION_QUERY_SERVICE, PUBLICATION_METHODS.GET_FEED)
-  async getFeed(data: GetFeedQueryDTO): Promise<GetFeedResponseDTO> {
-    this.logger.log(`gRPC: Getting feed for user: ${data.userId}`);
-    const { userId, pagination } = PublicationMapper.toGetFeedQueryParams(data);
+  async getFeed(data: GetFeedQueryDTO, @CurrentUser() user: AuthUser): Promise<GetFeedResponseDTO> {
+    this.logger.log(`gRPC: Getting feed for user: ${user.id}`);
+    const { userId, pagination } = PublicationMapper.toGetFeedQueryParams(data, user);
+    const paginationVO = pagination ?? new PaginationVO(1, 10);
+    const paginatedIds = await this.service.getFeed(userId, paginationVO);
+    return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
+  }
+
+  @GrpcMethod(GRPC_SERVICES.PUBLICATION_QUERY_SERVICE, 'adminGetUserPosts')
+  async adminGetUserPosts(data: AdminGetUserPostsQueryDTO): Promise<AdminGetUserPostsResponseDTO> {
+    this.logger.log(`gRPC: Admin getting posts for user: ${data.userId}`);
+    const { userId, pagination } = PublicationMapper.toAdminGetUserPostsQueryParams(data);
+    const paginationVO = pagination ?? new PaginationVO(1, 10);
+    const paginatedIds = await this.service.getUserPosts(userId, paginationVO);
+    return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
+  }
+
+  @GrpcMethod(GRPC_SERVICES.PUBLICATION_QUERY_SERVICE, 'adminGetFeed')
+  async adminGetFeed(data: AdminGetFeedQueryDTO): Promise<AdminGetFeedResponseDTO> {
+    this.logger.log(`gRPC: Admin getting feed for user: ${data.userId}`);
+    const { userId, pagination } = PublicationMapper.toAdminGetFeedQueryParams(data);
     const paginationVO = pagination ?? new PaginationVO(1, 10);
     const paginatedIds = await this.service.getFeed(userId, paginationVO);
     return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
