@@ -1,6 +1,8 @@
-import { PaginationMapper } from '../../../common/mappers/pagination.mapper';
-import { PaginationRequestDTO } from '../../../common/dto/pagination.dto';
-import { PaginationVO, PaginationResultVO } from '@volontariapp/domain-social';
+import { PaginationMapper } from '../../../common/mappers/pagination.mapper.js';
+import type { PaginationRequestDTO } from '../../../common/dto/pagination.dto.js';
+import type { PaginationResultVO } from '@volontariapp/domain-social';
+import { PaginationVO } from '@volontariapp/domain-social';
+import { describe, it, expect } from '@jest/globals';
 
 describe('PaginationMapper', () => {
   describe('toPaginationVO', () => {
