@@ -4,6 +4,7 @@ import { CreateSocialUserCommandDTO } from '../../../modules/user-node/dto/user-
 import {
   CreateSocialPostCommandDTO,
   PostUserOwnCommandDTO,
+  AdminPostUserOwnCommandDTO,
 } from '../../../modules/publication/dto/publication.command.dto.js';
 import { PaginationRequestDTO } from '../../../common/dto/pagination.dto.js';
 import { describe, it, expect } from '@jest/globals';
@@ -26,24 +27,22 @@ describe('DTO Validation - Bad Request Scenarios', () => {
       expect(errors[0].property).toBe('postId');
     });
 
-    it('should return validation error for missing userId in PostUserOwnCommandDTO', async () => {
-      const dto = plainToInstance(PostUserOwnCommandDTO, {
+    it('should return validation error for missing postId in PostUserOwnCommandDTO', async () => {
+      const dto = plainToInstance(PostUserOwnCommandDTO, {});
+      const errors = await validate(dto);
+
+      expect(errors.length).toBeGreaterThan(0);
+      expect(errors.some((e) => e.property === 'postId')).toBe(true);
+    });
+
+    it('should return validation error for missing userId in AdminPostUserOwnCommandDTO', async () => {
+      const dto = plainToInstance(AdminPostUserOwnCommandDTO, {
         postId: 'post-123',
       });
       const errors = await validate(dto);
 
       expect(errors.length).toBeGreaterThan(0);
       expect(errors.some((e) => e.property === 'userId')).toBe(true);
-    });
-
-    it('should return validation error for missing postId in PostUserOwnCommandDTO', async () => {
-      const dto = plainToInstance(PostUserOwnCommandDTO, {
-        userId: 'user-123',
-      });
-      const errors = await validate(dto);
-
-      expect(errors.length).toBeGreaterThan(0);
-      expect(errors.some((e) => e.property === 'postId')).toBe(true);
     });
 
     it('should return validation errors for missing pagination fields', async () => {
@@ -74,8 +73,8 @@ describe('DTO Validation - Bad Request Scenarios', () => {
       expect(errors.length).toBeGreaterThan(0);
     });
 
-    it('should return validation error for non-string userId in PostUserOwnCommandDTO', async () => {
-      const dto = plainToInstance(PostUserOwnCommandDTO, {
+    it('should return validation error for non-string userId in AdminPostUserOwnCommandDTO', async () => {
+      const dto = plainToInstance(AdminPostUserOwnCommandDTO, {
         userId: { id: '123' },
         postId: 'post-456',
       });
@@ -211,8 +210,8 @@ describe('DTO Validation - Bad Request Scenarios', () => {
       expect(errors.length).toBeGreaterThan(0);
     });
 
-    it('should return validation errors for multiple invalid fields', async () => {
-      const dto = plainToInstance(PostUserOwnCommandDTO, {
+    it('should return validation errors for multiple invalid fields in AdminPostUserOwnCommandDTO', async () => {
+      const dto = plainToInstance(AdminPostUserOwnCommandDTO, {
         userId: 123,
         postId: false,
       });
@@ -243,7 +242,6 @@ describe('DTO Validation - Bad Request Scenarios', () => {
 
     it('should pass validation for valid PostUserOwnCommandDTO', async () => {
       const dto = plainToInstance(PostUserOwnCommandDTO, {
-        userId: 'user-123',
         postId: 'post-456',
       });
       const errors = await validate(dto);
