@@ -1,6 +1,7 @@
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-import { PaginationRequestDTO } from '../../../common/dto/pagination.dto';
+import { PaginationRequestDTO } from '../../../common/dto/pagination.dto.js';
+import { describe, it, expect } from '@jest/globals';
 
 describe('PaginationRequestDTO', () => {
   it('should validate with valid page and limit', async () => {
