@@ -1,110 +1,101 @@
 import { UserId, PaginationVO } from '@volontariapp/domain-social';
-import { RelationshipMapper } from '../../../modules/relationship/mappers/relationship.mapper';
-import {
+import { RelationshipMapper } from '../../../modules/relationship/mappers/relationship.mapper.js';
+import type {
   PostFollowUserCommandDTO,
   DeleteFollowUserCommandDTO,
   PostBlockUserCommandDTO,
   DeleteBlockUserCommandDTO,
-} from '../../../modules/relationship/dto/relationship.command.dto';
-import {
+} from '../../../modules/relationship/dto/relationship.command.dto.js';
+import type {
   GetMyFollowsQueryDTO,
   GetMyFollowersQueryDTO,
   GetMyBlocksQueryDTO,
   GetWhoBlockedMeQueryDTO,
-} from '../../../modules/relationship/dto/relationship.query.dto';
-import { PaginationRequestDTO } from '../../../common/dto/pagination.dto';
+} from '../../../modules/relationship/dto/relationship.query.dto.js';
+import type { PaginationRequestDTO } from '../../../common/dto/pagination.dto.js';
+import { createMockAuthUser } from '../../utils/mock.helper.js';
+import { describe, it, expect } from '@jest/globals';
 
 describe('RelationshipMapper', () => {
+  const mockUser = createMockAuthUser();
+
   describe('toFollowUserParams', () => {
-    it('should convert PostFollowUserCommandDTO to params', () => {
+    it('should convert PostFollowUserCommandDTO and user to params', () => {
       const dto: PostFollowUserCommandDTO = {
-        followerId: 'user-123',
         followedId: 'user-456',
       };
-      const result = RelationshipMapper.toFollowUserParams(dto);
+      const result = RelationshipMapper.toFollowUserParams(dto, mockUser);
 
       expect(result.followerId).toBeInstanceOf(UserId);
+      expect(result.followerId.value).toBe(mockUser.id);
       expect(result.followedId).toBeInstanceOf(UserId);
+      expect(result.followedId.value).toBe('user-456');
     });
   });
 
   describe('toUnfollowUserParams', () => {
-    it('should convert DeleteFollowUserCommandDTO to params', () => {
+    it('should convert DeleteFollowUserCommandDTO and user to params', () => {
       const dto: DeleteFollowUserCommandDTO = {
-        followerId: 'user-123',
         followedId: 'user-456',
       };
-      const result = RelationshipMapper.toUnfollowUserParams(dto);
+      const result = RelationshipMapper.toUnfollowUserParams(dto, mockUser);
 
       expect(result.followerId).toBeInstanceOf(UserId);
+      expect(result.followerId.value).toBe(mockUser.id);
       expect(result.followedId).toBeInstanceOf(UserId);
+      expect(result.followedId.value).toBe('user-456');
     });
   });
 
   describe('toBlockUserParams', () => {
-    it('should convert PostBlockUserCommandDTO to params', () => {
+    it('should convert PostBlockUserCommandDTO and user to params', () => {
       const dto: PostBlockUserCommandDTO = {
-        blockerId: 'user-123',
         blockedId: 'user-789',
       };
-      const result = RelationshipMapper.toBlockUserParams(dto);
+      const result = RelationshipMapper.toBlockUserParams(dto, mockUser);
 
       expect(result.blockerId).toBeInstanceOf(UserId);
+      expect(result.blockerId.value).toBe(mockUser.id);
       expect(result.blockedId).toBeInstanceOf(UserId);
-    });
-
-    it('should handle blocking different users', () => {
-      const dto1: PostBlockUserCommandDTO = {
-        blockerId: 'user-1',
-        blockedId: 'user-2',
-      };
-      const dto2: PostBlockUserCommandDTO = {
-        blockerId: 'user-1',
-        blockedId: 'user-3',
-      };
-
-      const result1 = RelationshipMapper.toBlockUserParams(dto1);
-      const result2 = RelationshipMapper.toBlockUserParams(dto2);
-
-      expect(result1.blockerId).toBeInstanceOf(UserId);
-      expect(result2.blockerId).toBeInstanceOf(UserId);
+      expect(result.blockedId.value).toBe('user-789');
     });
   });
 
   describe('toUnblockUserParams', () => {
-    it('should convert DeleteBlockUserCommandDTO to params', () => {
+    it('should convert DeleteBlockUserCommandDTO and user to params', () => {
       const dto: DeleteBlockUserCommandDTO = {
-        blockerId: 'user-123',
         blockedId: 'user-789',
       };
-      const result = RelationshipMapper.toUnblockUserParams(dto);
+      const result = RelationshipMapper.toUnblockUserParams(dto, mockUser);
 
       expect(result.blockerId).toBeInstanceOf(UserId);
+      expect(result.blockerId.value).toBe(mockUser.id);
       expect(result.blockedId).toBeInstanceOf(UserId);
+      expect(result.blockedId.value).toBe('user-789');
     });
   });
 
   describe('toGetFollowsParams', () => {
     it('should convert GetMyFollowsQueryDTO without pagination', () => {
       const dto: GetMyFollowsQueryDTO = {
-        userId: 'user-123',
         pagination: undefined,
       };
-      const result = RelationshipMapper.toGetFollowsParams(dto);
+      const result = RelationshipMapper.toGetFollowsParams(dto, mockUser);
 
       expect(result.userId).toBeInstanceOf(UserId);
+      expect(result.userId.value).toBe(mockUser.id);
       expect(result.pagination).toBeUndefined();
     });
 
     it('should convert GetMyFollowsQueryDTO with pagination', () => {
       const pagination: PaginationRequestDTO = { page: 1, limit: 10 };
       const dto: GetMyFollowsQueryDTO = {
-        userId: 'user-123',
         pagination,
       };
-      const result = RelationshipMapper.toGetFollowsParams(dto);
+      const result = RelationshipMapper.toGetFollowsParams(dto, mockUser);
 
       expect(result.userId).toBeInstanceOf(UserId);
+      expect(result.userId.value).toBe(mockUser.id);
       expect(result.pagination).toBeInstanceOf(PaginationVO);
     });
   });
@@ -112,24 +103,24 @@ describe('RelationshipMapper', () => {
   describe('toGetFollowersParams', () => {
     it('should convert GetMyFollowersQueryDTO without pagination', () => {
       const dto: GetMyFollowersQueryDTO = {
-        userId: 'user-456',
         pagination: undefined,
       };
-      const result = RelationshipMapper.toGetFollowersParams(dto);
+      const result = RelationshipMapper.toGetFollowersParams(dto, mockUser);
 
       expect(result.userId).toBeInstanceOf(UserId);
+      expect(result.userId.value).toBe(mockUser.id);
       expect(result.pagination).toBeUndefined();
     });
 
     it('should convert GetMyFollowersQueryDTO with pagination', () => {
       const pagination: PaginationRequestDTO = { page: 2, limit: 20 };
       const dto: GetMyFollowersQueryDTO = {
-        userId: 'user-456',
         pagination,
       };
-      const result = RelationshipMapper.toGetFollowersParams(dto);
+      const result = RelationshipMapper.toGetFollowersParams(dto, mockUser);
 
       expect(result.userId).toBeInstanceOf(UserId);
+      expect(result.userId.value).toBe(mockUser.id);
       expect(result.pagination).toBeInstanceOf(PaginationVO);
     });
   });
@@ -137,24 +128,24 @@ describe('RelationshipMapper', () => {
   describe('toGetBlocksParams', () => {
     it('should convert GetMyBlocksQueryDTO without pagination', () => {
       const dto: GetMyBlocksQueryDTO = {
-        userId: 'user-789',
         pagination: undefined,
       };
-      const result = RelationshipMapper.toGetBlocksParams(dto);
+      const result = RelationshipMapper.toGetBlocksParams(dto, mockUser);
 
       expect(result.userId).toBeInstanceOf(UserId);
+      expect(result.userId.value).toBe(mockUser.id);
       expect(result.pagination).toBeUndefined();
     });
 
     it('should convert GetMyBlocksQueryDTO with pagination', () => {
       const pagination: PaginationRequestDTO = { page: 1, limit: 10 };
       const dto: GetMyBlocksQueryDTO = {
-        userId: 'user-789',
         pagination,
       };
-      const result = RelationshipMapper.toGetBlocksParams(dto);
+      const result = RelationshipMapper.toGetBlocksParams(dto, mockUser);
 
       expect(result.userId).toBeInstanceOf(UserId);
+      expect(result.userId.value).toBe(mockUser.id);
       expect(result.pagination).toBeInstanceOf(PaginationVO);
     });
   });
@@ -162,24 +153,24 @@ describe('RelationshipMapper', () => {
   describe('toGetWhoBlockedMeParams', () => {
     it('should convert GetWhoBlockedMeQueryDTO without pagination', () => {
       const dto: GetWhoBlockedMeQueryDTO = {
-        userId: 'user-101',
         pagination: undefined,
       };
-      const result = RelationshipMapper.toGetWhoBlockedMeParams(dto);
+      const result = RelationshipMapper.toGetWhoBlockedMeParams(dto, mockUser);
 
       expect(result.userId).toBeInstanceOf(UserId);
+      expect(result.userId.value).toBe(mockUser.id);
       expect(result.pagination).toBeUndefined();
     });
 
     it('should convert GetWhoBlockedMeQueryDTO with pagination', () => {
       const pagination: PaginationRequestDTO = { page: 1, limit: 10 };
       const dto: GetWhoBlockedMeQueryDTO = {
-        userId: 'user-101',
         pagination,
       };
-      const result = RelationshipMapper.toGetWhoBlockedMeParams(dto);
+      const result = RelationshipMapper.toGetWhoBlockedMeParams(dto, mockUser);
 
       expect(result.userId).toBeInstanceOf(UserId);
+      expect(result.userId.value).toBe(mockUser.id);
       expect(result.pagination).toBeInstanceOf(PaginationVO);
     });
   });

@@ -1,9 +1,10 @@
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
+import { describe, it, expect } from '@jest/globals';
 import {
   CreateSocialUserCommandDTO,
   DeleteSocialUserCommandDTO,
-} from '../../../modules/user-node/dto/user-node.command.dto';
+} from '../../../modules/user-node/dto/user-node.command.dto.js';
 
 describe('UserNode Command DTOs', () => {
   describe('CreateSocialUserCommandDTO', () => {

@@ -1,95 +1,81 @@
+import { describe, it, expect } from '@jest/globals';
 import { UserId, PostId, PaginationVO } from '@volontariapp/domain-social';
-import { InteractionMapper } from '../../../modules/interaction/mappers/interaction.mapper';
-import {
+import { InteractionMapper } from '../../../modules/interaction/mappers/interaction.mapper.js';
+import type {
   PostLikePostCommandDTO,
   DeleteLikePostCommandDTO,
-} from '../../../modules/interaction/dto/interaction.command.dto';
-import {
+} from '../../../modules/interaction/dto/interaction.command.dto.js';
+import type {
   GetUserLikesQueryDTO,
   GetPostLikersQueryDTO,
-} from '../../../modules/interaction/dto/interaction.query.dto';
-import { PaginationRequestDTO } from '../../../common/dto/pagination.dto';
+} from '../../../modules/interaction/dto/interaction.query.dto.js';
+import type { PaginationRequestDTO } from '../../../common/dto/pagination.dto.js';
+import { createMockAuthUser } from '../../utils/mock.helper.js';
 
 describe('InteractionMapper', () => {
+  const mockUser = createMockAuthUser();
+
   describe('toLikePostParams', () => {
-    it('should convert PostLikePostCommandDTO to params', () => {
+    it('should convert PostLikePostCommandDTO and user to params', () => {
       const dto: PostLikePostCommandDTO = {
-        userId: 'user-123',
         postId: 'post-456',
       };
-      const result = InteractionMapper.toLikePostParams(dto);
+      const result = InteractionMapper.toLikePostParams(dto, mockUser);
 
       expect(result.userId).toBeInstanceOf(UserId);
+      expect(result.userId.value).toBe(mockUser.id);
       expect(result.postId).toBeInstanceOf(PostId);
-    });
-
-    it('should preserve userId and postId values', () => {
-      const userId = 'specific-user';
-      const postId = 'specific-post';
-      const dto: PostLikePostCommandDTO = { userId, postId };
-      const result = InteractionMapper.toLikePostParams(dto);
-
-      expect(result.userId).toBeInstanceOf(UserId);
-      expect(result.postId).toBeInstanceOf(PostId);
+      expect(result.postId.value).toBe('post-456');
     });
 
     it('should handle UUID format IDs', () => {
       const dto: PostLikePostCommandDTO = {
-        userId: '550e8400-e29b-41d4-a716-446655440000',
         postId: '550e8400-e29b-41d4-a716-446655440001',
       };
-      const result = InteractionMapper.toLikePostParams(dto);
+      const result = InteractionMapper.toLikePostParams(dto, mockUser);
 
       expect(result.userId).toBeInstanceOf(UserId);
+      expect(result.userId.value).toBe(mockUser.id);
       expect(result.postId).toBeInstanceOf(PostId);
+      expect(result.postId.value).toBe('550e8400-e29b-41d4-a716-446655440001');
     });
   });
 
   describe('toUnlikePostParams', () => {
-    it('should convert DeleteLikePostCommandDTO to params', () => {
+    it('should convert DeleteLikePostCommandDTO and user to params', () => {
       const dto: DeleteLikePostCommandDTO = {
-        userId: 'user-123',
         postId: 'post-456',
       };
-      const result = InteractionMapper.toUnlikePostParams(dto);
+      const result = InteractionMapper.toUnlikePostParams(dto, mockUser);
 
       expect(result.userId).toBeInstanceOf(UserId);
+      expect(result.userId.value).toBe(mockUser.id);
       expect(result.postId).toBeInstanceOf(PostId);
+      expect(result.postId.value).toBe('post-456');
     });
   });
 
   describe('toGetUserLikesParams', () => {
-    it('should convert GetUserLikesQueryDTO without pagination', () => {
+    it('should convert GetUserLikesQueryDTO and user without pagination', () => {
       const dto: GetUserLikesQueryDTO = {
-        userId: 'user-123',
         pagination: undefined,
       };
-      const result = InteractionMapper.toGetUserLikesParams(dto);
+      const result = InteractionMapper.toGetUserLikesParams(dto, mockUser);
 
       expect(result.userId).toBeInstanceOf(UserId);
+      expect(result.userId.value).toBe(mockUser.id);
       expect(result.pagination).toBeUndefined();
     });
 
-    it('should convert GetUserLikesQueryDTO with pagination', () => {
+    it('should convert GetUserLikesQueryDTO and user with pagination', () => {
       const pagination: PaginationRequestDTO = { page: 1, limit: 10 };
       const dto: GetUserLikesQueryDTO = {
-        userId: 'user-123',
         pagination,
       };
-      const result = InteractionMapper.toGetUserLikesParams(dto);
+      const result = InteractionMapper.toGetUserLikesParams(dto, mockUser);
 
       expect(result.userId).toBeInstanceOf(UserId);
-      expect(result.pagination).toBeInstanceOf(PaginationVO);
-    });
-
-    it('should handle multiple pages', () => {
-      const pagination: PaginationRequestDTO = { page: 5, limit: 20 };
-      const dto: GetUserLikesQueryDTO = {
-        userId: 'user-456',
-        pagination,
-      };
-      const result = InteractionMapper.toGetUserLikesParams(dto);
-
+      expect(result.userId.value).toBe(mockUser.id);
       expect(result.pagination).toBeInstanceOf(PaginationVO);
     });
   });

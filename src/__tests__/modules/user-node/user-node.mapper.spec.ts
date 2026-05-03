@@ -1,7 +1,8 @@
 import { UserId } from '@volontariapp/domain-social';
-import { UserNodeMapper } from '../../../modules/user-node/mappers/user-node.mapper';
-import { CreateSocialUserCommandDTO } from '../../../modules/user-node/dto/user-node.command.dto';
-import { GetSocialUserQueryDTO } from '../../../modules/user-node/dto/user-node.query.dto';
+import { describe, it, expect } from '@jest/globals';
+import { UserNodeMapper } from '../../../modules/user-node/mappers/user-node.mapper.js';
+import type { CreateSocialUserCommandDTO } from '../../../modules/user-node/dto/user-node.command.dto.js';
+import type { GetSocialUserQueryDTO } from '../../../modules/user-node/dto/user-node.query.dto.js';
 
 describe('UserNodeMapper', () => {
   describe('toUserIdVO', () => {

@@ -1,11 +1,12 @@
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-import { CreateSocialUserCommandDTO } from '../../../modules/user-node/dto/user-node.command.dto';
+import { CreateSocialUserCommandDTO } from '../../../modules/user-node/dto/user-node.command.dto.js';
 import {
   CreateSocialPostCommandDTO,
   PostUserOwnCommandDTO,
-} from '../../../modules/publication/dto/publication.command.dto';
-import { PaginationRequestDTO } from '../../../common/dto/pagination.dto';
+} from '../../../modules/publication/dto/publication.command.dto.js';
+import { PaginationRequestDTO } from '../../../common/dto/pagination.dto.js';
+import { describe, it, expect } from '@jest/globals';
 
 describe('DTO Validation - Bad Request Scenarios', () => {
   describe('Missing required fields return validation errors (400)', () => {
