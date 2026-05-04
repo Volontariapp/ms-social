@@ -1,11 +1,17 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { HealthModule } from '@volontariapp/health-check-nest';
+import { AuthModule, GrpcInternalGuard } from '@volontariapp/auth';
 import { AppConfigModule } from './config/app-config.module.js';
 import type { CustomConfig } from './config/base-config.js';
 import { DatabaseModule } from './providers/database/database.module.js';
-import { SocialModule } from './modules/social/social.module.js';
+import { UserNodeModule } from './modules/user-node/user-node.module.js';
+import { RelationshipModule } from './modules/relationship/relationship.module.js';
+import { PublicationModule } from './modules/publication/publication.module.js';
+import { InteractionModule } from './modules/interaction/interaction.module.js';
+import { ParticipationModule } from './modules/participation/participation.module.js';
+import { EventPostLinkModule } from './modules/event-post-link/event-post-link.module.js';
 import { GrpcClientModule } from './grpc/grpc-client.module.js';
-import { APP_FILTER, APP_PIPE } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { GlobalExceptionFilter } from '@volontariapp/errors-nest';
 import { GrpcValidationPipe } from '@volontariapp/validation-nest';
 
@@ -18,8 +24,16 @@ export class AppModule {
       module: AppModule,
       imports: [
         AppConfigModule.forRoot(config),
+        AuthModule.registerMicroservice({
+          internalPublicKeyPath: config.auth.internalPublicKeyPath,
+        }),
         DatabaseModule.register(config),
-        SocialModule,
+        UserNodeModule,
+        RelationshipModule,
+        PublicationModule,
+        InteractionModule,
+        ParticipationModule,
+        EventPostLinkModule,
         GrpcClientModule,
         HealthModule.register({
           databases: ['neo4j'],
@@ -27,6 +41,10 @@ export class AppModule {
         }),
       ],
       providers: [
+        {
+          provide: APP_GUARD,
+          useClass: GrpcInternalGuard,
+        },
         {
           provide: APP_FILTER,
           useClass: GlobalExceptionFilter,
