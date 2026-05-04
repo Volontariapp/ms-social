@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
-import { GrpcMethod } from '@nestjs/microservices';
+import { GrpcMethod, Payload } from '@nestjs/microservices';
 import { GRPC_SERVICES, EVENT_POST_LINK_METHODS } from '@volontariapp/contracts-nest';
 import { EventPostLinkService, PaginationVO } from '@volontariapp/domain-social';
 import {
@@ -27,7 +27,7 @@ export class EventPostLinkQueryController {
     EVENT_POST_LINK_METHODS.GET_EVENT_RELATED_TO_POST,
   )
   async getEventRelatedToPost(
-    data: GetEventRelatedToPostQueryDTO,
+    @Payload() data: GetEventRelatedToPostQueryDTO,
   ): Promise<GetEventRelatedToPostResponseDTO> {
     this.logger.log(`gRPC: Getting event linked to post: ${data.postId}`);
     const postId = EventPostLinkMapper.toGetEventRelatedToPostParams(data);
@@ -36,7 +36,7 @@ export class EventPostLinkQueryController {
   }
 
   @GrpcMethod(GRPC_SERVICES.EVENT_POST_LINK_QUERY_SERVICE, EVENT_POST_LINK_METHODS.GET_EVENT_POSTS)
-  async getEventPosts(data: GetEventPostsQueryDTO): Promise<GetEventPostsResponseDTO> {
+  async getEventPosts(@Payload() data: GetEventPostsQueryDTO): Promise<GetEventPostsResponseDTO> {
     this.logger.log(`gRPC: Getting posts linked to event: ${data.eventId}`);
     const { eventId, pagination } = EventPostLinkMapper.toGetEventPostsParams(data);
     const paginationVO = pagination ?? new PaginationVO(1, 10);

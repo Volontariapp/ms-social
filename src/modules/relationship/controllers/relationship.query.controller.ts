@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
-import { GrpcMethod } from '@nestjs/microservices';
+import { GrpcMethod, Payload } from '@nestjs/microservices';
 import { CurrentUser } from '@volontariapp/auth';
 import type { AuthUser } from '@volontariapp/auth';
 import { GRPC_SERVICES, RELATIONSHIP_METHODS } from '@volontariapp/contracts-nest';
@@ -38,7 +38,7 @@ export class RelationshipQueryController {
 
   @GrpcMethod(GRPC_SERVICES.RELATIONSHIP_QUERY_SERVICE, RELATIONSHIP_METHODS.GET_MY_FOLLOWS)
   async getMyFollows(
-    data: GetMyFollowsQueryDTO,
+    @Payload() data: GetMyFollowsQueryDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<GetMyFollowsResponseDTO> {
     this.logger.log(`gRPC: Getting follows for user: ${user.id}`);
@@ -50,7 +50,7 @@ export class RelationshipQueryController {
 
   @GrpcMethod(GRPC_SERVICES.RELATIONSHIP_QUERY_SERVICE, RELATIONSHIP_METHODS.GET_MY_FOLLOWERS)
   async getMyFollowers(
-    data: GetMyFollowersQueryDTO,
+    @Payload() data: GetMyFollowersQueryDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<GetMyFollowersResponseDTO> {
     this.logger.log(`gRPC: Getting followers for user: ${user.id}`);
@@ -62,7 +62,7 @@ export class RelationshipQueryController {
 
   @GrpcMethod(GRPC_SERVICES.RELATIONSHIP_QUERY_SERVICE, RELATIONSHIP_METHODS.GET_MY_BLOCKS)
   async getMyBlocks(
-    data: GetMyBlocksQueryDTO,
+    @Payload() data: GetMyBlocksQueryDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<GetMyBlocksResponseDTO> {
     this.logger.log(`gRPC: Getting blocks for user: ${user.id}`);
@@ -74,7 +74,7 @@ export class RelationshipQueryController {
 
   @GrpcMethod(GRPC_SERVICES.RELATIONSHIP_QUERY_SERVICE, RELATIONSHIP_METHODS.GET_WHO_BLOCKED_ME)
   async getWhoBlockedMe(
-    data: GetWhoBlockedMeQueryDTO,
+    @Payload() data: GetWhoBlockedMeQueryDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<GetWhoBlockedMeResponseDTO> {
     this.logger.log(`gRPC: Getting who blocked user: ${user.id}`);
@@ -84,8 +84,10 @@ export class RelationshipQueryController {
     return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
   }
 
-  @GrpcMethod(GRPC_SERVICES.RELATIONSHIP_QUERY_SERVICE, 'adminGetMyFollows')
-  async adminGetMyFollows(data: AdminGetMyFollowsQueryDTO): Promise<AdminGetMyFollowsResponseDTO> {
+  @GrpcMethod(GRPC_SERVICES.RELATIONSHIP_QUERY_SERVICE, RELATIONSHIP_METHODS.ADMIN_GET_MY_FOLLOWS)
+  async adminGetMyFollows(
+    @Payload() data: AdminGetMyFollowsQueryDTO,
+  ): Promise<AdminGetMyFollowsResponseDTO> {
     this.logger.log(`gRPC: Admin getting follows for user: ${data.userId}`);
     const { userId, pagination } = RelationshipMapper.toAdminGetFollowsParams(data);
     const paginationVO = pagination ?? new PaginationVO(1, 10);
@@ -93,9 +95,9 @@ export class RelationshipQueryController {
     return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
   }
 
-  @GrpcMethod(GRPC_SERVICES.RELATIONSHIP_QUERY_SERVICE, 'adminGetMyFollowers')
+  @GrpcMethod(GRPC_SERVICES.RELATIONSHIP_QUERY_SERVICE, RELATIONSHIP_METHODS.ADMIN_GET_MY_FOLLOWERS)
   async adminGetMyFollowers(
-    data: AdminGetMyFollowersQueryDTO,
+    @Payload() data: AdminGetMyFollowersQueryDTO,
   ): Promise<AdminGetMyFollowersResponseDTO> {
     this.logger.log(`gRPC: Admin getting followers for user: ${data.userId}`);
     const { userId, pagination } = RelationshipMapper.toAdminGetFollowersParams(data);
@@ -104,8 +106,10 @@ export class RelationshipQueryController {
     return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
   }
 
-  @GrpcMethod(GRPC_SERVICES.RELATIONSHIP_QUERY_SERVICE, 'adminGetMyBlocks')
-  async adminGetMyBlocks(data: AdminGetMyBlocksQueryDTO): Promise<AdminGetMyBlocksResponseDTO> {
+  @GrpcMethod(GRPC_SERVICES.RELATIONSHIP_QUERY_SERVICE, RELATIONSHIP_METHODS.ADMIN_GET_MY_BLOCKS)
+  async adminGetMyBlocks(
+    @Payload() data: AdminGetMyBlocksQueryDTO,
+  ): Promise<AdminGetMyBlocksResponseDTO> {
     this.logger.log(`gRPC: Admin getting blocks for user: ${data.userId}`);
     const { userId, pagination } = RelationshipMapper.toAdminGetBlocksParams(data);
     const paginationVO = pagination ?? new PaginationVO(1, 10);
@@ -113,9 +117,12 @@ export class RelationshipQueryController {
     return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
   }
 
-  @GrpcMethod(GRPC_SERVICES.RELATIONSHIP_QUERY_SERVICE, 'adminGetWhoBlockedMe')
+  @GrpcMethod(
+    GRPC_SERVICES.RELATIONSHIP_QUERY_SERVICE,
+    RELATIONSHIP_METHODS.ADMIN_GET_WHO_BLOCKED_ME,
+  )
   async adminGetWhoBlockedMe(
-    data: AdminGetWhoBlockedMeQueryDTO,
+    @Payload() data: AdminGetWhoBlockedMeQueryDTO,
   ): Promise<AdminGetWhoBlockedMeResponseDTO> {
     this.logger.log(`gRPC: Admin getting who blocked user: ${data.userId}`);
     const { userId, pagination } = RelationshipMapper.toAdminGetWhoBlockedMeParams(data);

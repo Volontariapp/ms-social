@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
-import { GrpcMethod } from '@nestjs/microservices';
+import { GrpcMethod, Payload } from '@nestjs/microservices';
 import { CurrentUser } from '@volontariapp/auth';
 import type { AuthUser } from '@volontariapp/auth';
 import { GRPC_SERVICES, PARTICIPATION_METHODS } from '@volontariapp/contracts-nest';
@@ -37,7 +37,7 @@ export class ParticipationQueryController {
   constructor(private readonly service: ParticipationService) {}
 
   @GrpcMethod(GRPC_SERVICES.PARTICIPATION_QUERY_SERVICE, PARTICIPATION_METHODS.GET_EVENT_NODE)
-  async getEventNode(data: GetSocialEventQueryDTO): Promise<GetEventNodeResponseDTO> {
+  async getEventNode(@Payload() data: GetSocialEventQueryDTO): Promise<GetEventNodeResponseDTO> {
     this.logger.log(`gRPC: Checking social event node existence: ${data.eventId}`);
     const eventId = ParticipationMapper.toGetEventNodeParams(data);
     const exists = await this.service.getEventExists(eventId);
@@ -46,7 +46,7 @@ export class ParticipationQueryController {
 
   @GrpcMethod(GRPC_SERVICES.PARTICIPATION_QUERY_SERVICE, PARTICIPATION_METHODS.GET_USER_EVENT)
   async getUserEvent(
-    data: GetUserEventQueryDTO,
+    @Payload() data: GetUserEventQueryDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<GetUserEventResponseDTO> {
     this.logger.log(`gRPC: Getting events created by user: ${user.id}`);
@@ -61,7 +61,7 @@ export class ParticipationQueryController {
     PARTICIPATION_METHODS.GET_USER_PARTICIPATE_EVENT,
   )
   async getUserParticipateEvent(
-    data: GetUserParticipateEventQueryDTO,
+    @Payload() data: GetUserParticipateEventQueryDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<GetUserParticipateEventResponseDTO> {
     this.logger.log(`gRPC: Getting events participated by user: ${user.id}`);
@@ -76,7 +76,7 @@ export class ParticipationQueryController {
     PARTICIPATION_METHODS.GET_EVENT_PARTICIPANTS,
   )
   async getEventParticipants(
-    data: GetEventParticipantsQueryDTO,
+    @Payload() data: GetEventParticipantsQueryDTO,
   ): Promise<GetEventParticipantsResponseDTO> {
     this.logger.log(`gRPC: Getting participants for event: ${data.eventId}`);
     const { eventId, pagination } = ParticipationMapper.toGetEventParticipantsParams(data);
@@ -85,9 +85,9 @@ export class ParticipationQueryController {
     return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
   }
 
-  @GrpcMethod(GRPC_SERVICES.PARTICIPATION_QUERY_SERVICE, 'getUserWishEvent')
+  @GrpcMethod(GRPC_SERVICES.PARTICIPATION_QUERY_SERVICE, PARTICIPATION_METHODS.GET_USER_WISH_EVENT)
   async getUserWishEvent(
-    data: GetUserWishEventQueryDTO,
+    @Payload() data: GetUserWishEventQueryDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<GetUserWishEventResponseDTO> {
     this.logger.log(`gRPC: Getting wished events for user: ${user.id}`);
@@ -97,8 +97,10 @@ export class ParticipationQueryController {
     return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
   }
 
-  @GrpcMethod(GRPC_SERVICES.PARTICIPATION_QUERY_SERVICE, 'adminGetUserEvent')
-  async adminGetUserEvent(data: AdminGetUserEventQueryDTO): Promise<AdminGetUserEventResponseDTO> {
+  @GrpcMethod(GRPC_SERVICES.PARTICIPATION_QUERY_SERVICE, PARTICIPATION_METHODS.ADMIN_GET_USER_EVENT)
+  async adminGetUserEvent(
+    @Payload() data: AdminGetUserEventQueryDTO,
+  ): Promise<AdminGetUserEventResponseDTO> {
     this.logger.log(`gRPC: Admin getting events created by user: ${data.userId}`);
     const { userId, pagination } = ParticipationMapper.toAdminGetUserEventsParams(data);
     const paginationVO = pagination ?? new PaginationVO(1, 10);
@@ -106,9 +108,12 @@ export class ParticipationQueryController {
     return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
   }
 
-  @GrpcMethod(GRPC_SERVICES.PARTICIPATION_QUERY_SERVICE, 'adminGetUserParticipateEvent')
+  @GrpcMethod(
+    GRPC_SERVICES.PARTICIPATION_QUERY_SERVICE,
+    PARTICIPATION_METHODS.ADMIN_GET_USER_PARTICIPATE_EVENT,
+  )
   async adminGetUserParticipateEvent(
-    data: AdminGetUserParticipateEventQueryDTO,
+    @Payload() data: AdminGetUserParticipateEventQueryDTO,
   ): Promise<AdminGetUserParticipateEventResponseDTO> {
     this.logger.log(`gRPC: Admin getting events participated by user: ${data.userId}`);
     const { userId, pagination } = ParticipationMapper.toAdminGetUserParticipationsParams(data);
@@ -117,9 +122,12 @@ export class ParticipationQueryController {
     return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
   }
 
-  @GrpcMethod(GRPC_SERVICES.PARTICIPATION_QUERY_SERVICE, 'adminGetUserWishEvent')
+  @GrpcMethod(
+    GRPC_SERVICES.PARTICIPATION_QUERY_SERVICE,
+    PARTICIPATION_METHODS.ADMIN_GET_USER_WISH_EVENT,
+  )
   async adminGetUserWishEvent(
-    data: AdminGetUserWishEventQueryDTO,
+    @Payload() data: AdminGetUserWishEventQueryDTO,
   ): Promise<AdminGetUserWishEventResponseDTO> {
     this.logger.log(`gRPC: Admin getting wished events for user: ${data.userId}`);
     const { userId, pagination } = ParticipationMapper.toAdminGetUserWishEventsParams(data);

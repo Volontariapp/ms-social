@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
-import { GrpcMethod } from '@nestjs/microservices';
+import { GrpcMethod, Payload } from '@nestjs/microservices';
 import { CurrentUser } from '@volontariapp/auth';
 import type { AuthUser } from '@volontariapp/auth';
 import { GRPC_SERVICES, PUBLICATION_METHODS } from '@volontariapp/contracts-nest';
@@ -32,7 +32,9 @@ export class PublicationCommandController {
   constructor(private readonly service: PublicationService) {}
 
   @GrpcMethod(GRPC_SERVICES.PUBLICATION_COMMAND_SERVICE, PUBLICATION_METHODS.CREATE_POST_NODE)
-  async createPostNode(data: CreateSocialPostCommandDTO): Promise<CreatePostNodeResponseDTO> {
+  async createPostNode(
+    @Payload() data: CreateSocialPostCommandDTO,
+  ): Promise<CreatePostNodeResponseDTO> {
     this.logger.log(`gRPC: Creating post node for: ${data.postId}`);
     const postId = PublicationMapper.toPostIdVOFromCommand(data);
     await this.service.createPost(postId);
@@ -40,7 +42,9 @@ export class PublicationCommandController {
   }
 
   @GrpcMethod(GRPC_SERVICES.PUBLICATION_COMMAND_SERVICE, PUBLICATION_METHODS.DELETE_POST_NODE)
-  async deletePostNode(data: DeleteSocialPostCommandDTO): Promise<DeletePostNodeResponseDTO> {
+  async deletePostNode(
+    @Payload() data: DeleteSocialPostCommandDTO,
+  ): Promise<DeletePostNodeResponseDTO> {
     this.logger.log(`gRPC: Deleting post node for: ${data.postId}`);
     const postId = PublicationMapper.toDeletePostIdVOFromCommand(data);
     await this.service.deletePost(postId);
@@ -49,7 +53,7 @@ export class PublicationCommandController {
 
   @GrpcMethod(GRPC_SERVICES.PUBLICATION_COMMAND_SERVICE, PUBLICATION_METHODS.POST_USER_OWN)
   async postUserOwn(
-    data: PostUserOwnCommandDTO,
+    @Payload() data: PostUserOwnCommandDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<PostUserOwnResponseDTO> {
     this.logger.log(`gRPC: User ${user.id} owns post ${data.postId}`);
@@ -60,7 +64,7 @@ export class PublicationCommandController {
 
   @GrpcMethod(GRPC_SERVICES.PUBLICATION_COMMAND_SERVICE, PUBLICATION_METHODS.DELETE_USER_OWN)
   async deleteUserOwn(
-    data: DeleteUserOwnCommandDTO,
+    @Payload() data: DeleteUserOwnCommandDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<DeleteUserOwnResponseDTO> {
     this.logger.log(`gRPC: User ${user.id} disowns post ${data.postId}`);
@@ -69,17 +73,19 @@ export class PublicationCommandController {
     return new DeleteUserOwnResponseDTO();
   }
 
-  @GrpcMethod(GRPC_SERVICES.PUBLICATION_COMMAND_SERVICE, 'adminPostUserOwn')
-  async adminPostUserOwn(data: AdminPostUserOwnCommandDTO): Promise<AdminPostUserOwnResponseDTO> {
+  @GrpcMethod(GRPC_SERVICES.PUBLICATION_COMMAND_SERVICE, PUBLICATION_METHODS.ADMIN_POST_USER_OWN)
+  async adminPostUserOwn(
+    @Payload() data: AdminPostUserOwnCommandDTO,
+  ): Promise<AdminPostUserOwnResponseDTO> {
     this.logger.log(`gRPC: Admin user owns post ${data.postId} for user ${data.userId}`);
     const { userId, postId } = PublicationMapper.toAdminOwnPostCommandParams(data);
     await this.service.ownPost(userId, postId);
     return new AdminPostUserOwnResponseDTO();
   }
 
-  @GrpcMethod(GRPC_SERVICES.PUBLICATION_COMMAND_SERVICE, 'adminDeleteUserOwn')
+  @GrpcMethod(GRPC_SERVICES.PUBLICATION_COMMAND_SERVICE, PUBLICATION_METHODS.ADMIN_DELETE_USER_OWN)
   async adminDeleteUserOwn(
-    data: AdminDeleteUserOwnCommandDTO,
+    @Payload() data: AdminDeleteUserOwnCommandDTO,
   ): Promise<AdminDeleteUserOwnResponseDTO> {
     this.logger.log(`gRPC: Admin user disowns post ${data.postId} for user ${data.userId}`);
     const { userId, postId } = PublicationMapper.toAdminDisownPostCommandParams(data);

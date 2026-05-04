@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
-import { GrpcMethod } from '@nestjs/microservices';
+import { GrpcMethod, Payload } from '@nestjs/microservices';
 import { CurrentUser } from '@volontariapp/auth';
 import type { AuthUser } from '@volontariapp/auth';
 import { GRPC_SERVICES, RELATIONSHIP_METHODS } from '@volontariapp/contracts-nest';
@@ -37,7 +37,7 @@ export class RelationshipCommandController {
 
   @GrpcMethod(GRPC_SERVICES.RELATIONSHIP_COMMAND_SERVICE, RELATIONSHIP_METHODS.POST_FOLLOW_USER)
   async postFollowUser(
-    data: PostFollowUserCommandDTO,
+    @Payload() data: PostFollowUserCommandDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<PostFollowUserResponseDTO> {
     this.logger.log(`gRPC: User ${user.id} following ${data.followedId}`);
@@ -48,7 +48,7 @@ export class RelationshipCommandController {
 
   @GrpcMethod(GRPC_SERVICES.RELATIONSHIP_COMMAND_SERVICE, RELATIONSHIP_METHODS.DELETE_FOLLOW_USER)
   async deleteFollowUser(
-    data: DeleteFollowUserCommandDTO,
+    @Payload() data: DeleteFollowUserCommandDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<DeleteFollowUserResponseDTO> {
     this.logger.log(`gRPC: User ${user.id} unfollowing ${data.followedId}`);
@@ -59,7 +59,7 @@ export class RelationshipCommandController {
 
   @GrpcMethod(GRPC_SERVICES.RELATIONSHIP_COMMAND_SERVICE, RELATIONSHIP_METHODS.POST_BLOCK_USER)
   async postBlockUser(
-    data: PostBlockUserCommandDTO,
+    @Payload() data: PostBlockUserCommandDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<PostBlockUserResponseDTO> {
     this.logger.log(`gRPC: User ${user.id} blocking ${data.blockedId}`);
@@ -70,7 +70,7 @@ export class RelationshipCommandController {
 
   @GrpcMethod(GRPC_SERVICES.RELATIONSHIP_COMMAND_SERVICE, RELATIONSHIP_METHODS.DELETE_BLOCK_USER)
   async deleteBlockUser(
-    data: DeleteBlockUserCommandDTO,
+    @Payload() data: DeleteBlockUserCommandDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<DeleteBlockUserResponseDTO> {
     this.logger.log(`gRPC: User ${user.id} unblocking ${data.blockedId}`);
@@ -79,9 +79,12 @@ export class RelationshipCommandController {
     return new DeleteBlockUserResponseDTO();
   }
 
-  @GrpcMethod(GRPC_SERVICES.RELATIONSHIP_COMMAND_SERVICE, 'adminPostFollowUser')
+  @GrpcMethod(
+    GRPC_SERVICES.RELATIONSHIP_COMMAND_SERVICE,
+    RELATIONSHIP_METHODS.ADMIN_POST_FOLLOW_USER,
+  )
   async adminPostFollowUser(
-    data: AdminPostFollowUserCommandDTO,
+    @Payload() data: AdminPostFollowUserCommandDTO,
   ): Promise<AdminPostFollowUserResponseDTO> {
     this.logger.log(`gRPC: Admin user following ${data.followedId} for user ${data.followerId}`);
     const { followerId, followedId } = RelationshipMapper.toAdminFollowUserParams(data);
@@ -89,9 +92,12 @@ export class RelationshipCommandController {
     return new AdminPostFollowUserResponseDTO();
   }
 
-  @GrpcMethod(GRPC_SERVICES.RELATIONSHIP_COMMAND_SERVICE, 'adminDeleteFollowUser')
+  @GrpcMethod(
+    GRPC_SERVICES.RELATIONSHIP_COMMAND_SERVICE,
+    RELATIONSHIP_METHODS.ADMIN_DELETE_FOLLOW_USER,
+  )
   async adminDeleteFollowUser(
-    data: AdminDeleteFollowUserCommandDTO,
+    @Payload() data: AdminDeleteFollowUserCommandDTO,
   ): Promise<AdminDeleteFollowUserResponseDTO> {
     this.logger.log(`gRPC: Admin user unfollowing ${data.followedId} for user ${data.followerId}`);
     const { followerId, followedId } = RelationshipMapper.toAdminUnfollowUserParams(data);
@@ -99,9 +105,12 @@ export class RelationshipCommandController {
     return new AdminDeleteFollowUserResponseDTO();
   }
 
-  @GrpcMethod(GRPC_SERVICES.RELATIONSHIP_COMMAND_SERVICE, 'adminPostBlockUser')
+  @GrpcMethod(
+    GRPC_SERVICES.RELATIONSHIP_COMMAND_SERVICE,
+    RELATIONSHIP_METHODS.ADMIN_POST_BLOCK_USER,
+  )
   async adminPostBlockUser(
-    data: AdminPostBlockUserCommandDTO,
+    @Payload() data: AdminPostBlockUserCommandDTO,
   ): Promise<AdminPostBlockUserResponseDTO> {
     this.logger.log(`gRPC: Admin user blocking ${data.blockedId} for user ${data.blockerId}`);
     const { blockerId, blockedId } = RelationshipMapper.toAdminBlockUserParams(data);
@@ -109,9 +118,12 @@ export class RelationshipCommandController {
     return new AdminPostBlockUserResponseDTO();
   }
 
-  @GrpcMethod(GRPC_SERVICES.RELATIONSHIP_COMMAND_SERVICE, 'adminDeleteBlockUser')
+  @GrpcMethod(
+    GRPC_SERVICES.RELATIONSHIP_COMMAND_SERVICE,
+    RELATIONSHIP_METHODS.ADMIN_DELETE_BLOCK_USER,
+  )
   async adminDeleteBlockUser(
-    data: AdminDeleteBlockUserCommandDTO,
+    @Payload() data: AdminDeleteBlockUserCommandDTO,
   ): Promise<AdminDeleteBlockUserResponseDTO> {
     this.logger.log(`gRPC: Admin user unblocking ${data.blockedId} for user ${data.blockerId}`);
     const { blockerId, blockedId } = RelationshipMapper.toAdminUnblockUserParams(data);

@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
-import { GrpcMethod } from '@nestjs/microservices';
+import { GrpcMethod, Payload } from '@nestjs/microservices';
 import { CurrentUser } from '@volontariapp/auth';
 import type { AuthUser } from '@volontariapp/auth';
 import { GRPC_SERVICES, INTERACTION_METHODS } from '@volontariapp/contracts-nest';
@@ -29,7 +29,7 @@ export class InteractionCommandController {
 
   @GrpcMethod(GRPC_SERVICES.INTERACTION_COMMAND_SERVICE, INTERACTION_METHODS.POST_LIKE_POST)
   async postLikePost(
-    data: PostLikePostCommandDTO,
+    @Payload() data: PostLikePostCommandDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<PostLikePostResponseDTO> {
     this.logger.log(`gRPC: User ${user.id} liking post ${data.postId}`);
@@ -40,7 +40,7 @@ export class InteractionCommandController {
 
   @GrpcMethod(GRPC_SERVICES.INTERACTION_COMMAND_SERVICE, INTERACTION_METHODS.DELETE_LIKE_POST)
   async deleteLikePost(
-    data: DeleteLikePostCommandDTO,
+    @Payload() data: DeleteLikePostCommandDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<DeleteLikePostResponseDTO> {
     this.logger.log(`gRPC: User ${user.id} unliking post ${data.postId}`);
@@ -49,9 +49,9 @@ export class InteractionCommandController {
     return new DeleteLikePostResponseDTO();
   }
 
-  @GrpcMethod(GRPC_SERVICES.INTERACTION_COMMAND_SERVICE, 'adminPostLikePost')
+  @GrpcMethod(GRPC_SERVICES.INTERACTION_COMMAND_SERVICE, INTERACTION_METHODS.ADMIN_POST_LIKE_POST)
   async adminPostLikePost(
-    data: AdminPostLikePostCommandDTO,
+    @Payload() data: AdminPostLikePostCommandDTO,
   ): Promise<AdminPostLikePostResponseDTO> {
     this.logger.log(`gRPC: Admin user liking post ${data.postId} for user ${data.userId}`);
     const { userId, postId } = InteractionMapper.toAdminLikePostParams(data);
@@ -59,9 +59,9 @@ export class InteractionCommandController {
     return new AdminPostLikePostResponseDTO();
   }
 
-  @GrpcMethod(GRPC_SERVICES.INTERACTION_COMMAND_SERVICE, 'adminDeleteLikePost')
+  @GrpcMethod(GRPC_SERVICES.INTERACTION_COMMAND_SERVICE, INTERACTION_METHODS.ADMIN_DELETE_LIKE_POST)
   async adminDeleteLikePost(
-    data: AdminDeleteLikePostCommandDTO,
+    @Payload() data: AdminDeleteLikePostCommandDTO,
   ): Promise<AdminDeleteLikePostResponseDTO> {
     this.logger.log(`gRPC: Admin user unliking post ${data.postId} for user ${data.userId}`);
     const { userId, postId } = InteractionMapper.toAdminUnlikePostParams(data);

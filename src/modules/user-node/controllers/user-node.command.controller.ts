@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { Logger } from '@volontariapp/logger';
-import { GrpcMethod } from '@nestjs/microservices';
+import { GrpcMethod, Payload } from '@nestjs/microservices';
 import { GRPC_SERVICES, SOCIAL_USER_NODE_METHODS } from '@volontariapp/contracts-nest';
 import { SocialUserService } from '@volontariapp/domain-social';
 import {
@@ -25,7 +25,9 @@ export class UserNodeCommandController {
     GRPC_SERVICES.SOCIAL_USER_NODE_COMMAND_SERVICE,
     SOCIAL_USER_NODE_METHODS.CREATE_USER_NODE,
   )
-  async createUserNode(data: CreateSocialUserCommandDTO): Promise<CreateUserNodeResponseDTO> {
+  async createUserNode(
+    @Payload() data: CreateSocialUserCommandDTO,
+  ): Promise<CreateUserNodeResponseDTO> {
     this.logger.log(`gRPC: Creating user node for: ${data.userId}`);
     const userId = UserNodeMapper.toUserIdVOFromCommand(data);
     await this.service.createUser(userId);
@@ -36,7 +38,9 @@ export class UserNodeCommandController {
     GRPC_SERVICES.SOCIAL_USER_NODE_COMMAND_SERVICE,
     SOCIAL_USER_NODE_METHODS.DELETE_USER_NODE,
   )
-  async deleteUserNode(data: DeleteSocialUserCommandDTO): Promise<DeleteUserNodeResponseDTO> {
+  async deleteUserNode(
+    @Payload() data: DeleteSocialUserCommandDTO,
+  ): Promise<DeleteUserNodeResponseDTO> {
     this.logger.log(`gRPC: Deleting user node for: ${data.userId}`);
     const userId = UserNodeMapper.toUserIdVO(data.userId);
     await this.service.deleteUser(userId);
