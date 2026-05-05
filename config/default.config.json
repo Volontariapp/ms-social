@@ -22,5 +22,14 @@
     "database": "neo4j",
     "authScheme": "basic",
     "realm": "neo4j"
+  },
+  "db": {
+    "host": "localhost",
+    "port": 5435,
+    "username": "user",
+    "password": "password",
+    "database": "ms_social",
+    "maxPoolSize": 10,
+    "ssl": false
   }
 }

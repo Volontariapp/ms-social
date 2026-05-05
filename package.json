@@ -22,6 +22,16 @@
     "test:cov": "jest --coverage --passWithNoTests",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
+    "typeorm": "node --loader ts-node/esm ./node_modules/typeorm/cli.js",
+    "migration:generate": "yarn typeorm migration:generate -d src/config/data-source.ts",
+    "migration:run:local": "NODE_ENV=local yarn typeorm migration:run -d src/config/data-source.ts",
+    "migration:run:dev": "NODE_ENV=development yarn typeorm migration:run -d src/config/data-source.ts",
+    "migration:run:test": "NODE_ENV=test yarn typeorm migration:run -d src/config/data-source.ts",
+    "migration:run:prod": "NODE_ENV=production yarn typeorm migration:run -d src/config/data-source.ts",
+    "migration:revert:local": "NODE_ENV=local yarn typeorm migration:revert -d src/config/data-source.ts",
+    "migration:revert:dev": "NODE_ENV=development yarn typeorm migration:revert -d src/config/data-source.ts",
+    "migration:revert:test": "NODE_ENV=test yarn typeorm migration:revert -d src/config/data-source.ts",
+    "migration:revert:prod": "NODE_ENV=production yarn typeorm migration:revert -d src/config/data-source.ts",
     "prepare": "husky"
   },
   "dependencies": {
@@ -35,6 +45,7 @@
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/swagger": "^11.2.7",
     "@nestjs/terminus": "^11.1.1",
+    "@nestjs/typeorm": "^11.0.1",
     "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/core": "^2.6.1",
     "@volontariapp/auth": "3.2.2",
@@ -42,6 +53,7 @@
     "@volontariapp/config": "2.1.0",
     "@volontariapp/contracts": "4.0.8",
     "@volontariapp/contracts-nest": "3.1.0",
+    "@volontariapp/database": "1.14.0",
     "@volontariapp/domain-social": "0.3.9",
     "@volontariapp/errors": "0.5.0",
     "@volontariapp/errors-nest": "0.10.2",
@@ -55,7 +67,8 @@
     "class-validator": "^0.15.1",
     "joi": "^18.0.2",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "typeorm": "^0.3.28"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",

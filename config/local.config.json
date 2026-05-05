@@ -18,5 +18,14 @@
     "msPostUrl": "localhost:5002",
     "msEventUrl": "localhost:5003",
     "msSocialUrl": "localhost:5004"
+  },
+  "db": {
+    "host": "localhost",
+    "port": 5435,
+    "username": "user",
+    "password": "password",
+    "database": "ms_social",
+    "maxPoolSize": 10,
+    "ssl": false
   }
 }
