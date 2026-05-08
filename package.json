@@ -53,7 +53,7 @@
     "@volontariapp/config": "2.1.0",
     "@volontariapp/contracts": "4.0.8",
     "@volontariapp/contracts-nest": "3.1.0",
-    "@volontariapp/database": "1.14.0",
+    "@volontariapp/database": "1.15.0-snap-4fcec4b",
     "@volontariapp/domain-social": "0.3.9",
     "@volontariapp/errors": "0.5.0",
     "@volontariapp/errors-nest": "0.10.2",
