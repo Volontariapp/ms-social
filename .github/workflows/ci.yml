@@ -18,10 +18,9 @@ jobs:
     uses: Volontariapp/ci-tools/.github/workflows/ci-docker-smoke.yml@main
     with:
       service-name: ms-social
-      db-image: "neo4j:5"
-      db-name: "neo4j"
-      db-user: "neo4j"
+      db-name: "ms_social"
+      db-user: "user"
       db-password: "password"
-      db-type: "neo4j"
+      db-type: "postgres-neo4j"
       port: 3004
     secrets: inherit
