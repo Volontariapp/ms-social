@@ -29,7 +29,7 @@ const AppDataSource = new DataSource({
   ssl: appConfig.db.ssl ? { rejectUnauthorized: false } : false,
   entities: [EventQueueEntity, JobsOutboxEntity],
   synchronize: false,
-  migrations: ['src/migrations/*.ts'],
+  migrations: ['src/migrations/*.{ts,js}'],
 });
 
 export default AppDataSource;
