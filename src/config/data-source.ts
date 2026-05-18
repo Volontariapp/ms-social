@@ -5,7 +5,7 @@ import { existsSync } from 'fs';
 import { CustomConfig } from './base-config.js';
 
 import { loadConfig } from '@volontariapp/config';
-import { EventQueueEntity, JobsOutboxEntity } from '@volontariapp/database';
+import { EventQueueEntity, JobsOutboxEntity, JobAuditModel } from '@volontariapp/database';
 
 function resolveConfigDirectory(): string {
   const currentFileDir = dirname(fileURLToPath(import.meta.url));
@@ -27,7 +27,7 @@ const AppDataSource = new DataSource({
   password: appConfig.db.password,
   database: appConfig.db.database,
   ssl: appConfig.db.ssl ? { rejectUnauthorized: false } : false,
-  entities: [EventQueueEntity, JobsOutboxEntity],
+  entities: [EventQueueEntity, JobsOutboxEntity, JobAuditModel],
   synchronize: false,
   migrations: ['src/migrations/*.{ts,js}'],
 });
