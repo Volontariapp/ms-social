@@ -35,6 +35,18 @@ export class EventPostLinkQueryController {
     return { eventId: eventId ?? '' };
   }
 
+  @GrpcMethod(GRPC_SERVICES.EVENT_POST_LINK_QUERY_SERVICE, 'GetEventsRelatedToPosts')
+  async getEventsRelatedToPosts(
+    @Payload() data: { postIds: string[] },
+  ): Promise<{ links: { postId: string; eventId: string }[] }> {
+    this.logger.log(`gRPC: Getting events linked to ${String(data.postIds.length)} posts`);
+    const postIds = data.postIds.map((id) =>
+      EventPostLinkMapper.toGetEventRelatedToPostParams({ postId: id }),
+    );
+    const links = await this.service.getEventsRelatedToPosts(postIds);
+    return { links };
+  }
+
   @GrpcMethod(GRPC_SERVICES.EVENT_POST_LINK_QUERY_SERVICE, EVENT_POST_LINK_METHODS.GET_EVENT_POSTS)
   async getEventPosts(@Payload() data: GetEventPostsQueryDTO): Promise<GetEventPostsResponseDTO> {
     this.logger.log(`gRPC: Getting posts linked to event: ${data.eventId}`);
