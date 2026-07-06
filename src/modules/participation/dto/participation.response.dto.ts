@@ -19,6 +19,7 @@ import type {
   AdminGetUserParticipateEventResponse,
   AdminGetUserWishEventResponse,
   GetEventParticipantsResponse,
+  GetRecommendedEventIdsResponse,
 } from '@volontariapp/contracts-nest';
 import {
   SuccessResponseDTO,
@@ -81,3 +82,6 @@ export class GetEventParticipantsResponseDTO
   extends IdsResponseDTO
   implements GetEventParticipantsResponse {}
 export class GetEventNodeResponseDTO extends ExistsResponseDTO implements GetEventNodeResponse {}
+export class GetRecommendedEventIdsResponseDTO
+  extends IdsResponseDTO
+  implements GetRecommendedEventIdsResponse {}

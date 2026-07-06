@@ -9,8 +9,45 @@ import {
   AdminGetUserEventQuery,
   AdminGetUserParticipateEventQuery,
   AdminGetUserWishEventQuery,
+  GetRecommendedEventIdsQuery,
 } from '@volontariapp/contracts-nest';
 import { PaginationRequestDTO } from '../../../common/dto/pagination.dto.js';
+import { IsBoolean } from 'class-validator';
+
+export class GetRecommendedEventIdsQueryDTO implements GetRecommendedEventIdsQuery {
+  @IsOptional()
+  @IsBoolean()
+  excludeCreatedByMe!: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  excludeBlockedUsers!: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  excludeParticipatedByMe!: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  excludeWishedByMe!: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  onlyParticipatedByFriends!: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  onlyWishedByFriends!: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  onlyCreatedByFriends!: boolean;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => PaginationRequestDTO)
+  pagination: PaginationRequestDTO | undefined;
+}
 
 export class GetSocialEventQueryDTO implements GetSocialEventQuery {
   @IsString()
