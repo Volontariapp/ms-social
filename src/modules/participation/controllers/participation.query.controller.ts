@@ -4,7 +4,7 @@ import { GrpcMethod, Payload } from '@nestjs/microservices';
 import { CurrentUser } from '@volontariapp/auth';
 import type { AuthUser } from '@volontariapp/auth';
 import { GRPC_SERVICES, PARTICIPATION_METHODS } from '@volontariapp/contracts-nest';
-import { ParticipationService, PaginationVO } from '@volontariapp/domain-social';
+import { ParticipationService, PaginationVO, UserId } from '@volontariapp/domain-social';
 import {
   GetSocialEventQueryDTO,
   GetUserEventQueryDTO,
@@ -14,6 +14,7 @@ import {
   AdminGetUserEventQueryDTO,
   AdminGetUserParticipateEventQueryDTO,
   AdminGetUserWishEventQueryDTO,
+  GetRecommendedEventIdsQueryDTO,
 } from '../dto/participation.query.dto.js';
 import {
   GetEventNodeResponseDTO,
@@ -24,6 +25,7 @@ import {
   AdminGetUserEventResponseDTO,
   AdminGetUserParticipateEventResponseDTO,
   AdminGetUserWishEventResponseDTO,
+  GetRecommendedEventIdsResponseDTO,
 } from '../dto/participation.response.dto.js';
 import { ParticipationMapper } from '../mappers/participation.mapper.js';
 import { PaginatedIdsMapper } from '../../../common/mappers/paginated-ids.mapper.js';
@@ -133,6 +135,32 @@ export class ParticipationQueryController {
     const { userId, pagination } = ParticipationMapper.toAdminGetUserWishEventsParams(data);
     const paginationVO = pagination ?? new PaginationVO(1, 10);
     const paginatedIds = await this.service.getUserWishes(userId, paginationVO);
+    return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
+  }
+
+  @GrpcMethod(GRPC_SERVICES.PARTICIPATION_QUERY_SERVICE, 'GetRecommendedEventIds')
+  async getRecommendedEventIds(
+    @Payload() data: GetRecommendedEventIdsQueryDTO,
+    @CurrentUser() user: AuthUser,
+  ): Promise<GetRecommendedEventIdsResponseDTO> {
+    this.logger.log(`gRPC: Getting recommended events for user: ${user.id}`);
+    const paginationVO = data.pagination
+      ? new PaginationVO(data.pagination.page, data.pagination.limit)
+      : new PaginationVO(1, 10);
+
+    const paginatedIds = await this.service.getRecommendedEventIds(
+      new UserId(user.id),
+      {
+        excludeCreatedByMe: data.excludeCreatedByMe,
+        excludeBlockedUsers: data.excludeBlockedUsers,
+        excludeParticipatedByMe: data.excludeParticipatedByMe,
+        excludeWishedByMe: data.excludeWishedByMe,
+        onlyParticipatedByFriends: data.onlyParticipatedByFriends,
+        onlyWishedByFriends: data.onlyWishedByFriends,
+        onlyCreatedByFriends: data.onlyCreatedByFriends,
+      },
+      paginationVO,
+    );
     return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
   }
 }
