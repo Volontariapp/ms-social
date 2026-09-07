@@ -1,8 +1,17 @@
 import { DynamicModule, Global, Module } from '@nestjs/common';
 import { Neo4jBridgeModule, PostgresBridgeModule } from '@volontariapp/bridge-nest';
 import type { CustomConfig } from '../../config/base-config.js';
-import { JobsOutboxModel, EventQueueModel } from '@volontariapp/database';
+import {
+  JobsOutboxModel,
+  EventQueueModel,
+  JobsOutboxEntity,
+  EventQueueEntity,
+  databaseMapper,
+} from '@volontariapp/database';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
+databaseMapper.registerBidirectional(EventQueueModel, EventQueueEntity);
+databaseMapper.registerBidirectional(JobsOutboxModel, JobsOutboxEntity);
 
 const entities = [JobsOutboxModel, EventQueueModel];
 
