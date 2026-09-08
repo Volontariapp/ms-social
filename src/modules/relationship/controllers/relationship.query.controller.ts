@@ -4,7 +4,7 @@ import { GrpcMethod, Payload } from '@nestjs/microservices';
 import { CurrentUser } from '@volontariapp/auth';
 import type { AuthUser } from '@volontariapp/auth';
 import { GRPC_SERVICES, RELATIONSHIP_METHODS } from '@volontariapp/contracts-nest';
-import { RelationshipService, PaginationVO } from '@volontariapp/domain-social';
+import { RelationshipService, PaginationVO, UserId } from '@volontariapp/domain-social';
 import {
   GetMyFollowsQueryDTO,
   GetMyFollowersQueryDTO,
@@ -14,6 +14,8 @@ import {
   AdminGetMyFollowersQueryDTO,
   AdminGetMyBlocksQueryDTO,
   AdminGetWhoBlockedMeQueryDTO,
+  GetIsFollowingQueryDTO,
+  AdminGetIsFollowingQueryDTO,
 } from '../dto/relationship.query.dto.js';
 import {
   GetMyFollowsResponseDTO,
@@ -24,6 +26,8 @@ import {
   AdminGetMyFollowersResponseDTO,
   AdminGetMyBlocksResponseDTO,
   AdminGetWhoBlockedMeResponseDTO,
+  GetIsFollowingResponseDTO,
+  AdminGetIsFollowingResponseDTO,
 } from '../dto/relationship.response.dto.js';
 import { RelationshipMapper } from '../mappers/relationship.mapper.js';
 import { PaginatedIdsMapper } from '../../../common/mappers/paginated-ids.mapper.js';
@@ -129,5 +133,32 @@ export class RelationshipQueryController {
     const paginationVO = pagination ?? new PaginationVO(1, 10);
     const paginatedIds = await this.service.getWhoBlockedMe(userId, paginationVO);
     return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
+  }
+
+  @GrpcMethod(GRPC_SERVICES.RELATIONSHIP_QUERY_SERVICE, 'getIsFollowing')
+  async getIsFollowing(
+    @Payload() data: GetIsFollowingQueryDTO,
+    @CurrentUser() user: AuthUser,
+  ): Promise<GetIsFollowingResponseDTO> {
+    this.logger.log(`gRPC: Checking if user: ${user.id} is following user: ${data.userId}`);
+    const isFollowing = await this.service.isFollowing(
+      new UserId(user.id),
+      new UserId(data.userId),
+    );
+    return { isFollowing };
+  }
+
+  @GrpcMethod(GRPC_SERVICES.RELATIONSHIP_QUERY_SERVICE, 'adminGetIsFollowing')
+  async adminGetIsFollowing(
+    @Payload() data: AdminGetIsFollowingQueryDTO,
+  ): Promise<AdminGetIsFollowingResponseDTO> {
+    this.logger.log(
+      `gRPC: Admin checking if user: ${data.followerId} is following user: ${data.followedId}`,
+    );
+    const isFollowing = await this.service.isFollowing(
+      new UserId(data.followerId),
+      new UserId(data.followedId),
+    );
+    return { isFollowing };
   }
 }

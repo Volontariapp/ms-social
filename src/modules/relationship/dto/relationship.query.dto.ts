@@ -9,6 +9,8 @@ import {
   AdminGetMyFollowersQuery,
   AdminGetMyBlocksQuery,
   AdminGetWhoBlockedMeQuery,
+  GetIsFollowingQuery,
+  AdminGetIsFollowingQuery,
 } from '@volontariapp/contracts-nest';
 import { PaginationRequestDTO } from '../../../common/dto/pagination.dto.js';
 
@@ -78,4 +80,17 @@ export class AdminGetWhoBlockedMeQueryDTO implements AdminGetWhoBlockedMeQuery {
   @ValidateNested()
   @Type(() => PaginationRequestDTO)
   pagination: PaginationRequestDTO | undefined;
+}
+
+export class GetIsFollowingQueryDTO implements GetIsFollowingQuery {
+  @IsString()
+  userId!: string;
+}
+
+export class AdminGetIsFollowingQueryDTO implements AdminGetIsFollowingQuery {
+  @IsString()
+  followerId!: string;
+
+  @IsString()
+  followedId!: string;
 }

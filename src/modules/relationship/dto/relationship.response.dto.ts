@@ -15,6 +15,8 @@ import type {
   AdminGetMyFollowersResponse,
   AdminGetMyBlocksResponse,
   AdminGetWhoBlockedMeResponse,
+  GetIsFollowingResponse,
+  AdminGetIsFollowingResponse,
 } from '@volontariapp/contracts-nest';
 import { SuccessResponseDTO, IdsResponseDTO } from '../../../common/dto/base.response.dto.js';
 
@@ -57,3 +59,11 @@ export class AdminGetMyBlocksResponseDTO
 export class AdminGetWhoBlockedMeResponseDTO
   extends IdsResponseDTO
   implements AdminGetWhoBlockedMeResponse {}
+
+export class GetIsFollowingResponseDTO implements GetIsFollowingResponse {
+  isFollowing!: boolean;
+}
+
+export class AdminGetIsFollowingResponseDTO implements AdminGetIsFollowingResponse {
+  isFollowing!: boolean;
+}
