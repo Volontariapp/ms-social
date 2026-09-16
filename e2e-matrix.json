@@ -2,6 +2,6 @@
   "api-gateway": "main",
   "ms-post": "main",
   "ms-event": "main",
-  "ms-social": "main",
+  "ms-user": "main",
   "ms-storage": "main"
 }
