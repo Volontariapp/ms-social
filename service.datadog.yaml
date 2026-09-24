@@ -1,0 +1,9 @@
+schema-version: v2.2
+dd-service: ms-social
+team: volontariapp
+application: volontariapp
+description: Microservice gRPC de gestion du réseau social et graphe relationnel Neo4j.
+tier: backend
+type: web
+repos:
+  - url: https://github.com/Volontariapp/ms-social
