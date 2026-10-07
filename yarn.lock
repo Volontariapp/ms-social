@@ -4357,7 +4357,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@volontariapp/database@npm:3.4.28":
+"@volontariapp/database@npm:3.4.28, @volontariapp/database@npm:^3.4.28":
   version: 3.4.28
   resolution: "@volontariapp/database@npm:3.4.28"
   dependencies:
@@ -4374,26 +4374,6 @@ __metadata:
   peerDependencies:
     typeorm: ^0.3.28
   checksum: 10c0/4eb15375928c59f2eceac2dca5f3ab8d650a299e93f9e3f6377a039075f4011b6910a8a377fdafb8e1b14fe9525ddf1280ea6c3d30239c18902211b1303adee4
-  languageName: node
-  linkType: hard
-
-"@volontariapp/database@npm:^3.4.25":
-  version: 3.4.25
-  resolution: "@volontariapp/database@npm:3.4.25"
-  dependencies:
-    "@volontariapp/bridge": "npm:1.0.7"
-    "@volontariapp/config": "npm:3.2.3"
-    "@volontariapp/errors": "npm:0.6.3"
-    "@volontariapp/logger": "npm:0.3.0"
-    "@volontariapp/messaging": "npm:2.19.1"
-    "@volontariapp/shared": "npm:0.9.1"
-    class-transformer: "npm:^0.5.1"
-    class-validator: "npm:^0.14.1"
-    pg: "npm:^8.20.0"
-    reflect-metadata: "npm:^0.2.2"
-  peerDependencies:
-    typeorm: ^0.3.28
-  checksum: 10c0/689bd3ce4a056083cd29d6c3504f28c9f89042c753112af7dcbdae6016e0fc369889aeb19d8663f987d9074255ca55c153004cb7433c7526ad15e9c621317aa4
   languageName: node
   linkType: hard
 
@@ -4514,16 +4494,6 @@ __metadata:
   dependencies:
     "@opentelemetry/api": "npm:^1.9.0"
   checksum: 10c0/aaf29d486aba2b1af23006fa573856f7236e5304848c9d44086e9c4e4dcadc928035ff5ae3120e34259e5f9108f5b5ab8ca5e58506c0d4fb408d558e4cd7a4e0
-  languageName: node
-  linkType: hard
-
-"@volontariapp/messaging@npm:2.19.1":
-  version: 2.19.1
-  resolution: "@volontariapp/messaging@npm:2.19.1"
-  dependencies:
-    "@volontariapp/contracts": "npm:4.3.14"
-    "@volontariapp/shared": "npm:0.9.1"
-  checksum: 10c0/ea1072d89205e8b2a2e25da2a4a713d7c9d2fb86680f469487c8cc5b2c8db0c5f4400cbbd15c35fbd63b8d5d306f886bf33b1418c67c6dfafbd6873997df1818
   languageName: node
   linkType: hard
 
@@ -9120,7 +9090,7 @@ __metadata:
     "@volontariapp/config": "npm:^3.2.3"
     "@volontariapp/contracts": "npm:^4.3.14"
     "@volontariapp/contracts-nest": "npm:^3.3.6"
-    "@volontariapp/database": "npm:^3.4.25"
+    "@volontariapp/database": "npm:^3.4.28"
     "@volontariapp/domain-social": "npm:0.13.0"
     "@volontariapp/errors": "npm:^0.6.3"
     "@volontariapp/errors-nest": "npm:^0.13.3"
