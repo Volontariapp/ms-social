@@ -15,6 +15,7 @@ import {
   AdminGetUserParticipateEventQueryDTO,
   AdminGetUserWishEventQueryDTO,
   GetRecommendedEventIdsQueryDTO,
+  AdminGetRecommendedEventIdsQueryDTO,
 } from '../dto/participation.query.dto.js';
 import {
   GetEventNodeResponseDTO,
@@ -26,6 +27,7 @@ import {
   AdminGetUserParticipateEventResponseDTO,
   AdminGetUserWishEventResponseDTO,
   GetRecommendedEventIdsResponseDTO,
+  AdminGetRecommendedEventIdsResponseDTO,
 } from '../dto/participation.response.dto.js';
 import { ParticipationMapper } from '../mappers/participation.mapper.js';
 import { PaginatedIdsMapper } from '../../../common/mappers/paginated-ids.mapper.js';
@@ -161,6 +163,18 @@ export class ParticipationQueryController {
       },
       paginationVO,
     );
+    return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
+  }
+
+  @GrpcMethod(GRPC_SERVICES.PARTICIPATION_QUERY_SERVICE, 'AdminGetRecommendedEventIds')
+  async adminGetRecommendedEventIds(
+    @Payload() data: AdminGetRecommendedEventIdsQueryDTO,
+  ): Promise<AdminGetRecommendedEventIdsResponseDTO> {
+    this.logger.log(`gRPC: Admin getting recommended events for user: ${data.userId}`);
+    const { userId, filters, pagination } =
+      ParticipationMapper.toAdminGetRecommendedEventIdsParams(data);
+    const paginationVO = pagination ?? new PaginationVO(1, 10);
+    const paginatedIds = await this.service.getRecommendedEventIds(userId, filters, paginationVO);
     return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
   }
 }

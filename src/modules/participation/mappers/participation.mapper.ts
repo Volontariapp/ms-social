@@ -24,6 +24,7 @@ import type {
   AdminGetUserParticipateEventQueryDTO,
   AdminGetUserWishEventQueryDTO,
   GetRecommendedEventIdsQueryDTO,
+  AdminGetRecommendedEventIdsQueryDTO,
 } from '../dto/participation.query.dto.js';
 import { PaginationMapper } from '../../../common/mappers/pagination.mapper.js';
 
@@ -253,6 +254,34 @@ export class ParticipationMapper {
   } {
     return {
       userId: new UserId(user.id),
+      filters: {
+        excludeCreatedByMe: dto.excludeCreatedByMe,
+        excludeBlockedUsers: dto.excludeBlockedUsers,
+        excludeParticipatedByMe: dto.excludeParticipatedByMe,
+        excludeWishedByMe: dto.excludeWishedByMe,
+        onlyParticipatedByFriends: dto.onlyParticipatedByFriends,
+        onlyWishedByFriends: dto.onlyWishedByFriends,
+        onlyCreatedByFriends: dto.onlyCreatedByFriends,
+      },
+      pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
+    };
+  }
+
+  static toAdminGetRecommendedEventIdsParams(dto: AdminGetRecommendedEventIdsQueryDTO): {
+    userId: UserId;
+    filters: {
+      excludeCreatedByMe?: boolean;
+      excludeBlockedUsers?: boolean;
+      excludeParticipatedByMe?: boolean;
+      excludeWishedByMe?: boolean;
+      onlyParticipatedByFriends?: boolean;
+      onlyWishedByFriends?: boolean;
+      onlyCreatedByFriends?: boolean;
+    };
+    pagination: ReturnType<typeof PaginationMapper.toPaginationVO> | undefined;
+  } {
+    return {
+      userId: new UserId(dto.userId),
       filters: {
         excludeCreatedByMe: dto.excludeCreatedByMe,
         excludeBlockedUsers: dto.excludeBlockedUsers,

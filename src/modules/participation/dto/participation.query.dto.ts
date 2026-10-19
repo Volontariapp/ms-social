@@ -1,4 +1,4 @@
-import { IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import {
   GetUserEventQuery,
@@ -10,11 +10,51 @@ import {
   AdminGetUserParticipateEventQuery,
   AdminGetUserWishEventQuery,
   GetRecommendedEventIdsQuery,
+  AdminGetRecommendedEventIdsQuery,
 } from '@volontariapp/contracts-nest';
 import { PaginationRequestDTO } from '../../../common/dto/pagination.dto.js';
 import { IsBoolean } from 'class-validator';
 
 export class GetRecommendedEventIdsQueryDTO implements GetRecommendedEventIdsQuery {
+  @IsOptional()
+  @IsBoolean()
+  excludeCreatedByMe!: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  excludeBlockedUsers!: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  excludeParticipatedByMe!: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  excludeWishedByMe!: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  onlyParticipatedByFriends!: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  onlyWishedByFriends!: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  onlyCreatedByFriends!: boolean;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => PaginationRequestDTO)
+  pagination: PaginationRequestDTO | undefined;
+}
+
+export class AdminGetRecommendedEventIdsQueryDTO implements AdminGetRecommendedEventIdsQuery {
+  @IsString()
+  @IsNotEmpty()
+  userId!: string;
+
   @IsOptional()
   @IsBoolean()
   excludeCreatedByMe!: boolean;
