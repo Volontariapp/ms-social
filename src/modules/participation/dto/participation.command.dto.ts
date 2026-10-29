@@ -60,9 +60,7 @@ export class DeleteUserWishEventCommandDTO implements DeleteUserWishEventCommand
   eventId!: string;
 }
 
-export class AdminPostUserParticipateEventCommandDTO
-  implements AdminPostUserParticipateEventCommand
-{
+export class AdminPostUserParticipateEventCommandDTO implements AdminPostUserParticipateEventCommand {
   @IsString()
   userId!: string;
 
@@ -70,9 +68,7 @@ export class AdminPostUserParticipateEventCommandDTO
   eventId!: string;
 }
 
-export class AdminDeleteUserParticipateEventCommandDTO
-  implements AdminDeleteUserParticipateEventCommand
-{
+export class AdminDeleteUserParticipateEventCommandDTO implements AdminDeleteUserParticipateEventCommand {
   @IsString()
   userId!: string;
 
