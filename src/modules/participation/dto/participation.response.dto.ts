@@ -21,7 +21,11 @@ import type {
   GetEventParticipantsResponse,
   GetRecommendedEventIdsResponse,
   AdminGetRecommendedEventIdsResponse,
+  SetEventAttendanceResponse,
+  GetEventAttendeesResponse,
+  EventAttendee,
 } from '@volontariapp/contracts-nest';
+import type { PaginationResponseDTO } from '../../../common/dto/pagination-response.dto.js';
 import {
   SuccessResponseDTO,
   ExistsResponseDTO,
@@ -89,3 +93,12 @@ export class GetRecommendedEventIdsResponseDTO
 export class AdminGetRecommendedEventIdsResponseDTO
   extends IdsResponseDTO
   implements AdminGetRecommendedEventIdsResponse {}
+
+export class SetEventAttendanceResponseDTO
+  extends SuccessResponseDTO
+  implements SetEventAttendanceResponse {}
+
+export class GetEventAttendeesResponseDTO implements GetEventAttendeesResponse {
+  attendees!: EventAttendee[];
+  pagination: PaginationResponseDTO | undefined;
+}

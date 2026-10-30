@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsArray, IsString } from 'class-validator';
 import {
   CreateSocialEventCommand,
   DeleteSocialEventCommand,
@@ -12,6 +12,7 @@ import {
   AdminDeleteUserParticipateEventCommand,
   AdminPostUserWishEventCommand,
   AdminDeleteUserWishEventCommand,
+  SetEventAttendanceCommand,
 } from '@volontariapp/contracts-nest';
 
 export class CreateSocialEventCommandDTO implements CreateSocialEventCommand {
@@ -90,4 +91,17 @@ export class AdminDeleteUserWishEventCommandDTO implements AdminDeleteUserWishEv
 
   @IsString()
   eventId!: string;
+}
+
+export class SetEventAttendanceCommandDTO implements SetEventAttendanceCommand {
+  @IsString()
+  eventId!: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  checkedUserIds!: string[];
+
+  @IsArray()
+  @IsString({ each: true })
+  uncheckedUserIds!: string[];
 }

@@ -23,6 +23,7 @@ import {
   DeleteUserParticipateEventResponseDTO,
   PostUserWishEventResponseDTO,
   DeleteUserWishEventResponseDTO,
+  SetEventAttendanceResponseDTO,
 } from '../../../modules/participation/dto/participation.response.dto.js';
 import { createMock, createMockAuthUser } from '../../utils/mock.helper.js';
 
@@ -148,6 +149,25 @@ describe('ParticipationCommandController', () => {
       expect(spy).toHaveBeenCalledWith(
         expect.objectContaining({ value: mockUser.id }),
         expect.objectContaining({ value: 'event-123' }),
+      );
+    });
+  });
+
+  describe('setEventAttendance', () => {
+    it('should set event attendance successfully', async () => {
+      const dto = {
+        eventId: 'event-123',
+        checkedUserIds: ['u-1', 'u-2'],
+        uncheckedUserIds: ['u-3'],
+      };
+      const spy = jest.spyOn(service, 'setEventAttendance').mockResolvedValue(undefined);
+      const result = await controller.setEventAttendance(dto);
+
+      expect(result).toBeInstanceOf(SetEventAttendanceResponseDTO);
+      expect(spy).toHaveBeenCalledWith(
+        expect.objectContaining({ value: 'event-123' }),
+        ['u-1', 'u-2'],
+        ['u-3'],
       );
     });
   });

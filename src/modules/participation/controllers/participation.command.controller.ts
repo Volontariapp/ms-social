@@ -18,6 +18,7 @@ import {
   AdminDeleteUserParticipateEventCommandDTO,
   AdminPostUserWishEventCommandDTO,
   AdminDeleteUserWishEventCommandDTO,
+  SetEventAttendanceCommandDTO,
 } from '../dto/participation.command.dto.js';
 import {
   CreateEventNodeResponseDTO,
@@ -32,6 +33,7 @@ import {
   AdminDeleteUserParticipateEventResponseDTO,
   AdminPostUserWishEventResponseDTO,
   AdminDeleteUserWishEventResponseDTO,
+  SetEventAttendanceResponseDTO,
 } from '../dto/participation.response.dto.js';
 import { ParticipationMapper } from '../mappers/participation.mapper.js';
 
@@ -195,5 +197,18 @@ export class ParticipationCommandController {
     const { userId, eventId } = ParticipationMapper.toAdminUnwishEventParams(data);
     await this.service.unwishEvent(userId, eventId);
     return new AdminDeleteUserWishEventResponseDTO();
+  }
+
+  @GrpcMethod(GRPC_SERVICES.PARTICIPATION_COMMAND_SERVICE, 'setEventAttendance')
+  async setEventAttendance(
+    @Payload() data: SetEventAttendanceCommandDTO,
+  ): Promise<SetEventAttendanceResponseDTO> {
+    this.logger.log(`gRPC: Setting attendance for event: ${data.eventId}`);
+    await this.service.setEventAttendance(
+      ParticipationMapper.toEventIdVO(data.eventId),
+      data.checkedUserIds,
+      data.uncheckedUserIds,
+    );
+    return new SetEventAttendanceResponseDTO();
   }
 }

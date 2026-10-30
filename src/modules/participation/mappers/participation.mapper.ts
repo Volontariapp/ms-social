@@ -1,5 +1,7 @@
+import type { PaginatedAttendeesVO } from '@volontariapp/domain-social';
 import { UserId, EventId } from '@volontariapp/domain-social';
 import type { AuthUser } from '@volontariapp/auth';
+import { GrpcDateMapper } from '@volontariapp/contracts-nest';
 import type {
   CreateSocialEventCommandDTO,
   DeleteSocialEventCommandDTO,
@@ -25,7 +27,9 @@ import type {
   AdminGetUserWishEventQueryDTO,
   GetRecommendedEventIdsQueryDTO,
   AdminGetRecommendedEventIdsQueryDTO,
+  GetEventAttendeesQueryDTO,
 } from '../dto/participation.query.dto.js';
+import type { GetEventAttendeesResponseDTO } from '../dto/participation.response.dto.js';
 import { PaginationMapper } from '../../../common/mappers/pagination.mapper.js';
 
 export class ParticipationMapper {
@@ -292,6 +296,31 @@ export class ParticipationMapper {
         onlyCreatedByFriends: dto.onlyCreatedByFriends,
       },
       pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
+    };
+  }
+
+  static toGetEventAttendeesParams(dto: GetEventAttendeesQueryDTO): {
+    eventId: EventId;
+    pagination: ReturnType<typeof PaginationMapper.toPaginationVO> | undefined;
+  } {
+    return {
+      eventId: this.toEventIdVO(dto.eventId),
+      pagination: dto.pagination ? PaginationMapper.toPaginationVO(dto.pagination) : undefined,
+    };
+  }
+
+  static toGetEventAttendeesResponseDTO(
+    paginated: PaginatedAttendeesVO,
+  ): GetEventAttendeesResponseDTO {
+    return {
+      attendees: paginated.attendees.map((a) => ({
+        userId: a.userId,
+        registeredAt: GrpcDateMapper.toTimestamp(new Date(a.registeredAt)),
+        checkedInAt: a.checkedInAt
+          ? GrpcDateMapper.toTimestamp(new Date(a.checkedInAt))
+          : undefined,
+      })),
+      pagination: PaginationMapper.toPaginationResponseDTO(paginated.pagination),
     };
   }
 }
