@@ -1,12 +1,12 @@
 import { jest } from '@jest/globals';
 import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import type { ParticipationService } from '@volontariapp/domain-social';
-import { EventId } from '@volontariapp/domain-social';
+import { EventId, UserId } from '@volontariapp/domain-social';
 import { ForbiddenError, UnauthorizedError } from '@volontariapp/errors';
 import { EventOrganizerPolicy } from '../../../modules/participation/policies/event-organizer.policy.js';
 import type { AuthUser } from '@volontariapp/auth';
-import { createMock, createMockAuthUser } from '../../utils/mock.helper.js';
-import { createPaginatedIds } from './participation.factory.js';
+import { createMockAuthUser } from '../../utils/mock.helper.js';
+import { createParticipationServiceMock } from './event-organizer.policy.mock.js';
 
 describe('EventOrganizerPolicy', () => {
   let policy: EventOrganizerPolicy;
@@ -14,7 +14,7 @@ describe('EventOrganizerPolicy', () => {
   const eventId = new EventId('event-123');
 
   beforeEach(() => {
-    service = createMock<ParticipationService>();
+    service = createParticipationServiceMock();
     policy = new EventOrganizerPolicy(service);
   });
 
@@ -22,31 +22,27 @@ describe('EventOrganizerPolicy', () => {
     jest.restoreAllMocks();
   });
 
-  it('allows the organizer of the event', async () => {
-    const spy = jest
-      .spyOn(service, 'getUserEvents')
-      .mockResolvedValue(createPaginatedIds(['other', 'event-123']));
+  it('allows the creator of the event', async () => {
+    const spy = jest.spyOn(service, 'isEventCreator').mockResolvedValue(true);
 
     await expect(
       policy.assertCanManageAttendance(createMockAuthUser({ id: 'org-1' }), eventId),
     ).resolves.toBeUndefined();
     expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith(new UserId('org-1'), eventId);
   });
 
-  it('finds the event on a later page of created events', async () => {
-    const spy = jest
-      .spyOn(service, 'getUserEvents')
-      .mockResolvedValueOnce(createPaginatedIds(['a'], 1, 100, 101, 2))
-      .mockResolvedValueOnce(createPaginatedIds(['event-123'], 2, 100, 101, 2));
+  it('rejects a user who did not create the event', async () => {
+    const spy = jest.spyOn(service, 'isEventCreator').mockResolvedValue(false);
 
     await expect(
-      policy.assertCanManageAttendance(createMockAuthUser({ id: 'org-1' }), eventId),
-    ).resolves.toBeUndefined();
-    expect(spy).toHaveBeenCalledTimes(2);
+      policy.assertCanManageAttendance(createMockAuthUser({ id: 'intruder' }), eventId),
+    ).rejects.toBeInstanceOf(ForbiddenError);
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 
   it('allows an admin without looking up the creator', async () => {
-    const spy = jest.spyOn(service, 'getUserEvents');
+    const spy = jest.spyOn(service, 'isEventCreator');
 
     await expect(
       policy.assertCanManageAttendance(createMockAuthUser({ role: 'ADMIN' }), eventId),
@@ -54,42 +50,22 @@ describe('EventOrganizerPolicy', () => {
     expect(spy).not.toHaveBeenCalled();
   });
 
-  it('rejects a user who did not create the event', async () => {
-    jest.spyOn(service, 'getUserEvents').mockResolvedValue(createPaginatedIds(['other']));
-
-    await expect(
-      policy.assertCanManageAttendance(createMockAuthUser({ id: 'intruder' }), eventId),
-    ).rejects.toBeInstanceOf(ForbiddenError);
-  });
-
-  it('rejects when the event is absent after exhausting several pages', async () => {
-    const spy = jest
-      .spyOn(service, 'getUserEvents')
-      .mockResolvedValueOnce(createPaginatedIds(['a'], 1, 100, 201, 3))
-      .mockResolvedValueOnce(createPaginatedIds(['b'], 2, 100, 201, 3))
-      .mockResolvedValueOnce(createPaginatedIds(['c'], 3, 100, 201, 3));
-
-    await expect(
-      policy.assertCanManageAttendance(createMockAuthUser({ id: 'org-1' }), eventId),
-    ).rejects.toBeInstanceOf(ForbiddenError);
-    expect(spy).toHaveBeenCalledTimes(3);
-  });
-
-  it('rejects when the first page is empty', async () => {
-    jest.spyOn(service, 'getUserEvents').mockResolvedValue(createPaginatedIds([], 1, 100, 0, 0));
-
-    await expect(
-      policy.assertCanManageAttendance(createMockAuthUser({ id: 'org-1' }), eventId),
-    ).rejects.toBeInstanceOf(ForbiddenError);
-  });
-
   it('rejects an undefined caller as unauthorized', async () => {
-    const spy = jest.spyOn(service, 'getUserEvents');
+    const spy = jest.spyOn(service, 'isEventCreator');
     const missing = undefined as AuthUser | undefined;
 
     await expect(policy.assertCanManageAttendance(missing, eventId)).rejects.toBeInstanceOf(
       UnauthorizedError,
     );
     expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('propagates a service error instead of masking it as forbidden', async () => {
+    const failure = new Error('neo4j down');
+    jest.spyOn(service, 'isEventCreator').mockRejectedValue(failure);
+
+    await expect(
+      policy.assertCanManageAttendance(createMockAuthUser({ id: 'org-1' }), eventId),
+    ).rejects.toBe(failure);
   });
 });
