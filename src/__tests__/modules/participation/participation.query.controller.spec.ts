@@ -108,8 +108,8 @@ describe('ParticipationQueryController', () => {
     it('should get attendees for an event with pagination', async () => {
       const mockAttendee = new EventAttendeeVO(
         'user-1',
-        '2026-10-25T10:00:00.000Z',
-        '2026-10-25T11:00:00.000Z',
+        new Date('2026-10-25T10:00:00.000Z'),
+        new Date('2026-10-25T11:00:00.000Z'),
       );
       const spy = jest
         .spyOn(service, 'getEventAttendees')

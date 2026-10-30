@@ -35,6 +35,7 @@ import {
   AdminDeleteUserWishEventResponseDTO,
   SetEventAttendanceResponseDTO,
 } from '../dto/participation.response.dto.js';
+import { EventOrganizerPolicy } from '../policies/event-organizer.policy.js';
 import { ParticipationMapper } from '../mappers/participation.mapper.js';
 
 @Controller()
@@ -43,7 +44,10 @@ export class ParticipationCommandController {
     context: ParticipationCommandController.name,
   });
 
-  constructor(private readonly service: ParticipationService) {}
+  constructor(
+    private readonly service: ParticipationService,
+    private readonly organizerPolicy: EventOrganizerPolicy,
+  ) {}
 
   @GrpcMethod(GRPC_SERVICES.PARTICIPATION_COMMAND_SERVICE, PARTICIPATION_METHODS.CREATE_EVENT_NODE)
   async createEventNode(
@@ -202,13 +206,12 @@ export class ParticipationCommandController {
   @GrpcMethod(GRPC_SERVICES.PARTICIPATION_COMMAND_SERVICE, 'setEventAttendance')
   async setEventAttendance(
     @Payload() data: SetEventAttendanceCommandDTO,
+    @CurrentUser() user: AuthUser,
   ): Promise<SetEventAttendanceResponseDTO> {
-    this.logger.log(`gRPC: Setting attendance for event: ${data.eventId}`);
-    await this.service.setEventAttendance(
-      ParticipationMapper.toEventIdVO(data.eventId),
-      data.checkedUserIds,
-      data.uncheckedUserIds,
-    );
+    this.logger.log(`gRPC: User ${user.id} setting attendance for event: ${data.eventId}`);
+    const eventId = ParticipationMapper.toEventIdVO(data.eventId);
+    await this.organizerPolicy.assertCanManageAttendance(user, eventId);
+    await this.service.setEventAttendance(eventId, data.checkedUserIds, data.uncheckedUserIds);
     return new SetEventAttendanceResponseDTO();
   }
 }

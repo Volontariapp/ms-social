@@ -180,7 +180,7 @@ export class ParticipationQueryController {
     return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
   }
 
-  @GrpcMethod(GRPC_SERVICES.PARTICIPATION_QUERY_SERVICE, 'GetEventAttendees')
+  @GrpcMethod(GRPC_SERVICES.PARTICIPATION_QUERY_SERVICE, 'getEventAttendees')
   async getEventAttendees(
     @Payload() data: GetEventAttendeesQueryDTO,
   ): Promise<GetEventAttendeesResponseDTO> {

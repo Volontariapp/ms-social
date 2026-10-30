@@ -1,9 +1,12 @@
 import { jest } from '@jest/globals';
-import { describe, it, expect, beforeEach } from '@jest/globals';
+import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import { ParticipationCommandController } from '../../../modules/participation/controllers/participation.command.controller.js';
 import { ParticipationService } from '@volontariapp/domain-social';
+import { ForbiddenError } from '@volontariapp/errors';
+import { plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
 import type {
   CreateSocialEventCommandDTO,
   DeleteSocialEventCommandDTO,
@@ -25,11 +28,17 @@ import {
   DeleteUserWishEventResponseDTO,
   SetEventAttendanceResponseDTO,
 } from '../../../modules/participation/dto/participation.response.dto.js';
+import { SetEventAttendanceCommandDTO as SetEventAttendanceDtoClass } from '../../../modules/participation/dto/participation.command.dto.js';
+import { EventOrganizerPolicy } from '../../../modules/participation/policies/event-organizer.policy.js';
+import { MAX_ATTENDANCE_BATCH_SIZE } from '../../../modules/participation/participation.constants.js';
+import { createEventOrganizerPolicyMock } from './event-organizer.policy.mock.js';
+import { createSetEventAttendanceDto } from './participation.factory.js';
 import { createMock, createMockAuthUser } from '../../utils/mock.helper.js';
 
 describe('ParticipationCommandController', () => {
   let controller: ParticipationCommandController;
   let service: jest.Mocked<ParticipationService>;
+  let policy: jest.Mocked<EventOrganizerPolicy>;
   const mockUser = createMockAuthUser();
 
   beforeEach(async () => {
@@ -40,11 +49,20 @@ describe('ParticipationCommandController', () => {
           provide: ParticipationService,
           useValue: createMock<ParticipationService>(),
         },
+        {
+          provide: EventOrganizerPolicy,
+          useValue: createEventOrganizerPolicyMock(),
+        },
       ],
     }).compile();
 
     controller = module.get<ParticipationCommandController>(ParticipationCommandController);
     service = module.get(ParticipationService);
+    policy = module.get(EventOrganizerPolicy);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   describe('createEventNode', () => {
@@ -154,21 +172,62 @@ describe('ParticipationCommandController', () => {
   });
 
   describe('setEventAttendance', () => {
-    it('should set event attendance successfully', async () => {
-      const dto = {
-        eventId: 'event-123',
-        checkedUserIds: ['u-1', 'u-2'],
-        uncheckedUserIds: ['u-3'],
-      };
+    it('should set event attendance when the caller is allowed', async () => {
+      const dto = createSetEventAttendanceDto();
+      const policySpy = jest
+        .spyOn(policy, 'assertCanManageAttendance')
+        .mockResolvedValue(undefined);
       const spy = jest.spyOn(service, 'setEventAttendance').mockResolvedValue(undefined);
-      const result = await controller.setEventAttendance(dto);
+      const result = await controller.setEventAttendance(dto, mockUser);
 
       expect(result).toBeInstanceOf(SetEventAttendanceResponseDTO);
+      expect(policySpy).toHaveBeenCalledWith(
+        mockUser,
+        expect.objectContaining({ value: 'event-123' }),
+      );
       expect(spy).toHaveBeenCalledWith(
         expect.objectContaining({ value: 'event-123' }),
         ['u-1', 'u-2'],
         ['u-3'],
       );
+    });
+
+    it('should reject a non organizer and not write the attendance', async () => {
+      const dto = createSetEventAttendanceDto();
+      jest.spyOn(policy, 'assertCanManageAttendance').mockRejectedValue(new ForbiddenError());
+      const spy = jest.spyOn(service, 'setEventAttendance').mockResolvedValue(undefined);
+
+      await expect(controller.setEventAttendance(dto, mockUser)).rejects.toBeInstanceOf(
+        ForbiddenError,
+      );
+      expect(spy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('SetEventAttendanceCommandDTO validation', () => {
+    it('should accept a batch at the size limit', async () => {
+      const ids = Array.from({ length: MAX_ATTENDANCE_BATCH_SIZE }, (_, i) => `u-${String(i)}`);
+      const dto = plainToInstance(
+        SetEventAttendanceDtoClass,
+        createSetEventAttendanceDto({ checkedUserIds: ids }),
+      );
+
+      await expect(validate(dto)).resolves.toHaveLength(0);
+    });
+
+    it('should reject a batch above the size limit', async () => {
+      const ids = Array.from({ length: MAX_ATTENDANCE_BATCH_SIZE + 1 }, (_, i) => `u-${String(i)}`);
+      const checked = plainToInstance(
+        SetEventAttendanceDtoClass,
+        createSetEventAttendanceDto({ checkedUserIds: ids }),
+      );
+      const unchecked = plainToInstance(
+        SetEventAttendanceDtoClass,
+        createSetEventAttendanceDto({ uncheckedUserIds: ids }),
+      );
+
+      await expect(validate(checked)).resolves.toHaveLength(1);
+      await expect(validate(unchecked)).resolves.toHaveLength(1);
     });
   });
 });
