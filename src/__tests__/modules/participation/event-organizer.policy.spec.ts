@@ -87,9 +87,9 @@ describe('EventOrganizerPolicy', () => {
     const spy = jest.spyOn(service, 'getUserEvents');
     const missing = undefined as AuthUser | undefined;
 
-    await expect(
-      policy.assertCanManageAttendance(missing as AuthUser, eventId),
-    ).rejects.toBeInstanceOf(UnauthorizedError);
+    await expect(policy.assertCanManageAttendance(missing, eventId)).rejects.toBeInstanceOf(
+      UnauthorizedError,
+    );
     expect(spy).not.toHaveBeenCalled();
   });
 });

@@ -14,8 +14,8 @@ export class EventOrganizerPolicy {
    * Allows the caller when it is an admin or the creator (CREATED edge) of the event.
    * Throws UnauthorizedError when no caller identity is present, ForbiddenError otherwise.
    */
-  async assertCanManageAttendance(user: AuthUser, eventId: EventId): Promise<void> {
-    if (!user.id) {
+  async assertCanManageAttendance(user: AuthUser | undefined, eventId: EventId): Promise<void> {
+    if (!user?.id) {
       throw new UnauthorizedError('Missing caller identity', 'ATTENDANCE_UNAUTHENTICATED');
     }
     if (user.role === UserRoles.ADMIN.toString()) {
