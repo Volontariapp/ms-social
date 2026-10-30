@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import type { AuthUser } from '@volontariapp/auth';
 import { ParticipationService, PaginationVO, UserId } from '@volontariapp/domain-social';
 import type { EventId } from '@volontariapp/domain-social';
-import { ForbiddenError } from '@volontariapp/errors';
+import { ForbiddenError, UnauthorizedError } from '@volontariapp/errors';
 import { UserRoles } from '@volontariapp/shared';
 import { ORGANIZER_LOOKUP_PAGE_SIZE } from '../participation.constants.js';
 
@@ -12,9 +12,12 @@ export class EventOrganizerPolicy {
 
   /**
    * Allows the caller when it is an admin or the creator (CREATED edge) of the event.
-   * Throws ForbiddenError otherwise.
+   * Throws UnauthorizedError when no caller identity is present, ForbiddenError otherwise.
    */
   async assertCanManageAttendance(user: AuthUser, eventId: EventId): Promise<void> {
+    if (!user.id) {
+      throw new UnauthorizedError('Missing caller identity', 'ATTENDANCE_UNAUTHENTICATED');
+    }
     if (user.role === UserRoles.ADMIN.toString()) {
       return;
     }
@@ -28,6 +31,8 @@ export class EventOrganizerPolicy {
   }
 
   private async isOrganizer(userId: UserId, eventId: EventId): Promise<boolean> {
+    // TODO: replace this paging lookup (no ORDER BY, O(n) round trips, fails closed with a
+    // false Forbidden) with domain-social isEventCreator (planned).
     let page = 1;
     let totalPages = 1;
     while (page <= totalPages) {

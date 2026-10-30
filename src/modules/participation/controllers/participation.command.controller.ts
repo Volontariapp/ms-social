@@ -203,6 +203,7 @@ export class ParticipationCommandController {
     return new AdminDeleteUserWishEventResponseDTO();
   }
 
+  // contracts-nest 3.4.2 PARTICIPATION_METHODS has no constant for this method yet.
   @GrpcMethod(GRPC_SERVICES.PARTICIPATION_COMMAND_SERVICE, 'setEventAttendance')
   async setEventAttendance(
     @Payload() data: SetEventAttendanceCommandDTO,

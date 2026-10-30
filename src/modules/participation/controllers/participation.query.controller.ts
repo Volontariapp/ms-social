@@ -180,6 +180,7 @@ export class ParticipationQueryController {
     return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
   }
 
+  // contracts-nest 3.4.2 PARTICIPATION_METHODS has no constant for this method yet.
   @GrpcMethod(GRPC_SERVICES.PARTICIPATION_QUERY_SERVICE, 'getEventAttendees')
   async getEventAttendees(
     @Payload() data: GetEventAttendeesQueryDTO,

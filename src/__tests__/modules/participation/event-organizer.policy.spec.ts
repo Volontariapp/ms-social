@@ -2,8 +2,9 @@ import { jest } from '@jest/globals';
 import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import type { ParticipationService } from '@volontariapp/domain-social';
 import { EventId } from '@volontariapp/domain-social';
-import { ForbiddenError } from '@volontariapp/errors';
+import { ForbiddenError, UnauthorizedError } from '@volontariapp/errors';
 import { EventOrganizerPolicy } from '../../../modules/participation/policies/event-organizer.policy.js';
+import type { AuthUser } from '@volontariapp/auth';
 import { createMock, createMockAuthUser } from '../../utils/mock.helper.js';
 import { createPaginatedIds } from './participation.factory.js';
 
@@ -59,5 +60,36 @@ describe('EventOrganizerPolicy', () => {
     await expect(
       policy.assertCanManageAttendance(createMockAuthUser({ id: 'intruder' }), eventId),
     ).rejects.toBeInstanceOf(ForbiddenError);
+  });
+
+  it('rejects when the event is absent after exhausting several pages', async () => {
+    const spy = jest
+      .spyOn(service, 'getUserEvents')
+      .mockResolvedValueOnce(createPaginatedIds(['a'], 1, 100, 201, 3))
+      .mockResolvedValueOnce(createPaginatedIds(['b'], 2, 100, 201, 3))
+      .mockResolvedValueOnce(createPaginatedIds(['c'], 3, 100, 201, 3));
+
+    await expect(
+      policy.assertCanManageAttendance(createMockAuthUser({ id: 'org-1' }), eventId),
+    ).rejects.toBeInstanceOf(ForbiddenError);
+    expect(spy).toHaveBeenCalledTimes(3);
+  });
+
+  it('rejects when the first page is empty', async () => {
+    jest.spyOn(service, 'getUserEvents').mockResolvedValue(createPaginatedIds([], 1, 100, 0, 0));
+
+    await expect(
+      policy.assertCanManageAttendance(createMockAuthUser({ id: 'org-1' }), eventId),
+    ).rejects.toBeInstanceOf(ForbiddenError);
+  });
+
+  it('rejects an undefined caller as unauthorized', async () => {
+    const spy = jest.spyOn(service, 'getUserEvents');
+    const missing = undefined as AuthUser | undefined;
+
+    await expect(
+      policy.assertCanManageAttendance(missing as AuthUser, eventId),
+    ).rejects.toBeInstanceOf(UnauthorizedError);
+    expect(spy).not.toHaveBeenCalled();
   });
 });
