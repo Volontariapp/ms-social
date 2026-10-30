@@ -1,4 +1,3 @@
-import { PaginatedIdsVO, PaginationResultVO } from '@volontariapp/domain-social';
 import type { SetEventAttendanceCommandDTO } from '../../../modules/participation/dto/participation.command.dto.js';
 
 export const createSetEventAttendanceDto = (
@@ -9,12 +8,3 @@ export const createSetEventAttendanceDto = (
   uncheckedUserIds: ['u-3'],
   ...overrides,
 });
-
-export const createPaginatedIds = (
-  ids: string[],
-  page = 1,
-  limit = 100,
-  total = ids.length,
-  totalPages = 1,
-): PaginatedIdsVO =>
-  new PaginatedIdsVO(ids, new PaginationResultVO(page, limit, total, totalPages));
