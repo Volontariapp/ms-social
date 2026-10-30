@@ -11,6 +11,7 @@ import {
   AdminGetUserWishEventQuery,
   GetRecommendedEventIdsQuery,
   AdminGetRecommendedEventIdsQuery,
+  GetEventAttendeesQuery,
 } from '@volontariapp/contracts-nest';
 import { PaginationRequestDTO } from '../../../common/dto/pagination.dto.js';
 import { IsBoolean } from 'class-validator';
@@ -148,6 +149,16 @@ export class AdminGetUserParticipateEventQueryDTO implements AdminGetUserPartici
 export class AdminGetUserWishEventQueryDTO implements AdminGetUserWishEventQuery {
   @IsString()
   userId!: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => PaginationRequestDTO)
+  pagination: PaginationRequestDTO | undefined;
+}
+
+export class GetEventAttendeesQueryDTO implements GetEventAttendeesQuery {
+  @IsString()
+  eventId!: string;
 
   @IsOptional()
   @ValidateNested()

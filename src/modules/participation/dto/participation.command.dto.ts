@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { ArrayMaxSize, IsArray, IsString } from 'class-validator';
 import {
   CreateSocialEventCommand,
   DeleteSocialEventCommand,
@@ -12,7 +12,9 @@ import {
   AdminDeleteUserParticipateEventCommand,
   AdminPostUserWishEventCommand,
   AdminDeleteUserWishEventCommand,
+  SetEventAttendanceCommand,
 } from '@volontariapp/contracts-nest';
+import { MAX_ATTENDANCE_BATCH_SIZE } from '../participation.constants.js';
 
 export class CreateSocialEventCommandDTO implements CreateSocialEventCommand {
   @IsString()
@@ -90,4 +92,19 @@ export class AdminDeleteUserWishEventCommandDTO implements AdminDeleteUserWishEv
 
   @IsString()
   eventId!: string;
+}
+
+export class SetEventAttendanceCommandDTO implements SetEventAttendanceCommand {
+  @IsString()
+  eventId!: string;
+
+  @IsArray()
+  @ArrayMaxSize(MAX_ATTENDANCE_BATCH_SIZE)
+  @IsString({ each: true })
+  checkedUserIds!: string[];
+
+  @IsArray()
+  @ArrayMaxSize(MAX_ATTENDANCE_BATCH_SIZE)
+  @IsString({ each: true })
+  uncheckedUserIds!: string[];
 }

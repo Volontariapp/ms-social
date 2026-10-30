@@ -9,8 +9,13 @@ import {
   ParticipationService,
   PaginatedIdsVO,
   PaginationResultVO,
+  EventAttendeeVO,
+  PaginatedAttendeesVO,
 } from '@volontariapp/domain-social';
-import { AdminGetRecommendedEventIdsQueryDTO } from '../../../modules/participation/dto/participation.query.dto.js';
+import {
+  AdminGetRecommendedEventIdsQueryDTO,
+  GetEventAttendeesQueryDTO,
+} from '../../../modules/participation/dto/participation.query.dto.js';
 import { createMock } from '../../utils/mock.helper.js';
 
 describe('ParticipationQueryController', () => {
@@ -96,6 +101,37 @@ describe('ParticipationQueryController', () => {
       const dto = plainToInstance(AdminGetRecommendedEventIdsQueryDTO, { userId: 'user-42' });
 
       await expect(validate(dto)).resolves.toHaveLength(0);
+    });
+  });
+
+  describe('getEventAttendees', () => {
+    it('should get attendees for an event with pagination', async () => {
+      const mockAttendee = new EventAttendeeVO(
+        'user-1',
+        new Date('2026-10-25T10:00:00.000Z'),
+        new Date('2026-10-25T11:00:00.000Z'),
+      );
+      const spy = jest
+        .spyOn(service, 'getEventAttendees')
+        .mockResolvedValue(
+          new PaginatedAttendeesVO([mockAttendee], new PaginationResultVO(1, 100, 1, 1)),
+        );
+      const dto = plainToInstance(GetEventAttendeesQueryDTO, {
+        eventId: 'event-123',
+        pagination: { page: 1, limit: 100 },
+      });
+
+      const result = await controller.getEventAttendees(dto);
+
+      expect(spy).toHaveBeenCalledWith(
+        expect.objectContaining({ value: 'event-123' }),
+        expect.objectContaining({ page: 1, limit: 100 }),
+      );
+      expect(result.attendees).toHaveLength(1);
+      expect(result.attendees[0].userId).toBe('user-1');
+      expect(result.attendees[0].registeredAt).toBeDefined();
+      expect(result.attendees[0].checkedInAt).toBeDefined();
+      expect(result.pagination?.total).toBe(1);
     });
   });
 });

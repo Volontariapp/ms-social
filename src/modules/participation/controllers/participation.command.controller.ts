@@ -18,6 +18,7 @@ import {
   AdminDeleteUserParticipateEventCommandDTO,
   AdminPostUserWishEventCommandDTO,
   AdminDeleteUserWishEventCommandDTO,
+  SetEventAttendanceCommandDTO,
 } from '../dto/participation.command.dto.js';
 import {
   CreateEventNodeResponseDTO,
@@ -32,7 +33,9 @@ import {
   AdminDeleteUserParticipateEventResponseDTO,
   AdminPostUserWishEventResponseDTO,
   AdminDeleteUserWishEventResponseDTO,
+  SetEventAttendanceResponseDTO,
 } from '../dto/participation.response.dto.js';
+import { EventOrganizerPolicy } from '../policies/event-organizer.policy.js';
 import { ParticipationMapper } from '../mappers/participation.mapper.js';
 
 @Controller()
@@ -41,7 +44,10 @@ export class ParticipationCommandController {
     context: ParticipationCommandController.name,
   });
 
-  constructor(private readonly service: ParticipationService) {}
+  constructor(
+    private readonly service: ParticipationService,
+    private readonly organizerPolicy: EventOrganizerPolicy,
+  ) {}
 
   @GrpcMethod(GRPC_SERVICES.PARTICIPATION_COMMAND_SERVICE, PARTICIPATION_METHODS.CREATE_EVENT_NODE)
   async createEventNode(
@@ -195,5 +201,18 @@ export class ParticipationCommandController {
     const { userId, eventId } = ParticipationMapper.toAdminUnwishEventParams(data);
     await this.service.unwishEvent(userId, eventId);
     return new AdminDeleteUserWishEventResponseDTO();
+  }
+
+  // contracts-nest 3.4.2 PARTICIPATION_METHODS has no constant for this method yet.
+  @GrpcMethod(GRPC_SERVICES.PARTICIPATION_COMMAND_SERVICE, 'setEventAttendance')
+  async setEventAttendance(
+    @Payload() data: SetEventAttendanceCommandDTO,
+    @CurrentUser() user: AuthUser,
+  ): Promise<SetEventAttendanceResponseDTO> {
+    this.logger.log(`gRPC: User ${user.id} setting attendance for event: ${data.eventId}`);
+    const eventId = ParticipationMapper.toEventIdVO(data.eventId);
+    await this.organizerPolicy.assertCanManageAttendance(user, eventId);
+    await this.service.setEventAttendance(eventId, data.checkedUserIds, data.uncheckedUserIds);
+    return new SetEventAttendanceResponseDTO();
   }
 }
