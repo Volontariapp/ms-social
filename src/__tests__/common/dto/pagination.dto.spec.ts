@@ -13,6 +13,25 @@ describe('PaginationRequestDTO', () => {
     expect(errors).toHaveLength(0);
   });
 
+  it('should validate with limit = 1000', async () => {
+    const dto = plainToInstance(PaginationRequestDTO, {
+      page: 1,
+      limit: 1000,
+    });
+    const errors = await validate(dto);
+    expect(errors).toHaveLength(0);
+  });
+
+  it('should fail validation with limit = 1001', async () => {
+    const dto = plainToInstance(PaginationRequestDTO, {
+      page: 1,
+      limit: 1001,
+    });
+    const errors = await validate(dto);
+    expect(errors.length).toBeGreaterThan(0);
+    expect(errors[0].property).toBe('limit');
+  });
+
   it('should fail validation with missing page', async () => {
     const dto = plainToInstance(PaginationRequestDTO, {
       limit: 10,
@@ -81,10 +100,11 @@ describe('PaginationRequestDTO', () => {
   it('should fail validation with non-integer limit', async () => {
     const dto = plainToInstance(PaginationRequestDTO, {
       page: 1,
-      limit: 10.7,
+      limit: 2.5,
     });
     const errors = await validate(dto);
     expect(errors.length).toBeGreaterThan(0);
+    expect(errors[0].property).toBe('limit');
   });
 
   it('should fail validation with string page', async () => {
