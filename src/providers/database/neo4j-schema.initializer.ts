@@ -21,6 +21,7 @@ export class Neo4jSchemaInitializer implements OnApplicationBootstrap {
 
   async onApplicationBootstrap(): Promise<void> {
     if (!this.neo4jProvider.isConnected()) {
+      this.logger.warn('Neo4j is not connected, unique constraints were not created');
       return;
     }
 

@@ -79,6 +79,7 @@ describe('Neo4jSchemaInitializer', () => {
   it('should not execute any query or open session when provider is not connected', async () => {
     const disconnectedBundle = createNeo4jProviderMockBundle(false);
     const disconnectedInitializer = new Neo4jSchemaInitializer(disconnectedBundle.provider);
+    const loggerWarnSpy = jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => {});
 
     const getDriverSpy = jest.spyOn(disconnectedBundle.provider, 'getDriver');
     const runSpy = jest.spyOn(disconnectedBundle.session, 'run');
@@ -89,5 +90,6 @@ describe('Neo4jSchemaInitializer', () => {
     expect(getDriverSpy).not.toHaveBeenCalled();
     expect(runSpy).not.toHaveBeenCalled();
     expect(closeSpy).not.toHaveBeenCalled();
+    expect(loggerWarnSpy).toHaveBeenCalledTimes(1);
   });
 });
