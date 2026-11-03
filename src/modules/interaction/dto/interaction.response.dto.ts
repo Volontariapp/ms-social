@@ -6,6 +6,8 @@ import type {
   GetUserLikesResponse,
   GetPostLikersResponse,
   AdminGetUserLikesResponse,
+  PostLikeSummary,
+  GetPostsLikeSummaryResponse,
 } from '@volontariapp/contracts-nest';
 import { SuccessResponseDTO, IdsResponseDTO } from '../../../common/dto/base.response.dto.js';
 
@@ -25,3 +27,13 @@ export class GetPostLikersResponseDTO extends IdsResponseDTO implements GetPostL
 export class AdminGetUserLikesResponseDTO
   extends IdsResponseDTO
   implements AdminGetUserLikesResponse {}
+
+export class PostLikeSummaryDTO implements PostLikeSummary {
+  postId!: string;
+  likeCount!: number;
+  likedByMe!: boolean;
+}
+
+export class GetPostsLikeSummaryResponseDTO implements GetPostsLikeSummaryResponse {
+  summaries!: PostLikeSummaryDTO[];
+}

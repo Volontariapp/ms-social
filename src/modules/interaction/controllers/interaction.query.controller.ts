@@ -9,11 +9,13 @@ import {
   GetUserLikesQueryDTO,
   GetPostLikersQueryDTO,
   AdminGetUserLikesQueryDTO,
+  GetPostsLikeSummaryQueryDTO,
 } from '../dto/interaction.query.dto.js';
 import {
   GetUserLikesResponseDTO,
   GetPostLikersResponseDTO,
   AdminGetUserLikesResponseDTO,
+  GetPostsLikeSummaryResponseDTO,
 } from '../dto/interaction.response.dto.js';
 import { InteractionMapper } from '../mappers/interaction.mapper.js';
 import { PaginatedIdsMapper } from '../../../common/mappers/paginated-ids.mapper.js';
@@ -56,5 +58,16 @@ export class InteractionQueryController {
     const paginationVO = pagination ?? new PaginationVO(1, 10);
     const paginatedIds = await this.service.getUserLikes(userId, paginationVO);
     return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
+  }
+
+  @GrpcMethod(GRPC_SERVICES.INTERACTION_QUERY_SERVICE, 'GetPostsLikeSummary')
+  async getPostsLikeSummary(
+    @Payload() data: GetPostsLikeSummaryQueryDTO,
+    @CurrentUser() user: AuthUser,
+  ): Promise<GetPostsLikeSummaryResponseDTO> {
+    this.logger.log(`gRPC: Getting like summary for ${String(data.postIds.length)} posts`);
+    const { userId, postIds } = InteractionMapper.toGetPostsLikeSummaryParams(data, user);
+    const summaries = await this.service.getPostsLikeSummary(userId, postIds);
+    return InteractionMapper.toGetPostsLikeSummaryResponseDTO(summaries);
   }
 }

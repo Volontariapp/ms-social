@@ -1,4 +1,13 @@
-import { IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  ArrayMaxSize,
+  ArrayUnique,
+  IsArray,
+  IsBoolean,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import {
   GetUserEventQuery,
@@ -12,9 +21,9 @@ import {
   GetRecommendedEventIdsQuery,
   AdminGetRecommendedEventIdsQuery,
   GetEventAttendeesQuery,
+  CountEventParticipantsQuery,
 } from '@volontariapp/contracts-nest';
 import { PaginationRequestDTO } from '../../../common/dto/pagination.dto.js';
-import { IsBoolean } from 'class-validator';
 
 export class GetRecommendedEventIdsQueryDTO implements GetRecommendedEventIdsQuery {
   @IsOptional()
@@ -164,4 +173,12 @@ export class GetEventAttendeesQueryDTO implements GetEventAttendeesQuery {
   @ValidateNested()
   @Type(() => PaginationRequestDTO)
   pagination: PaginationRequestDTO | undefined;
+}
+
+export class CountEventParticipantsQueryDTO implements CountEventParticipantsQuery {
+  @IsArray()
+  @ArrayMaxSize(100)
+  @ArrayUnique()
+  @IsString({ each: true })
+  eventIds!: string[];
 }

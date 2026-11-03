@@ -1,5 +1,5 @@
 import { describe, it, expect } from '@jest/globals';
-import { UserId, PostId, PaginationVO } from '@volontariapp/domain-social';
+import { UserId, PostId, PaginationVO, PostLikeSummaryVO } from '@volontariapp/domain-social';
 import { InteractionMapper } from '../../../modules/interaction/mappers/interaction.mapper.js';
 import type {
   PostLikePostCommandDTO,
@@ -8,6 +8,7 @@ import type {
 import type {
   GetUserLikesQueryDTO,
   GetPostLikersQueryDTO,
+  GetPostsLikeSummaryQueryDTO,
 } from '../../../modules/interaction/dto/interaction.query.dto.js';
 import type { PaginationRequestDTO } from '../../../common/dto/pagination.dto.js';
 import { createMockAuthUser } from '../../utils/mock.helper.js';
@@ -102,6 +103,58 @@ describe('InteractionMapper', () => {
 
       expect(result.postId).toBeInstanceOf(PostId);
       expect(result.pagination).toBeInstanceOf(PaginationVO);
+    });
+  });
+
+  describe('toGetPostsLikeSummaryParams', () => {
+    it('should convert GetPostsLikeSummaryQueryDTO and user to params', () => {
+      const dto: GetPostsLikeSummaryQueryDTO = {
+        postIds: ['post-1', 'post-2'],
+      };
+      const result = InteractionMapper.toGetPostsLikeSummaryParams(dto, mockUser);
+
+      expect(result.userId).toBeInstanceOf(UserId);
+      expect(result.userId.value).toBe(mockUser.id);
+      expect(result.postIds).toHaveLength(2);
+      expect(result.postIds[0]).toBeInstanceOf(PostId);
+      expect(result.postIds[0].value).toBe('post-1');
+      expect(result.postIds[1]).toBeInstanceOf(PostId);
+      expect(result.postIds[1].value).toBe('post-2');
+    });
+  });
+
+  describe('toPostLikeSummaryDTO', () => {
+    it('should map PostLikeSummaryVO to DTO', () => {
+      const vo = new PostLikeSummaryVO('post-1', 42, true);
+      const result = InteractionMapper.toPostLikeSummaryDTO(vo);
+
+      expect(result).toEqual({
+        postId: 'post-1',
+        likeCount: 42,
+        likedByMe: true,
+      });
+    });
+  });
+
+  describe('toGetPostsLikeSummaryResponseDTO', () => {
+    it('should map array of PostLikeSummaryVO to response DTO', () => {
+      const summaries = [
+        new PostLikeSummaryVO('post-1', 42, true),
+        new PostLikeSummaryVO('post-2', 0, false),
+      ];
+      const result = InteractionMapper.toGetPostsLikeSummaryResponseDTO(summaries);
+
+      expect(result.summaries).toHaveLength(2);
+      expect(result.summaries[0]).toEqual({
+        postId: 'post-1',
+        likeCount: 42,
+        likedByMe: true,
+      });
+      expect(result.summaries[1]).toEqual({
+        postId: 'post-2',
+        likeCount: 0,
+        likedByMe: false,
+      });
     });
   });
 });
