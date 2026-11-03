@@ -1,5 +1,7 @@
 import { PaginationRequest } from '@volontariapp/contracts-nest';
-import { IsInt, Min } from 'class-validator';
+import { IsInt, Max, Min } from 'class-validator';
+
+export const MAX_PAGINATION_LIMIT = 1000;
 
 export class PaginationRequestDTO implements PaginationRequest {
   @IsInt()
@@ -8,5 +10,6 @@ export class PaginationRequestDTO implements PaginationRequest {
 
   @IsInt()
   @Min(1)
+  @Max(MAX_PAGINATION_LIMIT)
   limit!: number;
 }
