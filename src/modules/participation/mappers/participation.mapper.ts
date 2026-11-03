@@ -1,4 +1,4 @@
-import type { PaginatedAttendeesVO } from '@volontariapp/domain-social';
+import type { PaginatedAttendeesVO, EventParticipantCountVO } from '@volontariapp/domain-social';
 import { UserId, EventId } from '@volontariapp/domain-social';
 import type { AuthUser } from '@volontariapp/auth';
 import { GrpcDateMapper } from '@volontariapp/contracts-nest';
@@ -28,8 +28,13 @@ import type {
   GetRecommendedEventIdsQueryDTO,
   AdminGetRecommendedEventIdsQueryDTO,
   GetEventAttendeesQueryDTO,
+  CountEventParticipantsQueryDTO,
 } from '../dto/participation.query.dto.js';
-import type { GetEventAttendeesResponseDTO } from '../dto/participation.response.dto.js';
+import type {
+  GetEventAttendeesResponseDTO,
+  EventParticipantCountDTO,
+  CountEventParticipantsResponseDTO,
+} from '../dto/participation.response.dto.js';
 import { PaginationMapper } from '../../../common/mappers/pagination.mapper.js';
 
 export class ParticipationMapper {
@@ -321,6 +326,28 @@ export class ParticipationMapper {
           : undefined,
       })),
       pagination: PaginationMapper.toPaginationResponseDTO(paginated.pagination),
+    };
+  }
+
+  // Mapping des parametres pour le comptage des participants par evenement
+  static toCountEventParticipantsParams(dto: CountEventParticipantsQueryDTO): EventId[] {
+    return dto.eventIds.map((id) => this.toEventIdVO(id));
+  }
+
+  // Mapping d un resultat unitaire vers le DTO de comptage
+  static toEventParticipantCountDTO(vo: EventParticipantCountVO): EventParticipantCountDTO {
+    return {
+      eventId: vo.eventId,
+      participantCount: vo.count,
+    };
+  }
+
+  // Mapping de la liste des resultats vers le DTO de reponse
+  static toCountEventParticipantsResponseDTO(
+    results: EventParticipantCountVO[],
+  ): CountEventParticipantsResponseDTO {
+    return {
+      counts: results.map((vo) => this.toEventParticipantCountDTO(vo)),
     };
   }
 }

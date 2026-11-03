@@ -1,9 +1,17 @@
-import { IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  ArrayMaxSize,
+  ArrayUnique,
+  IsArray,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import {
   GetUserLikesQuery,
   GetPostLikersQuery,
   AdminGetUserLikesQuery,
+  GetPostsLikeSummaryQuery,
 } from '@volontariapp/contracts-nest';
 import { PaginationRequestDTO } from '../../../common/dto/pagination.dto.js';
 
@@ -32,4 +40,12 @@ export class AdminGetUserLikesQueryDTO implements AdminGetUserLikesQuery {
   @ValidateNested()
   @Type(() => PaginationRequestDTO)
   pagination: PaginationRequestDTO | undefined;
+}
+
+export class GetPostsLikeSummaryQueryDTO implements GetPostsLikeSummaryQuery {
+  @IsArray()
+  @ArrayMaxSize(100)
+  @ArrayUnique()
+  @IsString({ each: true })
+  postIds!: string[];
 }

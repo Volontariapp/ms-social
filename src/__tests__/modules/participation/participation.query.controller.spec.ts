@@ -11,10 +11,12 @@ import {
   PaginationResultVO,
   EventAttendeeVO,
   PaginatedAttendeesVO,
+  EventParticipantCountVO,
 } from '@volontariapp/domain-social';
 import {
   AdminGetRecommendedEventIdsQueryDTO,
   GetEventAttendeesQueryDTO,
+  CountEventParticipantsQueryDTO,
 } from '../../../modules/participation/dto/participation.query.dto.js';
 import { createMock } from '../../utils/mock.helper.js';
 
@@ -132,6 +134,92 @@ describe('ParticipationQueryController', () => {
       expect(result.attendees[0].registeredAt).toBeDefined();
       expect(result.attendees[0].checkedInAt).toBeDefined();
       expect(result.pagination?.total).toBe(1);
+    });
+  });
+
+  describe('countEventParticipants', () => {
+    // Test nominal: verification de l appel au service avec les bons identifiants et du mapping de reponse
+    it('should count participants for multiple events and map response', async () => {
+      const mockCounts = [
+        new EventParticipantCountVO('event-1', 42),
+        new EventParticipantCountVO('event-2', 0),
+      ];
+      const spy = jest.spyOn(service, 'countParticipantsByEventIds').mockResolvedValue(mockCounts);
+
+      const dto = plainToInstance(CountEventParticipantsQueryDTO, {
+        eventIds: ['event-1', 'event-2'],
+      });
+
+      const result = await controller.countEventParticipants(dto);
+
+      expect(spy).toHaveBeenCalledWith([
+        expect.objectContaining({ value: 'event-1' }),
+        expect.objectContaining({ value: 'event-2' }),
+      ]);
+      expect(result.counts).toEqual([
+        { eventId: 'event-1', participantCount: 42 },
+        { eventId: 'event-2', participantCount: 0 },
+      ]);
+    });
+
+    // Test avec liste vide
+    it('should return empty counts when event ids list is empty', async () => {
+      const spy = jest.spyOn(service, 'countParticipantsByEventIds').mockResolvedValue([]);
+
+      const dto = plainToInstance(CountEventParticipantsQueryDTO, {
+        eventIds: [],
+      });
+
+      const result = await controller.countEventParticipants(dto);
+
+      expect(spy).toHaveBeenCalledWith([]);
+      expect(result.counts).toEqual([]);
+    });
+  });
+
+  describe('CountEventParticipantsQueryDTO', () => {
+    it('should validate with valid eventIds', async () => {
+      const dto = plainToInstance(CountEventParticipantsQueryDTO, {
+        eventIds: ['event-1', 'event-2'],
+      });
+      const errors = await validate(dto);
+      expect(errors).toHaveLength(0);
+    });
+
+    it('should validate with empty array', async () => {
+      const dto = plainToInstance(CountEventParticipantsQueryDTO, {
+        eventIds: [],
+      });
+      const errors = await validate(dto);
+      expect(errors).toHaveLength(0);
+    });
+
+    it('should fail validation when exceeding ceiling of 100', async () => {
+      const eventIds = Array.from({ length: 101 }, (_, i) => `event-${String(i)}`);
+      const dto = plainToInstance(CountEventParticipantsQueryDTO, {
+        eventIds,
+      });
+      const errors = await validate(dto);
+      expect(errors.length).toBeGreaterThan(0);
+      expect(errors.some((error) => error.property === 'eventIds')).toBe(true);
+    });
+
+    it('should fail validation when duplicate eventIds are provided', async () => {
+      const dto = plainToInstance(CountEventParticipantsQueryDTO, {
+        eventIds: ['event-1', 'event-1'],
+      });
+      const errors = await validate(dto);
+      expect(errors.length).toBeGreaterThan(0);
+      expect(errors.some((error) => error.property === 'eventIds')).toBe(true);
+    });
+
+    it('should fail validation when element is not a string', async () => {
+      const dto = plainToInstance(CountEventParticipantsQueryDTO, {
+        eventIds: [123],
+      });
+      const errors = await validate(dto);
+      expect(errors.length).toBeGreaterThan(0);
+      expect(errors.some((error) => error.property === 'eventIds')).toBe(true);
     });
   });
 });

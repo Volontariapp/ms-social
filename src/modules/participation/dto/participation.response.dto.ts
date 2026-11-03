@@ -24,6 +24,8 @@ import type {
   SetEventAttendanceResponse,
   GetEventAttendeesResponse,
   EventAttendee,
+  CountEventParticipantsResponse,
+  EventParticipantCount,
 } from '@volontariapp/contracts-nest';
 import type { PaginationResponseDTO } from '../../../common/dto/pagination-response.dto.js';
 import {
@@ -101,4 +103,13 @@ export class SetEventAttendanceResponseDTO
 export class GetEventAttendeesResponseDTO implements GetEventAttendeesResponse {
   attendees!: EventAttendee[];
   pagination: PaginationResponseDTO | undefined;
+}
+
+export class EventParticipantCountDTO implements EventParticipantCount {
+  eventId!: string;
+  participantCount!: number;
+}
+
+export class CountEventParticipantsResponseDTO implements CountEventParticipantsResponse {
+  counts!: EventParticipantCountDTO[];
 }

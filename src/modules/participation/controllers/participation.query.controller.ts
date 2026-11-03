@@ -17,6 +17,7 @@ import {
   GetRecommendedEventIdsQueryDTO,
   AdminGetRecommendedEventIdsQueryDTO,
   GetEventAttendeesQueryDTO,
+  CountEventParticipantsQueryDTO,
 } from '../dto/participation.query.dto.js';
 import {
   GetEventNodeResponseDTO,
@@ -30,6 +31,7 @@ import {
   GetRecommendedEventIdsResponseDTO,
   AdminGetRecommendedEventIdsResponseDTO,
   GetEventAttendeesResponseDTO,
+  CountEventParticipantsResponseDTO,
 } from '../dto/participation.response.dto.js';
 import { ParticipationMapper } from '../mappers/participation.mapper.js';
 import { PaginatedIdsMapper } from '../../../common/mappers/paginated-ids.mapper.js';
@@ -190,5 +192,15 @@ export class ParticipationQueryController {
     const paginationVO = pagination ?? new PaginationVO(1, 100);
     const paginatedAttendees = await this.service.getEventAttendees(eventId, paginationVO);
     return ParticipationMapper.toGetEventAttendeesResponseDTO(paginatedAttendees);
+  }
+
+  @GrpcMethod(GRPC_SERVICES.PARTICIPATION_QUERY_SERVICE, 'CountEventParticipants')
+  async countEventParticipants(
+    @Payload() data: CountEventParticipantsQueryDTO,
+  ): Promise<CountEventParticipantsResponseDTO> {
+    this.logger.log(`gRPC: Counting participants for ${String(data.eventIds.length)} events`);
+    const eventIds = ParticipationMapper.toCountEventParticipantsParams(data);
+    const counts = await this.service.countParticipantsByEventIds(eventIds);
+    return ParticipationMapper.toCountEventParticipantsResponseDTO(counts);
   }
 }
