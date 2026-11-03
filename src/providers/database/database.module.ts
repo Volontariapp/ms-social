@@ -9,6 +9,7 @@ import {
   databaseMapper,
 } from '@volontariapp/database';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Neo4jSchemaInitializer } from './neo4j-schema.initializer.js';
 
 databaseMapper.registerBidirectional(EventQueueModel, EventQueueEntity);
 databaseMapper.registerBidirectional(JobsOutboxModel, JobsOutboxEntity);
@@ -49,6 +50,7 @@ export class DatabaseModule {
     return {
       module: DatabaseModule,
       imports: [neo4jModule, postgresModule, typeOrmModule, typeOrmFeature],
+      providers: [Neo4jSchemaInitializer],
       exports: [Neo4jBridgeModule, PostgresBridgeModule, TypeOrmModule],
     };
   }
