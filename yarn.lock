@@ -4307,7 +4307,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@volontariapp/database@npm:3.12.1":
+"@volontariapp/database@npm:3.12.1, @volontariapp/database@npm:^3.12.1":
   version: 3.12.1
   resolution: "@volontariapp/database@npm:3.12.1"
   dependencies:
@@ -4325,27 +4325,6 @@ __metadata:
   peerDependencies:
     typeorm: ^0.3.28
   checksum: 10c0/6734d57de339097a288cca3adce1d6768c018aaa3c1ba838d304c5f7b882ea1a174dde8e60759d04b54a8f1d4db9477302907f560ced2224a282d0ee632ffd64
-  languageName: node
-  linkType: hard
-
-"@volontariapp/database@npm:^3.12.0":
-  version: 3.12.0
-  resolution: "@volontariapp/database@npm:3.12.0"
-  dependencies:
-    "@opentelemetry/api": "npm:^1.9.0"
-    "@volontariapp/bridge": "npm:1.0.11"
-    "@volontariapp/config": "npm:3.3.2"
-    "@volontariapp/errors": "npm:0.7.0"
-    "@volontariapp/logger": "npm:0.4.0"
-    "@volontariapp/messaging": "npm:2.30.2"
-    "@volontariapp/shared": "npm:0.18.1"
-    class-transformer: "npm:^0.5.1"
-    class-validator: "npm:^0.15.1"
-    pg: "npm:^8.23.1"
-    reflect-metadata: "npm:^0.2.2"
-  peerDependencies:
-    typeorm: ^0.3.28
-  checksum: 10c0/37425b5568e744e30ba8e113be463f299cf2f8183b9c69ee203493168c886166a2036fc540369a286555772d8021c906a451259643d88f43d311a92b47334587
   languageName: node
   linkType: hard
 
@@ -8668,7 +8647,7 @@ __metadata:
     "@volontariapp/config": "npm:^3.3.2"
     "@volontariapp/contracts": "npm:^4.8.4"
     "@volontariapp/contracts-nest": "npm:^3.4.3"
-    "@volontariapp/database": "npm:^3.12.0"
+    "@volontariapp/database": "npm:^3.12.1"
     "@volontariapp/domain-social": "npm:^0.17.1"
     "@volontariapp/errors": "npm:^0.6.5"
     "@volontariapp/errors-nest": "npm:^0.14.0"
