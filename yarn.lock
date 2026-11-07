@@ -4338,9 +4338,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@volontariapp/domain-social@npm:0.18.0":
-  version: 0.18.0
-  resolution: "@volontariapp/domain-social@npm:0.18.0"
+"@volontariapp/domain-social@npm:0.18.1":
+  version: 0.18.1
+  resolution: "@volontariapp/domain-social@npm:0.18.1"
   dependencies:
     "@nestjs/common": "npm:^11.2.8"
     "@nestjs/typeorm": "npm:^11.0.3"
@@ -4355,7 +4355,7 @@ __metadata:
     "@volontariapp/shared": "npm:0.20.0"
     neo4j-driver: "npm:^6.3.0"
     reflect-metadata: "npm:^0.2.2"
-  checksum: 10c0/7cb00de6bbfd44ef80a05039487487ad33a1ab1f4ab4d7dfb5c55a37dcd27b583e65fdcca8fb4f071411c7744dd61570e21efaf0cd35dacb37fcef4a216ff12d
+  checksum: 10c0/33a4780c76ab00e74c7c473e0fb47057b39b7c51878231346a6cb4af4f1eaf6e4d61ab8ea6fa8ba4952c6fec08c842710025ca22dab7a7c8a212e344ce85701e
   languageName: node
   linkType: hard
 
@@ -8658,7 +8658,7 @@ __metadata:
     "@volontariapp/contracts": "npm:^4.8.4"
     "@volontariapp/contracts-nest": "npm:^3.4.3"
     "@volontariapp/database": "npm:3.12.10"
-    "@volontariapp/domain-social": "npm:0.18.0"
+    "@volontariapp/domain-social": "npm:0.18.1"
     "@volontariapp/errors": "npm:^0.6.5"
     "@volontariapp/errors-nest": "npm:^0.14.0"
     "@volontariapp/eslint-config": "npm:^2.2.5"
