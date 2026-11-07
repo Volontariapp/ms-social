@@ -4,7 +4,7 @@ import { GrpcMethod, Payload } from '@nestjs/microservices';
 import { CurrentUser } from '@volontariapp/auth';
 import type { AuthUser } from '@volontariapp/auth';
 import { GRPC_SERVICES, PARTICIPATION_METHODS } from '@volontariapp/contracts-nest';
-import { ParticipationService } from '@volontariapp/domain-social';
+import { ParticipationService, UserId } from '@volontariapp/domain-social';
 import {
   CreateSocialEventCommandDTO,
   DeleteSocialEventCommandDTO,
@@ -212,7 +212,12 @@ export class ParticipationCommandController {
     this.logger.log(`gRPC: User ${user.id} setting attendance for event: ${data.eventId}`);
     const eventId = ParticipationMapper.toEventIdVO(data.eventId);
     await this.organizerPolicy.assertCanManageAttendance(user, eventId);
-    await this.service.setEventAttendance(eventId, data.checkedUserIds, data.uncheckedUserIds);
+    await this.service.setEventAttendance(
+      eventId,
+      data.checkedUserIds,
+      data.uncheckedUserIds,
+      new UserId(user.id),
+    );
     return new SetEventAttendanceResponseDTO();
   }
 }
