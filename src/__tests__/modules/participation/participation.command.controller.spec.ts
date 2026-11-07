@@ -189,6 +189,7 @@ describe('ParticipationCommandController', () => {
         expect.objectContaining({ value: 'event-123' }),
         ['u-1', 'u-2'],
         ['u-3'],
+        expect.objectContaining({ value: mockUser.id }),
       );
     });
 
