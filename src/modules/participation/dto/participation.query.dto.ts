@@ -20,6 +20,7 @@ import {
   AdminGetUserWishEventQuery,
   GetRecommendedEventIdsQuery,
   AdminGetRecommendedEventIdsQuery,
+  GetSearchExclusionsQuery,
   GetEventAttendeesQuery,
   CountEventParticipantsQuery,
 } from '@volontariapp/contracts-nest';
@@ -58,6 +59,24 @@ export class GetRecommendedEventIdsQueryDTO implements GetRecommendedEventIdsQue
   @ValidateNested()
   @Type(() => PaginationRequestDTO)
   pagination: PaginationRequestDTO | undefined;
+}
+
+export class GetSearchExclusionsQueryDTO implements GetSearchExclusionsQuery {
+  @IsOptional()
+  @IsBoolean()
+  excludeCreatedByMe = false;
+
+  @IsOptional()
+  @IsBoolean()
+  excludeParticipatedByMe = false;
+
+  @IsOptional()
+  @IsBoolean()
+  excludeWishedByMe = false;
+
+  @IsOptional()
+  @IsBoolean()
+  excludeBlockedUsers = false;
 }
 
 export class AdminGetRecommendedEventIdsQueryDTO implements AdminGetRecommendedEventIdsQuery {

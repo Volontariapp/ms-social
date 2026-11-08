@@ -12,13 +12,15 @@ import {
   EventAttendeeVO,
   PaginatedAttendeesVO,
   EventParticipantCountVO,
+  SearchExclusionsVO,
 } from '@volontariapp/domain-social';
 import {
   AdminGetRecommendedEventIdsQueryDTO,
   GetEventAttendeesQueryDTO,
   CountEventParticipantsQueryDTO,
+  GetSearchExclusionsQueryDTO,
 } from '../../../modules/participation/dto/participation.query.dto.js';
-import { createMock } from '../../utils/mock.helper.js';
+import { createMock, createMockAuthUser } from '../../utils/mock.helper.js';
 
 describe('ParticipationQueryController', () => {
   let controller: ParticipationQueryController;
@@ -87,6 +89,85 @@ describe('ParticipationQueryController', () => {
         expect.anything(),
         expect.objectContaining({ page: 1, limit: 10 }),
       );
+    });
+  });
+
+  describe('getSearchExclusions', () => {
+    const user = createMockAuthUser({ id: 'user-from-token' });
+
+    it('should read the exclusions of the authenticated user with the requested filters', async () => {
+      const spy = jest
+        .spyOn(service, 'getSearchExclusions')
+        .mockResolvedValue(new SearchExclusionsVO(['event-1'], ['user-9'], false, true));
+      const dto = plainToInstance(GetSearchExclusionsQueryDTO, {
+        excludeCreatedByMe: true,
+        excludeParticipatedByMe: false,
+        excludeWishedByMe: true,
+        excludeBlockedUsers: true,
+      });
+
+      const result = await controller.getSearchExclusions(dto, user);
+
+      expect(spy).toHaveBeenCalledWith(expect.objectContaining({ value: 'user-from-token' }), {
+        excludeCreatedByMe: true,
+        excludeParticipatedByMe: false,
+        excludeWishedByMe: true,
+        excludeBlockedUsers: true,
+      });
+      expect(result).toEqual({
+        excludedEventIds: ['event-1'],
+        hiddenUserIds: ['user-9'],
+        excludedEventIdsTruncated: false,
+        hiddenUserIdsTruncated: true,
+      });
+    });
+
+    it('should treat a missing flag as false', async () => {
+      const spy = jest
+        .spyOn(service, 'getSearchExclusions')
+        .mockResolvedValue(new SearchExclusionsVO([], [], false, false));
+
+      await controller.getSearchExclusions(plainToInstance(GetSearchExclusionsQueryDTO, {}), user);
+
+      expect(spy).toHaveBeenCalledWith(expect.anything(), {
+        excludeCreatedByMe: false,
+        excludeParticipatedByMe: false,
+        excludeWishedByMe: false,
+        excludeBlockedUsers: false,
+      });
+    });
+
+    it('should ignore a user id sent in the payload', async () => {
+      const spy = jest
+        .spyOn(service, 'getSearchExclusions')
+        .mockResolvedValue(new SearchExclusionsVO([], [], false, false));
+      const dto = plainToInstance(GetSearchExclusionsQueryDTO, {
+        userId: 'someone-else',
+        excludeCreatedByMe: true,
+      });
+
+      await controller.getSearchExclusions(dto, user);
+
+      expect(spy).toHaveBeenCalledWith(
+        expect.objectContaining({ value: 'user-from-token' }),
+        expect.anything(),
+      );
+    });
+  });
+
+  describe('GetSearchExclusionsQueryDTO', () => {
+    it('should accept an empty payload', async () => {
+      await expect(
+        validate(plainToInstance(GetSearchExclusionsQueryDTO, {})),
+      ).resolves.toHaveLength(0);
+    });
+
+    it('should reject a non boolean flag', async () => {
+      const errors = await validate(
+        plainToInstance(GetSearchExclusionsQueryDTO, { excludeBlockedUsers: 'yes' }),
+      );
+
+      expect(errors.some((error) => error.property === 'excludeBlockedUsers')).toBe(true);
     });
   });
 
