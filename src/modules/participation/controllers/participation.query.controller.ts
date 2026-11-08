@@ -16,6 +16,7 @@ import {
   AdminGetUserWishEventQueryDTO,
   GetRecommendedEventIdsQueryDTO,
   AdminGetRecommendedEventIdsQueryDTO,
+  GetSearchExclusionsQueryDTO,
   GetEventAttendeesQueryDTO,
   CountEventParticipantsQueryDTO,
 } from '../dto/participation.query.dto.js';
@@ -30,6 +31,7 @@ import {
   AdminGetUserWishEventResponseDTO,
   GetRecommendedEventIdsResponseDTO,
   AdminGetRecommendedEventIdsResponseDTO,
+  GetSearchExclusionsResponseDTO,
   GetEventAttendeesResponseDTO,
   CountEventParticipantsResponseDTO,
 } from '../dto/participation.response.dto.js';
@@ -168,6 +170,26 @@ export class ParticipationQueryController {
       paginationVO,
     );
     return PaginatedIdsMapper.toPaginatedIdsResponseDTO(paginatedIds);
+  }
+
+  @GrpcMethod(GRPC_SERVICES.PARTICIPATION_QUERY_SERVICE, 'GetSearchExclusions')
+  async getSearchExclusions(
+    @Payload() data: GetSearchExclusionsQueryDTO,
+    @CurrentUser() user: AuthUser,
+  ): Promise<GetSearchExclusionsResponseDTO> {
+    this.logger.log(`gRPC: Getting search exclusions for user: ${user.id}`);
+    const exclusions = await this.service.getSearchExclusions(new UserId(user.id), {
+      excludeCreatedByMe: data.excludeCreatedByMe,
+      excludeParticipatedByMe: data.excludeParticipatedByMe,
+      excludeWishedByMe: data.excludeWishedByMe,
+      excludeBlockedUsers: data.excludeBlockedUsers,
+    });
+    return {
+      excludedEventIds: exclusions.excludedEventIds,
+      hiddenUserIds: exclusions.hiddenUserIds,
+      excludedEventIdsTruncated: exclusions.excludedEventIdsTruncated,
+      hiddenUserIdsTruncated: exclusions.hiddenUserIdsTruncated,
+    };
   }
 
   @GrpcMethod(GRPC_SERVICES.PARTICIPATION_QUERY_SERVICE, 'AdminGetRecommendedEventIds')

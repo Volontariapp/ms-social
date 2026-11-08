@@ -21,6 +21,7 @@ import type {
   GetEventParticipantsResponse,
   GetRecommendedEventIdsResponse,
   AdminGetRecommendedEventIdsResponse,
+  GetSearchExclusionsResponse,
   SetEventAttendanceResponse,
   GetEventAttendeesResponse,
   EventAttendee,
@@ -95,6 +96,13 @@ export class GetRecommendedEventIdsResponseDTO
 export class AdminGetRecommendedEventIdsResponseDTO
   extends IdsResponseDTO
   implements AdminGetRecommendedEventIdsResponse {}
+
+export class GetSearchExclusionsResponseDTO implements GetSearchExclusionsResponse {
+  excludedEventIds!: string[];
+  hiddenUserIds!: string[];
+  excludedEventIdsTruncated!: boolean;
+  hiddenUserIdsTruncated!: boolean;
+}
 
 export class SetEventAttendanceResponseDTO
   extends SuccessResponseDTO
