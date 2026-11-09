@@ -11,6 +11,7 @@ import { InteractionModule } from './modules/interaction/interaction.module.js';
 import { ParticipationModule } from './modules/participation/participation.module.js';
 import { EventPostLinkModule } from './modules/event-post-link/event-post-link.module.js';
 import { GrpcClientModule } from './grpc/grpc-client.module.js';
+import { Neo4jWarmupModule } from './providers/warmup/neo4j-warmup.module.js';
 import { APP_FILTER, APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { GlobalExceptionFilter } from '@volontariapp/errors-nest';
 import { GrpcValidationPipe } from '@volontariapp/validation-nest';
@@ -34,6 +35,7 @@ export class AppModule {
         InteractionModule,
         ParticipationModule,
         EventPostLinkModule,
+        Neo4jWarmupModule,
         GrpcClientModule,
         HealthModule.register({
           databases: ['neo4j'],

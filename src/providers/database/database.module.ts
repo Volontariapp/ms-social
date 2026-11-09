@@ -10,6 +10,7 @@ import {
 } from '@volontariapp/database';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Neo4jSchemaInitializer } from './neo4j-schema.initializer.js';
+import { buildNeo4jDriverConfig } from './neo4j-driver.config.js';
 
 databaseMapper.registerBidirectional(EventQueueModel, EventQueueEntity);
 databaseMapper.registerBidirectional(JobsOutboxModel, JobsOutboxEntity);
@@ -23,6 +24,7 @@ export class DatabaseModule {
     const neo4jModule = Neo4jBridgeModule.register({
       url: config.neo4j.url,
       authToken: config.neo4j.authToken,
+      config: buildNeo4jDriverConfig(),
     });
     const postgresModule = PostgresBridgeModule.register({
       host: config.db.host,
