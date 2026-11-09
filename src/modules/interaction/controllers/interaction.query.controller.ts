@@ -33,7 +33,7 @@ export class InteractionQueryController {
     @Payload() data: GetUserLikesQueryDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<GetUserLikesResponseDTO> {
-    this.logger.log(`gRPC: Getting likes for user: ${user.id}`);
+    this.logger.debug(`gRPC: Getting likes for user: ${user.id}`);
     const { userId, pagination } = InteractionMapper.toGetUserLikesParams(data, user);
     const paginationVO = pagination ?? new PaginationVO(1, 10);
     const paginatedIds = await this.service.getUserLikes(userId, paginationVO);
@@ -42,7 +42,7 @@ export class InteractionQueryController {
 
   @GrpcMethod(GRPC_SERVICES.INTERACTION_QUERY_SERVICE, INTERACTION_METHODS.GET_POST_LIKERS)
   async getPostLikers(@Payload() data: GetPostLikersQueryDTO): Promise<GetPostLikersResponseDTO> {
-    this.logger.log(`gRPC: Getting likers for post: ${data.postId}`);
+    this.logger.debug(`gRPC: Getting likers for post: ${data.postId}`);
     const { postId, pagination } = InteractionMapper.toGetPostLikersParams(data);
     const paginationVO = pagination ?? new PaginationVO(1, 10);
     const paginatedIds = await this.service.getPostLikers(postId, paginationVO);
@@ -65,7 +65,7 @@ export class InteractionQueryController {
     @Payload() data: GetPostsLikeSummaryQueryDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<GetPostsLikeSummaryResponseDTO> {
-    this.logger.log(`gRPC: Getting like summary for ${String(data.postIds.length)} posts`);
+    this.logger.debug(`gRPC: Getting like summary for ${String(data.postIds.length)} posts`);
     const { userId, postIds } = InteractionMapper.toGetPostsLikeSummaryParams(data, user);
     const summaries = await this.service.getPostsLikeSummary(userId, postIds);
     return InteractionMapper.toGetPostsLikeSummaryResponseDTO(summaries);

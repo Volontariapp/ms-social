@@ -32,7 +32,7 @@ export class PublicationQueryController {
 
   @GrpcMethod(GRPC_SERVICES.PUBLICATION_QUERY_SERVICE, PUBLICATION_METHODS.GET_POST_NODE)
   async getPostNode(@Payload() data: GetSocialPostQueryDTO): Promise<GetPostNodeResponseDTO> {
-    this.logger.log(`gRPC: Checking post node existence for: ${data.postId}`);
+    this.logger.debug(`gRPC: Checking post node existence for: ${data.postId}`);
     const postId = PublicationMapper.toGetPostQueryParams(data);
     const exists = await this.service.getPostExists(postId);
     return { exists };
@@ -43,7 +43,7 @@ export class PublicationQueryController {
     @Payload() data: GetUserPostsQueryDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<GetUserPostsResponseDTO> {
-    this.logger.log(`gRPC: Getting posts for user: ${user.id}`);
+    this.logger.debug(`gRPC: Getting posts for user: ${user.id}`);
     const { userId, pagination } = PublicationMapper.toGetUserPostsQueryParams(data, user);
     const paginationVO = pagination ?? new PaginationVO(1, 10);
     const paginatedIds = await this.service.getUserPosts(userId, paginationVO);
@@ -55,7 +55,7 @@ export class PublicationQueryController {
     @Payload() data: GetFeedQueryDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<GetFeedResponseDTO> {
-    this.logger.log(`gRPC: Getting feed for user: ${user.id}`);
+    this.logger.debug(`gRPC: Getting feed for user: ${user.id}`);
     const { userId, pagination } = PublicationMapper.toGetFeedQueryParams(data, user);
     const paginationVO = pagination ?? new PaginationVO(1, 10);
     const paginatedIds = await this.service.getFeed(userId, paginationVO);

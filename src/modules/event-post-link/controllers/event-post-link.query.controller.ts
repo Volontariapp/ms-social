@@ -29,7 +29,7 @@ export class EventPostLinkQueryController {
   async getEventRelatedToPost(
     @Payload() data: GetEventRelatedToPostQueryDTO,
   ): Promise<GetEventRelatedToPostResponseDTO> {
-    this.logger.log(`gRPC: Getting event linked to post: ${data.postId}`);
+    this.logger.debug(`gRPC: Getting event linked to post: ${data.postId}`);
     const postId = EventPostLinkMapper.toGetEventRelatedToPostParams(data);
     const eventId = await this.service.getEventRelatedToPost(postId);
     return { eventId: eventId ?? '' };
@@ -39,7 +39,7 @@ export class EventPostLinkQueryController {
   async getEventsRelatedToPosts(
     @Payload() data: { postIds: string[] },
   ): Promise<{ links: { postId: string; eventId: string }[] }> {
-    this.logger.log(`gRPC: Getting events linked to ${String(data.postIds.length)} posts`);
+    this.logger.debug(`gRPC: Getting events linked to ${String(data.postIds.length)} posts`);
     const postIds = data.postIds.map((id) =>
       EventPostLinkMapper.toGetEventRelatedToPostParams({ postId: id }),
     );
@@ -49,7 +49,7 @@ export class EventPostLinkQueryController {
 
   @GrpcMethod(GRPC_SERVICES.EVENT_POST_LINK_QUERY_SERVICE, EVENT_POST_LINK_METHODS.GET_EVENT_POSTS)
   async getEventPosts(@Payload() data: GetEventPostsQueryDTO): Promise<GetEventPostsResponseDTO> {
-    this.logger.log(`gRPC: Getting posts linked to event: ${data.eventId}`);
+    this.logger.debug(`gRPC: Getting posts linked to event: ${data.eventId}`);
     const { eventId, pagination } = EventPostLinkMapper.toGetEventPostsParams(data);
     const paginationVO = pagination ?? new PaginationVO(1, 10);
     const paginatedIds = await this.service.getEventPosts(eventId, paginationVO);
