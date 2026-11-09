@@ -48,7 +48,7 @@ export class ParticipationQueryController {
 
   @GrpcMethod(GRPC_SERVICES.PARTICIPATION_QUERY_SERVICE, PARTICIPATION_METHODS.GET_EVENT_NODE)
   async getEventNode(@Payload() data: GetSocialEventQueryDTO): Promise<GetEventNodeResponseDTO> {
-    this.logger.log(`gRPC: Checking social event node existence: ${data.eventId}`);
+    this.logger.debug(`gRPC: Checking social event node existence: ${data.eventId}`);
     const eventId = ParticipationMapper.toGetEventNodeParams(data);
     const exists = await this.service.getEventExists(eventId);
     return { exists };
@@ -59,7 +59,7 @@ export class ParticipationQueryController {
     @Payload() data: GetUserEventQueryDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<GetUserEventResponseDTO> {
-    this.logger.log(`gRPC: Getting events created by user: ${user.id}`);
+    this.logger.debug(`gRPC: Getting events created by user: ${user.id}`);
     const { userId, pagination } = ParticipationMapper.toGetUserEventsParams(data, user);
     const paginationVO = pagination ?? new PaginationVO(1, 10);
     const paginatedIds = await this.service.getUserEvents(userId, paginationVO);
@@ -74,7 +74,7 @@ export class ParticipationQueryController {
     @Payload() data: GetUserParticipateEventQueryDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<GetUserParticipateEventResponseDTO> {
-    this.logger.log(`gRPC: Getting events participated by user: ${user.id}`);
+    this.logger.debug(`gRPC: Getting events participated by user: ${user.id}`);
     const { userId, pagination } = ParticipationMapper.toGetUserParticipationsParams(data, user);
     const paginationVO = pagination ?? new PaginationVO(1, 10);
     const paginatedIds = await this.service.getUserParticipations(userId, paginationVO);
@@ -88,7 +88,7 @@ export class ParticipationQueryController {
   async getEventParticipants(
     @Payload() data: GetEventParticipantsQueryDTO,
   ): Promise<GetEventParticipantsResponseDTO> {
-    this.logger.log(`gRPC: Getting participants for event: ${data.eventId}`);
+    this.logger.debug(`gRPC: Getting participants for event: ${data.eventId}`);
     const { eventId, pagination } = ParticipationMapper.toGetEventParticipantsParams(data);
     const paginationVO = pagination ?? new PaginationVO(1, 10);
     const paginatedIds = await this.service.getEventParticipants(eventId, paginationVO);
@@ -100,7 +100,7 @@ export class ParticipationQueryController {
     @Payload() data: GetUserWishEventQueryDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<GetUserWishEventResponseDTO> {
-    this.logger.log(`gRPC: Getting wished events for user: ${user.id}`);
+    this.logger.debug(`gRPC: Getting wished events for user: ${user.id}`);
     const { userId, pagination } = ParticipationMapper.toGetUserWishEventsParams(data, user);
     const paginationVO = pagination ?? new PaginationVO(1, 10);
     const paginatedIds = await this.service.getUserWishes(userId, paginationVO);
@@ -151,7 +151,7 @@ export class ParticipationQueryController {
     @Payload() data: GetRecommendedEventIdsQueryDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<GetRecommendedEventIdsResponseDTO> {
-    this.logger.log(`gRPC: Getting recommended events for user: ${user.id}`);
+    this.logger.debug(`gRPC: Getting recommended events for user: ${user.id}`);
     const paginationVO = data.pagination
       ? new PaginationVO(data.pagination.page, data.pagination.limit)
       : new PaginationVO(1, 10);
@@ -177,7 +177,7 @@ export class ParticipationQueryController {
     @Payload() data: GetSearchExclusionsQueryDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<GetSearchExclusionsResponseDTO> {
-    this.logger.log(`gRPC: Getting search exclusions for user: ${user.id}`);
+    this.logger.debug(`gRPC: Getting search exclusions for user: ${user.id}`);
     const exclusions = await this.service.getSearchExclusions(new UserId(user.id), {
       excludeCreatedByMe: data.excludeCreatedByMe,
       excludeParticipatedByMe: data.excludeParticipatedByMe,
@@ -209,7 +209,7 @@ export class ParticipationQueryController {
   async getEventAttendees(
     @Payload() data: GetEventAttendeesQueryDTO,
   ): Promise<GetEventAttendeesResponseDTO> {
-    this.logger.log(`gRPC: Getting attendees for event: ${data.eventId}`);
+    this.logger.debug(`gRPC: Getting attendees for event: ${data.eventId}`);
     const { eventId, pagination } = ParticipationMapper.toGetEventAttendeesParams(data);
     const paginationVO = pagination ?? new PaginationVO(1, 100);
     const paginatedAttendees = await this.service.getEventAttendees(eventId, paginationVO);
@@ -220,7 +220,7 @@ export class ParticipationQueryController {
   async countEventParticipants(
     @Payload() data: CountEventParticipantsQueryDTO,
   ): Promise<CountEventParticipantsResponseDTO> {
-    this.logger.log(`gRPC: Counting participants for ${String(data.eventIds.length)} events`);
+    this.logger.debug(`gRPC: Counting participants for ${String(data.eventIds.length)} events`);
     const eventIds = ParticipationMapper.toCountEventParticipantsParams(data);
     const counts = await this.service.countParticipantsByEventIds(eventIds);
     return ParticipationMapper.toCountEventParticipantsResponseDTO(counts);

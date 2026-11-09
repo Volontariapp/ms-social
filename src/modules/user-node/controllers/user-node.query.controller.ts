@@ -17,7 +17,7 @@ export class UserNodeQueryController {
 
   @GrpcMethod(GRPC_SERVICES.SOCIAL_USER_NODE_QUERY_SERVICE, SOCIAL_USER_NODE_METHODS.GET_USER_NODE)
   async getUserNode(@Payload() data: GetSocialUserQueryDTO): Promise<GetUserNodeResponseDTO> {
-    this.logger.log(`gRPC: Checking user node existence for: ${data.userId}`);
+    this.logger.debug(`gRPC: Checking user node existence for: ${data.userId}`);
     const userId = UserNodeMapper.toUserIdVOFromQuery(data);
     const exists = await this.service.getUserExists(userId);
     return { exists };

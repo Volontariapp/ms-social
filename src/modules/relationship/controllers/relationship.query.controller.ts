@@ -45,7 +45,7 @@ export class RelationshipQueryController {
     @Payload() data: GetMyFollowsQueryDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<GetMyFollowsResponseDTO> {
-    this.logger.log(`gRPC: Getting follows for user: ${user.id}`);
+    this.logger.debug(`gRPC: Getting follows for user: ${user.id}`);
     const { userId, pagination } = RelationshipMapper.toGetFollowsParams(data, user);
     const paginationVO = pagination ?? new PaginationVO(1, 10);
     const paginatedIds = await this.service.getFollows(userId, paginationVO);
@@ -57,7 +57,7 @@ export class RelationshipQueryController {
     @Payload() data: GetMyFollowersQueryDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<GetMyFollowersResponseDTO> {
-    this.logger.log(`gRPC: Getting followers for user: ${user.id}`);
+    this.logger.debug(`gRPC: Getting followers for user: ${user.id}`);
     const { userId, pagination } = RelationshipMapper.toGetFollowersParams(data, user);
     const paginationVO = pagination ?? new PaginationVO(1, 10);
     const paginatedIds = await this.service.getFollowers(userId, paginationVO);
@@ -69,7 +69,7 @@ export class RelationshipQueryController {
     @Payload() data: GetMyBlocksQueryDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<GetMyBlocksResponseDTO> {
-    this.logger.log(`gRPC: Getting blocks for user: ${user.id}`);
+    this.logger.debug(`gRPC: Getting blocks for user: ${user.id}`);
     const { userId, pagination } = RelationshipMapper.toGetBlocksParams(data, user);
     const paginationVO = pagination ?? new PaginationVO(1, 10);
     const paginatedIds = await this.service.getBlocks(userId, paginationVO);
@@ -81,7 +81,7 @@ export class RelationshipQueryController {
     @Payload() data: GetWhoBlockedMeQueryDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<GetWhoBlockedMeResponseDTO> {
-    this.logger.log(`gRPC: Getting who blocked user: ${user.id}`);
+    this.logger.debug(`gRPC: Getting who blocked user: ${user.id}`);
     const { userId, pagination } = RelationshipMapper.toGetWhoBlockedMeParams(data, user);
     const paginationVO = pagination ?? new PaginationVO(1, 10);
     const paginatedIds = await this.service.getWhoBlockedMe(userId, paginationVO);
@@ -140,7 +140,7 @@ export class RelationshipQueryController {
     @Payload() data: GetIsFollowingQueryDTO,
     @CurrentUser() user: AuthUser,
   ): Promise<GetIsFollowingResponseDTO> {
-    this.logger.log(`gRPC: Checking if user: ${user.id} is following user: ${data.userId}`);
+    this.logger.debug(`gRPC: Checking if user: ${user.id} is following user: ${data.userId}`);
     const isFollowing = await this.service.isFollowing(
       new UserId(user.id),
       new UserId(data.userId),
