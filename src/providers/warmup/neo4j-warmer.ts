@@ -28,6 +28,19 @@ export const NEO4J_WARMUP_INTERVAL_MS = 5 * 60 * 1000;
 /** The startup round delays readiness (HTTP /health listens after it); a slow Neo4j must not block it. */
 export const NEO4J_WARMUP_STARTUP_BUDGET_MS = 15_000;
 
+/**
+ * Neo4j is probed this often (verifyConnectivity) to see it come back after a restart: its
+ * restart takes about 20 s, so a 5 s probe sees it down at least once.
+ */
+export const NEO4J_HEALTH_POLL_INTERVAL_MS = 5_000;
+
+/**
+ * While the warm-up that follows a Neo4j restart runs, readiness answers 503 so that the
+ * gateway gets fast errors instead of piling requests on a cold Neo4j. Past this cap the pod is
+ * ready again even if the warm-up has not finished, so it never stays out of service.
+ */
+export const NEO4J_RECOVERY_READINESS_CAP_MS = 30_000;
+
 export interface Neo4jWarmupReport {
   queries: number;
   failures: number;
@@ -43,8 +56,12 @@ export class Neo4jWarmer implements OnApplicationBootstrap, OnApplicationShutdow
   private readonly logger = new Logger({ context: Neo4jWarmer.name, format: 'json' });
   private readonly queries: Neo4jWarmupQuery[];
   private timer: NodeJS.Timeout | null = null;
+  private healthTimer: NodeJS.Timeout | null = null;
   private running: Promise<Neo4jWarmupReport> | null = null;
   private started = false;
+  private neo4jDown = false;
+  private probing = false;
+  private recoveringSince: number | null = null;
 
   constructor(
     @Inject(NEST_NEO4J_PROVIDER)
@@ -76,12 +93,63 @@ export class Neo4jWarmer implements OnApplicationBootstrap, OnApplicationShutdow
       });
     }, NEO4J_WARMUP_INTERVAL_MS);
     this.timer.unref();
+
+    this.healthTimer = setInterval(() => {
+      void this.probeNeo4j();
+    }, NEO4J_HEALTH_POLL_INTERVAL_MS);
+    this.healthTimer.unref();
   }
 
   onApplicationShutdown(): void {
     if (this.timer !== null) {
       clearInterval(this.timer);
       this.timer = null;
+    }
+    if (this.healthTimer !== null) {
+      clearInterval(this.healthTimer);
+      this.healthTimer = null;
+    }
+  }
+
+  /** False while the warm-up after a Neo4j restart runs, for at most the readiness cap. */
+  isReady(): boolean {
+    if (this.recoveringSince === null) return true;
+    return Date.now() - this.recoveringSince >= NEO4J_RECOVERY_READINESS_CAP_MS;
+  }
+
+  /**
+   * One probe. A failure marks Neo4j down; the first success after that starts the recovery
+   * warm-up (shared with a round already in progress). Overlapping probes are skipped.
+   */
+  async probeNeo4j(): Promise<void> {
+    if (this.probing || !this.neo4jProvider.isConnected()) return;
+    this.probing = true;
+    try {
+      await this.neo4jProvider.getDriver().verifyConnectivity();
+      if (this.neo4jDown) {
+        this.neo4jDown = false;
+        void this.recover();
+      }
+    } catch (error: unknown) {
+      if (!this.neo4jDown) {
+        this.logger.warn('Neo4j unreachable, warm-up will run when it is back', {
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+      this.neo4jDown = true;
+    } finally {
+      this.probing = false;
+    }
+  }
+
+  private async recover(): Promise<void> {
+    if (this.recoveringSince !== null) return;
+    this.recoveringSince = Date.now();
+    try {
+      const report = await this.warm();
+      this.logger.info('Neo4j back, warm-up done', { ...report });
+    } finally {
+      this.recoveringSince = null;
     }
   }
 
