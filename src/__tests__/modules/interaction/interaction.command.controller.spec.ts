@@ -13,6 +13,8 @@ import {
   DeleteLikePostResponseDTO,
 } from '../../../modules/interaction/dto/interaction.response.dto.js';
 import { createMock, createMockAuthUser } from '../../utils/mock.helper.js';
+import { SocialEdgeMirrorService } from '../../../modules/social-edge/social-edge-mirror.service.js';
+import { createSocialEdgeMirrorMock } from '../social-edge/social-edge-mirror.mock.js';
 
 describe('InteractionCommandController', () => {
   let controller: InteractionCommandController;
@@ -23,6 +25,10 @@ describe('InteractionCommandController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [InteractionCommandController],
       providers: [
+        {
+          provide: SocialEdgeMirrorService,
+          useValue: createSocialEdgeMirrorMock(),
+        },
         {
           provide: InteractionService,
           useValue: createMock<InteractionService>(),

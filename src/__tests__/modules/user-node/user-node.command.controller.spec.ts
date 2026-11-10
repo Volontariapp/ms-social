@@ -13,6 +13,8 @@ import {
   DeleteUserNodeResponseDTO,
 } from '../../../modules/user-node/dto/user-node.response.dto.js';
 import { createMock } from '../../utils/mock.helper.js';
+import { SocialEdgeMirrorService } from '../../../modules/social-edge/social-edge-mirror.service.js';
+import { createSocialEdgeMirrorMock } from '../social-edge/social-edge-mirror.mock.js';
 
 describe('UserNodeCommandController', () => {
   let controller: UserNodeCommandController;
@@ -22,6 +24,10 @@ describe('UserNodeCommandController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UserNodeCommandController],
       providers: [
+        {
+          provide: SocialEdgeMirrorService,
+          useValue: createSocialEdgeMirrorMock(),
+        },
         {
           provide: SocialUserService,
           useValue: createMock<SocialUserService>(),

@@ -17,6 +17,8 @@ import {
   DeleteBlockUserResponseDTO,
 } from '../../../modules/relationship/dto/relationship.response.dto.js';
 import { createMock, createMockAuthUser } from '../../utils/mock.helper.js';
+import { SocialEdgeMirrorService } from '../../../modules/social-edge/social-edge-mirror.service.js';
+import { createSocialEdgeMirrorMock } from '../social-edge/social-edge-mirror.mock.js';
 
 describe('RelationshipCommandController', () => {
   let controller: RelationshipCommandController;
@@ -27,6 +29,10 @@ describe('RelationshipCommandController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [RelationshipCommandController],
       providers: [
+        {
+          provide: SocialEdgeMirrorService,
+          useValue: createSocialEdgeMirrorMock(),
+        },
         {
           provide: RelationshipService,
           useValue: createMock<RelationshipService>(),

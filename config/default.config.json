@@ -32,5 +32,6 @@
     "database": "ms_social",
     "maxPoolSize": 10,
     "ssl": false
-  }
+  },
+  "socialWriteMode": "sync"
 }

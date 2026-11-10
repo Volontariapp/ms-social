@@ -32,5 +32,6 @@
     "database": "NEO4J_DATABASE",
     "authScheme": "NEO4J_AUTH_SCHEME",
     "realm": "NEO4J_REALM"
-  }
+  },
+  "socialWriteMode": "SOCIAL_WRITE_MODE"
 }

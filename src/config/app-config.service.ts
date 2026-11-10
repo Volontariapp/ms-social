@@ -19,6 +19,10 @@ export class AppConfigService {
     return this.config.microServices.msSocialUrl;
   }
 
+  get socialWriteMode() {
+    return this.config.socialWriteMode;
+  }
+
   get internalPublicKeyPath() {
     return this.config.auth.internalPublicKeyPath;
   }

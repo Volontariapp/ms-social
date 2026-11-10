@@ -17,6 +17,8 @@ import {
   DeleteUserOwnResponseDTO,
 } from '../../../modules/publication/dto/publication.response.dto.js';
 import { createMock, createMockAuthUser } from '../../utils/mock.helper.js';
+import { SocialEdgeMirrorService } from '../../../modules/social-edge/social-edge-mirror.service.js';
+import { createSocialEdgeMirrorMock } from '../social-edge/social-edge-mirror.mock.js';
 
 describe('PublicationCommandController', () => {
   let controller: PublicationCommandController;
@@ -27,6 +29,10 @@ describe('PublicationCommandController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [PublicationCommandController],
       providers: [
+        {
+          provide: SocialEdgeMirrorService,
+          useValue: createSocialEdgeMirrorMock(),
+        },
         {
           provide: PublicationService,
           useValue: createMock<PublicationService>(),
