@@ -18,6 +18,8 @@ import {
   AdminDeleteLikePostResponseDTO,
 } from '../dto/interaction.response.dto.js';
 import { InteractionMapper } from '../mappers/interaction.mapper.js';
+import { SocialEdgeAction, SocialEdgeKind } from '@volontariapp/messaging';
+import { SocialEdgeMirrorService } from '../../social-edge/social-edge-mirror.service.js';
 
 @Controller()
 export class InteractionCommandController {
@@ -25,7 +27,10 @@ export class InteractionCommandController {
     context: InteractionCommandController.name,
   });
 
-  constructor(private readonly service: InteractionService) {}
+  constructor(
+    private readonly service: InteractionService,
+    private readonly mirror: SocialEdgeMirrorService,
+  ) {}
 
   @GrpcMethod(GRPC_SERVICES.INTERACTION_COMMAND_SERVICE, INTERACTION_METHODS.POST_LIKE_POST)
   async postLikePost(
@@ -35,6 +40,7 @@ export class InteractionCommandController {
     this.logger.log(`gRPC: User ${user.id} liking post ${data.postId}`);
     const { userId, postId } = InteractionMapper.toLikePostParams(data, user);
     await this.service.likePost(userId, postId);
+    await this.mirror.mirror(SocialEdgeKind.LIKE, userId.value, postId.value, SocialEdgeAction.ADD);
     return new PostLikePostResponseDTO();
   }
 
@@ -46,6 +52,12 @@ export class InteractionCommandController {
     this.logger.log(`gRPC: User ${user.id} unliking post ${data.postId}`);
     const { userId, postId } = InteractionMapper.toUnlikePostParams(data, user);
     await this.service.unlikePost(userId, postId);
+    await this.mirror.mirror(
+      SocialEdgeKind.LIKE,
+      userId.value,
+      postId.value,
+      SocialEdgeAction.REMOVE,
+    );
     return new DeleteLikePostResponseDTO();
   }
 
@@ -56,6 +68,7 @@ export class InteractionCommandController {
     this.logger.log(`gRPC: Admin user liking post ${data.postId} for user ${data.userId}`);
     const { userId, postId } = InteractionMapper.toAdminLikePostParams(data);
     await this.service.likePost(userId, postId);
+    await this.mirror.mirror(SocialEdgeKind.LIKE, userId.value, postId.value, SocialEdgeAction.ADD);
     return new AdminPostLikePostResponseDTO();
   }
 
@@ -66,6 +79,12 @@ export class InteractionCommandController {
     this.logger.log(`gRPC: Admin user unliking post ${data.postId} for user ${data.userId}`);
     const { userId, postId } = InteractionMapper.toAdminUnlikePostParams(data);
     await this.service.unlikePost(userId, postId);
+    await this.mirror.mirror(
+      SocialEdgeKind.LIKE,
+      userId.value,
+      postId.value,
+      SocialEdgeAction.REMOVE,
+    );
     return new AdminDeleteLikePostResponseDTO();
   }
 }

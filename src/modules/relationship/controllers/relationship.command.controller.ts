@@ -26,6 +26,8 @@ import {
   AdminDeleteBlockUserResponseDTO,
 } from '../dto/relationship.response.dto.js';
 import { RelationshipMapper } from '../mappers/relationship.mapper.js';
+import { SocialEdgeAction, SocialEdgeKind } from '@volontariapp/messaging';
+import { SocialEdgeMirrorService } from '../../social-edge/social-edge-mirror.service.js';
 
 @Controller()
 export class RelationshipCommandController {
@@ -33,7 +35,10 @@ export class RelationshipCommandController {
     context: RelationshipCommandController.name,
   });
 
-  constructor(private readonly service: RelationshipService) {}
+  constructor(
+    private readonly service: RelationshipService,
+    private readonly mirror: SocialEdgeMirrorService,
+  ) {}
 
   @GrpcMethod(GRPC_SERVICES.RELATIONSHIP_COMMAND_SERVICE, RELATIONSHIP_METHODS.POST_FOLLOW_USER)
   async postFollowUser(
@@ -43,6 +48,12 @@ export class RelationshipCommandController {
     this.logger.log(`gRPC: User ${user.id} following ${data.followedId}`);
     const { followerId, followedId } = RelationshipMapper.toFollowUserParams(data, user);
     await this.service.followUser(followerId, followedId);
+    await this.mirror.mirror(
+      SocialEdgeKind.FOLLOW,
+      followerId.value,
+      followedId.value,
+      SocialEdgeAction.ADD,
+    );
     return new PostFollowUserResponseDTO();
   }
 
@@ -54,6 +65,12 @@ export class RelationshipCommandController {
     this.logger.log(`gRPC: User ${user.id} unfollowing ${data.followedId}`);
     const { followerId, followedId } = RelationshipMapper.toUnfollowUserParams(data, user);
     await this.service.unfollowUser(followerId, followedId);
+    await this.mirror.mirror(
+      SocialEdgeKind.FOLLOW,
+      followerId.value,
+      followedId.value,
+      SocialEdgeAction.REMOVE,
+    );
     return new DeleteFollowUserResponseDTO();
   }
 
@@ -89,6 +106,12 @@ export class RelationshipCommandController {
     this.logger.log(`gRPC: Admin user following ${data.followedId} for user ${data.followerId}`);
     const { followerId, followedId } = RelationshipMapper.toAdminFollowUserParams(data);
     await this.service.followUser(followerId, followedId);
+    await this.mirror.mirror(
+      SocialEdgeKind.FOLLOW,
+      followerId.value,
+      followedId.value,
+      SocialEdgeAction.ADD,
+    );
     return new AdminPostFollowUserResponseDTO();
   }
 
@@ -102,6 +125,12 @@ export class RelationshipCommandController {
     this.logger.log(`gRPC: Admin user unfollowing ${data.followedId} for user ${data.followerId}`);
     const { followerId, followedId } = RelationshipMapper.toAdminUnfollowUserParams(data);
     await this.service.unfollowUser(followerId, followedId);
+    await this.mirror.mirror(
+      SocialEdgeKind.FOLLOW,
+      followerId.value,
+      followedId.value,
+      SocialEdgeAction.REMOVE,
+    );
     return new AdminDeleteFollowUserResponseDTO();
   }
 

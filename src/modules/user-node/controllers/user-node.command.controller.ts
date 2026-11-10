@@ -12,6 +12,7 @@ import {
   DeleteUserNodeResponseDTO,
 } from '../dto/user-node.response.dto.js';
 import { UserNodeMapper } from '../mappers/user-node.mapper.js';
+import { SocialEdgeMirrorService } from '../../social-edge/social-edge-mirror.service.js';
 
 @Controller()
 export class UserNodeCommandController {
@@ -19,7 +20,10 @@ export class UserNodeCommandController {
     context: UserNodeCommandController.name,
   });
 
-  constructor(private readonly service: SocialUserService) {}
+  constructor(
+    private readonly service: SocialUserService,
+    private readonly mirror: SocialEdgeMirrorService,
+  ) {}
 
   @GrpcMethod(
     GRPC_SERVICES.SOCIAL_USER_NODE_COMMAND_SERVICE,
@@ -44,6 +48,7 @@ export class UserNodeCommandController {
     this.logger.log(`gRPC: Deleting user node for: ${data.userId}`);
     const userId = UserNodeMapper.toUserIdVO(data.userId);
     await this.service.deleteUser(userId);
+    await this.mirror.deleteEdgesOfNode(userId.value);
     return new DeleteUserNodeResponseDTO();
   }
 }

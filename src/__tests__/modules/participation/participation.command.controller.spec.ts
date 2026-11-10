@@ -34,6 +34,8 @@ import { MAX_ATTENDANCE_BATCH_SIZE } from '../../../modules/participation/partic
 import { createEventOrganizerPolicyMock } from './event-organizer.policy.mock.js';
 import { createSetEventAttendanceDto } from './participation.factory.js';
 import { createMock, createMockAuthUser } from '../../utils/mock.helper.js';
+import { SocialEdgeMirrorService } from '../../../modules/social-edge/social-edge-mirror.service.js';
+import { createSocialEdgeMirrorMock } from '../social-edge/social-edge-mirror.mock.js';
 
 describe('ParticipationCommandController', () => {
   let controller: ParticipationCommandController;
@@ -45,6 +47,10 @@ describe('ParticipationCommandController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ParticipationCommandController],
       providers: [
+        {
+          provide: SocialEdgeMirrorService,
+          useValue: createSocialEdgeMirrorMock(),
+        },
         {
           provide: ParticipationService,
           useValue: createMock<ParticipationService>(),

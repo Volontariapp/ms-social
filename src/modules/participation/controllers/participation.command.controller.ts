@@ -37,6 +37,8 @@ import {
 } from '../dto/participation.response.dto.js';
 import { EventOrganizerPolicy } from '../policies/event-organizer.policy.js';
 import { ParticipationMapper } from '../mappers/participation.mapper.js';
+import { SocialEdgeAction, SocialEdgeKind } from '@volontariapp/messaging';
+import { SocialEdgeMirrorService } from '../../social-edge/social-edge-mirror.service.js';
 
 @Controller()
 export class ParticipationCommandController {
@@ -47,6 +49,7 @@ export class ParticipationCommandController {
   constructor(
     private readonly service: ParticipationService,
     private readonly organizerPolicy: EventOrganizerPolicy,
+    private readonly mirror: SocialEdgeMirrorService,
   ) {}
 
   @GrpcMethod(GRPC_SERVICES.PARTICIPATION_COMMAND_SERVICE, PARTICIPATION_METHODS.CREATE_EVENT_NODE)
@@ -66,6 +69,7 @@ export class ParticipationCommandController {
     this.logger.log(`gRPC: Deleting event node for: ${data.eventId}`);
     const eventId = ParticipationMapper.toDeleteEventParams(data);
     await this.service.deleteEvent(eventId);
+    await this.mirror.deleteEdgesOfNode(eventId.value);
     return new DeleteEventNodeResponseDTO();
   }
 
@@ -100,6 +104,7 @@ export class ParticipationCommandController {
     this.logger.log(`gRPC: User ${user.id} participating to event ${data.eventId}`);
     const { userId, eventId } = ParticipationMapper.toParticipateEventParams(data, user);
     await this.service.participateEvent(userId, eventId);
+    await this.mirror.mirrorParticipation(userId.value, eventId.value, SocialEdgeAction.ADD);
     return new PostUserParticipateEventResponseDTO();
   }
 
@@ -114,6 +119,7 @@ export class ParticipationCommandController {
     this.logger.log(`gRPC: User ${user.id} unparticipating from event ${data.eventId}`);
     const { userId, eventId } = ParticipationMapper.toLeaveEventParams(data, user);
     await this.service.leaveEvent(userId, eventId);
+    await this.mirror.mirrorParticipation(userId.value, eventId.value, SocialEdgeAction.REMOVE);
     return new DeleteUserParticipateEventResponseDTO();
   }
 
@@ -128,6 +134,12 @@ export class ParticipationCommandController {
     this.logger.log(`gRPC: User ${user.id} wishing for event ${data.eventId}`);
     const { userId, eventId } = ParticipationMapper.toWishEventParams(data, user);
     await this.service.wishEvent(userId, eventId);
+    await this.mirror.mirror(
+      SocialEdgeKind.WISH,
+      userId.value,
+      eventId.value,
+      SocialEdgeAction.ADD,
+    );
     return new PostUserWishEventResponseDTO();
   }
 
@@ -142,6 +154,12 @@ export class ParticipationCommandController {
     this.logger.log(`gRPC: User ${user.id} unwishing from event ${data.eventId}`);
     const { userId, eventId } = ParticipationMapper.toUnwishEventParams(data, user);
     await this.service.unwishEvent(userId, eventId);
+    await this.mirror.mirror(
+      SocialEdgeKind.WISH,
+      userId.value,
+      eventId.value,
+      SocialEdgeAction.REMOVE,
+    );
     return new DeleteUserWishEventResponseDTO();
   }
 
@@ -157,6 +175,7 @@ export class ParticipationCommandController {
     );
     const { userId, eventId } = ParticipationMapper.toAdminParticipateEventParams(data);
     await this.service.participateEvent(userId, eventId);
+    await this.mirror.mirrorParticipation(userId.value, eventId.value, SocialEdgeAction.ADD);
     return new AdminPostUserParticipateEventResponseDTO();
   }
 
@@ -172,6 +191,7 @@ export class ParticipationCommandController {
     );
     const { userId, eventId } = ParticipationMapper.toAdminLeaveEventParams(data);
     await this.service.leaveEvent(userId, eventId);
+    await this.mirror.mirrorParticipation(userId.value, eventId.value, SocialEdgeAction.REMOVE);
     return new AdminDeleteUserParticipateEventResponseDTO();
   }
 
@@ -185,6 +205,12 @@ export class ParticipationCommandController {
     this.logger.log(`gRPC: Admin user wishing for event ${data.eventId} for user ${data.userId}`);
     const { userId, eventId } = ParticipationMapper.toAdminWishEventParams(data);
     await this.service.wishEvent(userId, eventId);
+    await this.mirror.mirror(
+      SocialEdgeKind.WISH,
+      userId.value,
+      eventId.value,
+      SocialEdgeAction.ADD,
+    );
     return new AdminPostUserWishEventResponseDTO();
   }
 
@@ -200,6 +226,12 @@ export class ParticipationCommandController {
     );
     const { userId, eventId } = ParticipationMapper.toAdminUnwishEventParams(data);
     await this.service.unwishEvent(userId, eventId);
+    await this.mirror.mirror(
+      SocialEdgeKind.WISH,
+      userId.value,
+      eventId.value,
+      SocialEdgeAction.REMOVE,
+    );
     return new AdminDeleteUserWishEventResponseDTO();
   }
 

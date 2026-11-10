@@ -3,8 +3,10 @@ import { ParticipationService, Neo4jParticipationRepository } from '@volontariap
 import { ParticipationCommandController } from './controllers/participation.command.controller.js';
 import { EventOrganizerPolicy } from './policies/event-organizer.policy.js';
 import { ParticipationQueryController } from './controllers/participation.query.controller.js';
+import { SocialEdgeModule } from '../social-edge/social-edge.module.js';
 
 @Module({
+  imports: [SocialEdgeModule],
   controllers: [ParticipationCommandController, ParticipationQueryController],
   providers: [Neo4jParticipationRepository, ParticipationService, EventOrganizerPolicy],
   exports: [ParticipationService],

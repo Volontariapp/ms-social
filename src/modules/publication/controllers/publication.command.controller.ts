@@ -22,6 +22,7 @@ import {
   AdminDeleteUserOwnResponseDTO,
 } from '../dto/publication.response.dto.js';
 import { PublicationMapper } from '../mappers/publication.mapper.js';
+import { SocialEdgeMirrorService } from '../../social-edge/social-edge-mirror.service.js';
 
 @Controller()
 export class PublicationCommandController {
@@ -29,7 +30,10 @@ export class PublicationCommandController {
     context: PublicationCommandController.name,
   });
 
-  constructor(private readonly service: PublicationService) {}
+  constructor(
+    private readonly service: PublicationService,
+    private readonly mirror: SocialEdgeMirrorService,
+  ) {}
 
   @GrpcMethod(GRPC_SERVICES.PUBLICATION_COMMAND_SERVICE, PUBLICATION_METHODS.CREATE_POST_NODE)
   async createPostNode(
@@ -48,6 +52,7 @@ export class PublicationCommandController {
     this.logger.log(`gRPC: Deleting post node for: ${data.postId}`);
     const postId = PublicationMapper.toDeletePostIdVOFromCommand(data);
     await this.service.deletePost(postId);
+    await this.mirror.deleteEdgesOfNode(postId.value);
     return new DeletePostNodeResponseDTO();
   }
 
